@@ -14,6 +14,7 @@ import javax.script.ScriptException;
 import de.kaleidox.JamesBot;
 import de.kaleidox.javacord.util.commands.Command;
 import de.kaleidox.javacord.util.commands.CommandGroup;
+import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
 
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
@@ -101,7 +102,18 @@ public enum AdminCommands {
 
         engine.setBindings(bindings, ScriptContext.GLOBAL_SCOPE);
 
-        return "```" + engine.eval(code.append('\n').toString().replaceAll("", "")) + "```";
+        command.delete();
+
+        final String exec = code.append('\n').toString().replaceAll("", "");
+        final String result = String.valueOf(engine.eval(exec));
+
+        return DefaultEmbedFactory.create()
+                .addField("Executed Code", "```javascript\n" + exec + "```")
+                .addField("Result", "```" + result + "```")
+                .setAuthor(user)
+                .setUrl("http://kaleidox.de:8111")
+                .setFooter("Evaluated by " + user.getDiscriminatedName())
+                .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
     }
 
     @Command

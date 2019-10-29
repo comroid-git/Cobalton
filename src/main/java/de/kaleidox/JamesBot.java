@@ -26,7 +26,7 @@ import org.javacord.api.entity.user.UserStatus;
 import org.javacord.api.util.logging.ExceptionLogger;
 
 public final class JamesBot {
-    public final static Color THEME = new Color(0x9B59B6);
+    public final static Color THEME = new Color(0x0f7eb1);
 
     public static final long BOT_ID = 625651396410343424L;
 
