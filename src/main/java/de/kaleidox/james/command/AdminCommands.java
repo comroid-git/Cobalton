@@ -22,6 +22,7 @@ import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.channel.ServerTextChannelUpdater;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.server.Server;
@@ -63,6 +64,8 @@ public enum AdminCommands {
         }
 
         String exec = null;
+        Object eval = null;
+        EmbedBuilder result;
 
         try {
             final String argsJoin = String.join(" ", args);
@@ -105,22 +108,18 @@ public enum AdminCommands {
 
             engine.setBindings(bindings, ScriptContext.GLOBAL_SCOPE);
 
-            exec = code.append('\n').toString().replaceAll("", "");
-            final String result = String.valueOf(engine.eval(exec));
-            
-            command.delete();
+            exec = code.append('\n').toString().replaceAll("", "").replaceAll("\"", "'");
+            eval = engine.eval(exec);
 
-            return DefaultEmbedFactory.create()
+            result = DefaultEmbedFactory.create()
                     .addField("Executed Code", "```javascript\n" + exec + "```")
-                    .addField("Result", "```" + result + "```")
+                    .addField("Result", "```" + eval + "```")
                     .setAuthor(user)
                     .setUrl("http://kaleidox.de:8111")
                     .setFooter("Evaluated by " + user.getDiscriminatedName())
                     .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
         } catch (Throwable t) {
-            command.delete();
-            
-            return DefaultEmbedFactory.create()
+            result = DefaultEmbedFactory.create()
                     .addField("Executed Code", (exec == null ? "Your source code was faulty." : "```javascript\n" + exec + "```"))
                     .addField("Message of thrown " + t.getClass().getSimpleName(), "```" + t.getMessage() + "```")
                     .setAuthor(user)
@@ -128,6 +127,9 @@ public enum AdminCommands {
                     .setFooter("Evaluated by " + user.getDiscriminatedName())
                     .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
         }
+
+        channel.sendMessage(result).thenComposeAsync(command::delete).join();
+        return eval;
     }
 
     @Command
