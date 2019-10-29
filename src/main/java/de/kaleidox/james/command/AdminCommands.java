@@ -1,7 +1,5 @@
 package de.kaleidox.james.command;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -118,28 +116,9 @@ public enum AdminCommands {
                     .setFooter("Evaluated by " + user.getDiscriminatedName())
                     .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
         } catch (Throwable t) {
-            class StringStream extends OutputStream {
-                String str = "";
-                int lines;
-
-                @Override
-                public void write(int i) {
-                    lines += ((char) i) == '\n' ? 1 : 0;
-                    if (lines < 7) str += (char) i;
-                }
-
-                @Override
-                public String toString() {
-                    return str;
-                }
-            }
-
-            final StringStream out = new StringStream();
-            t.printStackTrace(new PrintStream(out));
-
             return DefaultEmbedFactory.create()
                     .addField("Executed Code", (exec == null ? "Your source code was faulty." : "```javascript\n" + exec + "```"))
-                    .addField("Stacktrace of " + t.getClass().getSimpleName(), "```" + out.toString() + "```")
+                    .addField("Stacktrace of " + t.getClass().getSimpleName(), "```" + t.getMessage() + "```")
                     .setAuthor(user)
                     .setUrl("http://kaleidox.de:8111")
                     .setFooter("Evaluated by " + user.getDiscriminatedName())
