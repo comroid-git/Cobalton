@@ -102,7 +102,9 @@ public enum AdminCommands {
     }
     
     @Command
-    public String say(String[] args) {
+    public String say(String[] args, User executor) {
+        if (!executor.isBotOwner()) return null;
+        
         return String.join(" ", args);
     }
 
