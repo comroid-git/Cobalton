@@ -1,5 +1,7 @@
 package de.kaleidox.james.command;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -62,58 +64,87 @@ public enum AdminCommands {
             return null;
         }
 
-        final String argsJoin = String.join(" ", args);
-        final String[] lines = argsJoin.split("\\n");
+        String exec = null;
 
-        final ScriptEngine engine = mgr.getEngineByName("JavaScript");
-        final Bindings bindings = engine.createBindings();
+        try {
+            final String argsJoin = String.join(" ", args);
+            final String[] lines = argsJoin.split("\\n");
 
-        bindings.put("msg", command);
-        bindings.put("usr", user);
-        bindings.put("chl", channel);
-        bindings.put("srv", server);
-        bindings.put("api", JamesBot.API);
+            final ScriptEngine engine = mgr.getEngineByName("JavaScript");
+            final Bindings bindings = engine.createBindings();
 
-        StringBuilder code = new StringBuilder();
-        boolean append;
+            bindings.put("msg", command);
+            bindings.put("usr", user);
+            bindings.put("chl", channel);
+            bindings.put("srv", server);
+            bindings.put("api", JamesBot.API);
 
-        for (String line : lines) {
-            append = !line.contains("```");
+            StringBuilder code = new StringBuilder();
+            boolean append;
 
-            if (line.startsWith("import ")) {
-                append = false;
+            for (String line : lines) {
+                append = !line.contains("```");
 
-                String classname = line.substring("import ".length(), line.length() - ((line.lastIndexOf(';') == line.length()) ? 2 : 1));
-                Class<?> aClass = Class.forName(classname);
+                if (line.startsWith("import ")) {
+                    append = false;
 
-                code.append('\n')
-                        .append("var sys = Java.type('java.lang.System')\n")
-                        .append("var ")
-                        .append(aClass.getSimpleName())
-                        .append(" = Java.type('")
-                        .append(classname)
-                        .append("')");
+                    String classname = line.substring("import ".length(), line.length() - ((line.lastIndexOf(';') == line.length()) ? 2 : 1));
+                    Class<?> aClass = Class.forName(classname);
+
+                    code.append('\n')
+                            .append("var sys = Java.type('java.lang.System')\n")
+                            .append("var ")
+                            .append(aClass.getSimpleName())
+                            .append(" = Java.type('")
+                            .append(classname)
+                            .append("')");
+                }
+
+                if (append) {
+                    code.append('\n').append(line);
+                }
             }
 
-            if (append) {
-                code.append('\n').append(line);
+            engine.setBindings(bindings, ScriptContext.GLOBAL_SCOPE);
+
+            command.delete();
+
+            exec = code.append('\n').toString().replaceAll("", "");
+            final String result = String.valueOf(engine.eval(exec));
+
+            return DefaultEmbedFactory.create()
+                    .addField("Executed Code", "```javascript\n" + exec + "```")
+                    .addField("Result", "```" + result + "```")
+                    .setAuthor(user)
+                    .setUrl("http://kaleidox.de:8111")
+                    .setFooter("Evaluated by " + user.getDiscriminatedName())
+                    .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
+        } catch (Throwable t) {
+            class StringStream extends OutputStream {
+                String str = "";
+
+                @Override
+                public void write(int i) {
+                    str += (char) i;
+                }
+
+                @Override
+                public String toString() {
+                    return str;
+                }
             }
+
+            final StringStream out = new StringStream();
+            t.printStackTrace(new PrintStream(out));
+
+            return DefaultEmbedFactory.create()
+                    .addField("Executed Code", (exec == null ? "Your source code was faulty." : "```javascript\n" + exec + "```"))
+                    .addField("Stacktrace of " + t.getClass().getSimpleName(), "```" + out.toString() + "```")
+                    .setAuthor(user)
+                    .setUrl("http://kaleidox.de:8111")
+                    .setFooter("Evaluated by " + user.getDiscriminatedName())
+                    .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
         }
-
-        engine.setBindings(bindings, ScriptContext.GLOBAL_SCOPE);
-
-        command.delete();
-
-        final String exec = code.append('\n').toString().replaceAll("", "");
-        final String result = String.valueOf(engine.eval(exec));
-
-        return DefaultEmbedFactory.create()
-                .addField("Executed Code", "```javascript\n" + exec + "```")
-                .addField("Result", "```" + result + "```")
-                .setAuthor(user)
-                .setUrl("http://kaleidox.de:8111")
-                .setFooter("Evaluated by " + user.getDiscriminatedName())
-                .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
     }
 
     @Command
