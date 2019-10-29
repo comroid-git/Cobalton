@@ -51,7 +51,10 @@ public enum AdminCommands {
         if (user.isBotOwner()) System.exit(0);
     }
 
-    @Command(aliases = "eval")
+    @Command(aliases = "eval",
+            convertStringResultsToEmbed = true,
+            useTypingIndicator = true,
+            async = true)
     public Object eval(User user, String[] args, Message command, TextChannel channel, Server server) throws ScriptException, ClassNotFoundException, NoSuchFieldException {
         if (!user.isBotOwner()) {
             command.delete("Unauthorized").join();
@@ -100,11 +103,11 @@ public enum AdminCommands {
 
         return "```" + engine.eval(code.append('\n').toString().replaceAll("", "")) + "```";
     }
-    
+
     @Command
     public String say(String[] args, User executor) {
         if (!executor.isBotOwner()) return null;
-        
+
         return String.join(" ", args);
     }
 
