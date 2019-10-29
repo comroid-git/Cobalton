@@ -29,7 +29,7 @@ dependencies {
     implementation 'org.javacord:javacord:3.0.+'
 
     // Javacord Utilities
-    implementation('de.kaleidox:javacord-utilities:1.0.2rev1')
+    implementation('com.github.burdoto:javacord-utilities:f72f87335f')
             { exclude group: 'org.javacord' }
 
     // BotList artifact
