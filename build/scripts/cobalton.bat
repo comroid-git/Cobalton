@@ -1,7 +1,7 @@
 @if "%DEBUG%" == "" @echo off
 @rem ##########################################################################
 @rem
-@rem  cobalton startup script for Windows
+@rem  Cobalton startup script for Windows
 @rem
 @rem ##########################################################################
 
@@ -63,9 +63,9 @@ set CMD_LINE_ARGS=%*
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\cobalton-1.00.jar;%APP_HOME%\lib\javacord-utilities-1.0.2rev1.jar;%APP_HOME%\lib\flogger-log4j-backend-0.4.jar;%APP_HOME%\lib\log4j-1.2.17.jar;%APP_HOME%\lib\javacord-core-3.0.5-SNAPSHOT.jar;%APP_HOME%\lib\javacord-api-3.0.5-SNAPSHOT.jar;%APP_HOME%\lib\log4j-api-2.11.0.jar;%APP_HOME%\lib\jackson-databind-2.9.9.jar;%APP_HOME%\lib\flogger-0.4.jar;%APP_HOME%\lib\jsr305-3.0.1.jar;%APP_HOME%\lib\logging-interceptor-3.9.1.jar;%APP_HOME%\lib\okhttp-3.9.1.jar;%APP_HOME%\lib\nv-websocket-client-2.6.jar;%APP_HOME%\lib\jackson-annotations-2.9.0.jar;%APP_HOME%\lib\jackson-core-2.9.9.jar;%APP_HOME%\lib\okio-1.13.0.jar
+set CLASSPATH=%APP_HOME%\lib\Cobalton-1.00.jar;%APP_HOME%\lib\javacord-utilities-1.0.2rev1.jar;%APP_HOME%\lib\flogger-log4j-backend-0.4.jar;%APP_HOME%\lib\log4j-1.2.17.jar;%APP_HOME%\lib\javacord-core-3.0.5-SNAPSHOT.jar;%APP_HOME%\lib\javacord-api-3.0.5-SNAPSHOT.jar;%APP_HOME%\lib\log4j-api-2.11.0.jar;%APP_HOME%\lib\jackson-databind-2.9.9.jar;%APP_HOME%\lib\flogger-0.4.jar;%APP_HOME%\lib\jsr305-3.0.1.jar;%APP_HOME%\lib\logging-interceptor-3.9.1.jar;%APP_HOME%\lib\okhttp-3.9.1.jar;%APP_HOME%\lib\nv-websocket-client-2.6.jar;%APP_HOME%\lib\jackson-annotations-2.9.0.jar;%APP_HOME%\lib\jackson-core-2.9.9.jar;%APP_HOME%\lib\okio-1.13.0.jar
 
-@rem Execute cobalton
+@rem Execute Cobalton
 "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %COBALTON_OPTS%  -classpath "%CLASSPATH%" de.kaleidox.JamesBot %CMD_LINE_ARGS%
 
 :end

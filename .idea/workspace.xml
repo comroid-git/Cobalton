@@ -47,14 +47,15 @@
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.2.1/javaCompile/javaCompile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/de/kaleidox/james/command/AdminCommands.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/de/kaleidox/james/command/AdminCommands.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/libs/james-1.00.jar" beforeDir="false" afterPath="$PROJECT_DIR$/build/libs/james-1.00.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/install/cobalton/bin/cobalton" beforeDir="false" afterPath="$PROJECT_DIR$/build/install/cobalton/bin/cobalton" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/install/cobalton/bin/cobalton.bat" beforeDir="false" afterPath="$PROJECT_DIR$/build/install/cobalton/bin/cobalton.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/install/cobalton/lib/cobalton-1.00.jar" beforeDir="false" afterPath="$PROJECT_DIR$/build/install/cobalton/lib/cobalton-1.00.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/libs/cobalton-1.00.jar" beforeDir="false" afterPath="$PROJECT_DIR$/build/libs/cobalton-1.00.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/scripts/cobalton" beforeDir="false" afterPath="$PROJECT_DIR$/build/scripts/cobalton" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/scripts/cobalton.bat" beforeDir="false" afterPath="$PROJECT_DIR$/build/scripts/cobalton.bat" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -268,7 +269,7 @@
       <workItem from="1571687193671" duration="939000" />
       <workItem from="1571745983314" duration="7780000" />
       <workItem from="1571919541774" duration="26000" />
-      <workItem from="1572355527850" duration="3544000" />
+      <workItem from="1572355527850" duration="4417000" />
     </task>
     <servers />
   </component>

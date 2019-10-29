@@ -100,6 +100,11 @@ public enum AdminCommands {
 
         return "```" + engine.eval(code.append('\n').toString().replaceAll("", "")) + "```";
     }
+    
+    @Command
+    public String say(String[] args) {
+        return String.join(" ", args);
+    }
 
     @Command(aliases = "archive",
             enablePrivateChat = false,
