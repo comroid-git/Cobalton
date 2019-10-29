@@ -128,7 +128,7 @@ public enum AdminCommands {
                     .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
         }
 
-        channel.sendMessage(result).thenComposeAsync(command::delete).join();
+        channel.sendMessage(result).thenRun(command::delete).join();
         return eval;
     }
 
