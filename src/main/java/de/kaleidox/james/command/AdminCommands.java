@@ -107,8 +107,6 @@ public enum AdminCommands {
 
             engine.setBindings(bindings, ScriptContext.GLOBAL_SCOPE);
 
-            command.delete();
-
             exec = code.append('\n').toString().replaceAll("", "");
             final String result = String.valueOf(engine.eval(exec));
 
@@ -122,10 +120,12 @@ public enum AdminCommands {
         } catch (Throwable t) {
             class StringStream extends OutputStream {
                 String str = "";
+                int lines;
 
                 @Override
                 public void write(int i) {
-                    str += (char) i;
+                    lines += ((char) i) == '\n' ? 1 : 0;
+                    if (lines < 7) str += (char) i;
                 }
 
                 @Override
