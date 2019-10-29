@@ -107,6 +107,8 @@ public enum AdminCommands {
 
             exec = code.append('\n').toString().replaceAll("", "");
             final String result = String.valueOf(engine.eval(exec));
+            
+            command.delete();
 
             return DefaultEmbedFactory.create()
                     .addField("Executed Code", "```javascript\n" + exec + "```")
@@ -116,6 +118,8 @@ public enum AdminCommands {
                     .setFooter("Evaluated by " + user.getDiscriminatedName())
                     .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
         } catch (Throwable t) {
+            command.delete();
+            
             return DefaultEmbedFactory.create()
                     .addField("Executed Code", (exec == null ? "Your source code was faulty." : "```javascript\n" + exec + "```"))
                     .addField("Message of thrown " + t.getClass().getSimpleName(), "```" + t.getMessage() + "```")
