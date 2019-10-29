@@ -118,7 +118,7 @@ public enum AdminCommands {
         } catch (Throwable t) {
             return DefaultEmbedFactory.create()
                     .addField("Executed Code", (exec == null ? "Your source code was faulty." : "```javascript\n" + exec + "```"))
-                    .addField("Stacktrace of " + t.getClass().getSimpleName(), "```" + t.getMessage() + "```")
+                    .addField("Message of thrown " + t.getClass().getSimpleName(), "```" + t.getMessage() + "```")
                     .setAuthor(user)
                     .setUrl("http://kaleidox.de:8111")
                     .setFooter("Evaluated by " + user.getDiscriminatedName())
