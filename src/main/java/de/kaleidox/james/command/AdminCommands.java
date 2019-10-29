@@ -102,13 +102,13 @@ public enum AdminCommands {
                 }
 
                 if (append) {
-                    code.append('\n').append(line);
+                    code.append('\n').append(line.replaceAll("\"", "'"));
                 }
             }
 
             engine.setBindings(bindings, ScriptContext.GLOBAL_SCOPE);
 
-            exec = code.append('\n').toString().replaceAll("", "").replaceAll("\"", "'");
+            exec = code.append('\n').toString().replaceAll("", "");
             eval = engine.eval(exec);
 
             result = DefaultEmbedFactory.create()
