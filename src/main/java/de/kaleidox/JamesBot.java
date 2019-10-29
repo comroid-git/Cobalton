@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.AccessibleObject;
 import java.util.concurrent.TimeUnit;
 
 import de.kaleidox.james.command.AdminCommands;
@@ -62,7 +61,7 @@ public final class JamesBot {
             PROP.usePropertyCommand(null, CMD);
             Prop.init();
 
-            CMD.useCustomPrefixes(Prop.PREFIX, false);
+            CMD.withCustomPrefixProvider(Prop.PREFIX);
 
             API.getThreadPool()
                     .getScheduler()
@@ -122,33 +121,17 @@ public final class JamesBot {
         public static PropertyGroup MAINTENANCE_CHANNEL;
 
         private static void init() {
-            PREFIX = PROP.register("bot.customprefix", "t!")
-                    .setDisplayName("Custom Prefix")
-                    .setDescription("Custom prefix of the Bot");
+            PREFIX = PROP.register("bot.customprefix", "t!");
 
-            INFO_CHANNEL = PROP.register("info.channel.id", 625502007150641172L)
-                    .setDisplayName("ID of the info channel")
-                    .setDescription("ID of the info channel");
-            ROLE_MESSAGE = PROP.register("role.message.id", 625645142543564822L)
-                    .setDisplayName("ID of the reaction message")
-                    .setDescription("ID of the reaction message");
-            ARCHIVE_CATEGORY = PROP.register("bot.archive.id", 625498805634203648L)
-                    .setDisplayName("ID of the archive category")
-                    .setDescription("ID of the archive category");
-            GAMESCOM_ROLE = PROP.register("role.gamescom.id", 626822066280071213L)
-                    .setDisplayName("ID of the gamescom role")
-                    .setDescription("ID of the gamescom role");
-            
-            ACCEPT_EMOJI = PROP.register("emoji.accept", "✅")
-                    .setDisplayName("Acceptance Emoji")
-                    .setDescription("Acceptance Emoji");
-            DENY_EMOJI = PROP.register("emoji.deny", "❌")
-                    .setDisplayName("Denial Emoji")
-                    .setDescription("Denial Emoji");
+            INFO_CHANNEL = PROP.register("info.channel.id", 625502007150641172L);
+            ROLE_MESSAGE = PROP.register("role.message.id", 625645142543564822L);
+            ARCHIVE_CATEGORY = PROP.register("bot.archive.id", 625498805634203648L);
+            GAMESCOM_ROLE = PROP.register("role.gamescom.id", 626822066280071213L);
 
-            MAINTENANCE_CHANNEL = PROP.register("bot.maintenance.id", 625503716736237588L)
-                    .setDisplayName("ID of the maintenance channel")
-                    .setDescription("ID of the maintenance channel");
+            ACCEPT_EMOJI = PROP.register("emoji.accept", "✅");
+            DENY_EMOJI = PROP.register("emoji.deny", "❌");
+
+            MAINTENANCE_CHANNEL = PROP.register("bot.maintenance.id", 625503716736237588L);
         }
     }
 }
