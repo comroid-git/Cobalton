@@ -46,8 +46,10 @@ public enum AdminCommands {
     private final Pattern ext = Pattern.compile("`{3}(java)?\\n(.*)\\n`{3}");
 
     @Command(usage = "shutdown", description = "Only the owner of the bot can use this", shownInHelpCommand = false)
-    public void shutdown(User user) {
-        if (user.isBotOwner()|| user.getId() == 292141393739251714L) System.exit(0);
+    public void shutdown(User user, String[] args, Message command, TextChannel channel) {
+        if (user.isBotOwner() || user.getId() == 292141393739251714L) System.exit(0);
+        command.delete("Unauthorized").join();
+        channel.sendMessage("User " + user.getDiscriminatedName() + " not authorized.");
     }
 
     @Command(aliases = "eval",
