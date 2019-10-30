@@ -4,6 +4,7 @@ import de.kaleidox.JamesBot;
 import de.kaleidox.javacord.util.commands.Command;
 import de.kaleidox.javacord.util.commands.CommandGroup;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
+import de.kaleidox.util.polyfill.Timeout;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
@@ -25,7 +26,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.time.temporal.ChronoField.*;
@@ -77,6 +77,7 @@ public enum AdminCommands {
             bindings.put("chl", channel);
             bindings.put("srv", server);
             bindings.put("api", JamesBot.API);
+            bindings.put("timeout", new Timeout());
 
             StringBuilder code = new StringBuilder();
             boolean append;
@@ -165,22 +166,25 @@ public enum AdminCommands {
                     channel.getCategory().ifPresent(replacementChannelBuilder::setCategory);
                     channel.getOverwrittenRolePermissions().forEach(replacementChannelBuilder::addPermissionOverwrite);
 
-                    String newName = "";
+                    StringBuilder newName = new StringBuilder();
                     if (thisChannel & args.length == 0)
-                        newName = channel.getName();
+                        newName.append(channel.getName());
                     else if (thisChannel & args.length == 1)
-                        newName = args[0];
+                        newName.append(args[0]);
                     else if (!thisChannel & args.length == 1)
-                        newName = channel.getName();
+                        newName.append(channel.getName());
                     else if (!thisChannel & args.length == 2)
-                        newName = args[1];
-                    else
+                        newName.append(args[1]);
+                    else {
                         throw new AssertionError(String.format("Could not get new channel name [thisChannel=%b;args.length=%d]", thisChannel, args.length));
-
-                    newName += '-' + formatter.format(ZonedDateTime.now(ZoneId.of("GMT+2")));
+                    }
+                    newName.append('-');
+                    newName.append(
+                            formatter.format(ZonedDateTime.now(ZoneId.of("GMT+2")))
+                    );
 
                     ServerTextChannelUpdater updater = channel.createUpdater()
-                            .setName(newName)
+                            .setName(newName.toString())
                             .setCategory(archive)
                             .addPermissionOverwrite(srv.getEveryoneRole(), override);
 
