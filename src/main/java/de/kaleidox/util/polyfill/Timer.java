@@ -7,10 +7,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class Timeout {
+public class Timer {
     ScheduledExecutorService schedule;
 
-    public Timeout() {
+    public Timer() {
         this.schedule = JamesBot.API.getThreadPool().getScheduler();
     }
 

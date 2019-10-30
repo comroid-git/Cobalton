@@ -4,7 +4,7 @@ import de.kaleidox.JamesBot;
 import de.kaleidox.javacord.util.commands.Command;
 import de.kaleidox.javacord.util.commands.CommandGroup;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
-import de.kaleidox.util.polyfill.Timeout;
+import de.kaleidox.util.polyfill.Timer;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
@@ -77,7 +77,7 @@ public enum AdminCommands {
             bindings.put("chl", channel);
             bindings.put("srv", server);
             bindings.put("api", JamesBot.API);
-            bindings.put("timeout", new Timeout());
+            bindings.put("timer", new Timer());
 
             StringBuilder code = new StringBuilder();
             boolean append;
