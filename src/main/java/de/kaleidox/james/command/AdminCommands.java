@@ -80,15 +80,20 @@ public enum AdminCommands {
 
             EvalFactory.Eval eval = new EvalFactory(bindings).prepare(lines);
 
+            final Object evalResult = eval.run();
+            
             result = DefaultEmbedFactory.create()
                     .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.isVerbose() ? eval.getFullCode() : eval.getUserCode()) + "```")
-                    .addField("Result", "```" + Util.escapeString(eval.run()) + "```")
+                    .addField("Result", "```" + Util.escapeString(String.valueOf(evalResult)) + "```")
                     .addField("Execution Time", "```" + eval.getExecTime() + "ms```")
                     .addField("Evaluation Performance", "```" + eval.getEvalTime() + "ms```")
                     .setAuthor(user)
                     .setUrl("http://kaleidox.de:8111")
                     .setFooter("Evaluated by " + user.getDiscriminatedName())
                     .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
+            
+            if (evalResult instanceof EmbedBuilder)
+                channel.sendMessage((EmbedBuilder) evalResult).join(); // join for handling
         } catch (Throwable t) {
             ExecutionFactory.Execution exec = new ExecutionFactory()._safeBuild(lines);
             result = DefaultEmbedFactory.create()

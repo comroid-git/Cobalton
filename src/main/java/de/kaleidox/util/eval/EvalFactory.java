@@ -20,9 +20,9 @@ public class EvalFactory {
             return code.isVerbose();
         }
 
-        public String run() throws ScriptException {
+        public Object run() throws ScriptException {
             long start = System.currentTimeMillis();
-            String result = this.engine.eval(this.code.toString()).toString();
+            Object result = this.engine.eval(this.code.toString()).toString();
             this.evalTime = System.currentTimeMillis() - start;
             Object execTime = this.engine.getContext().getAttribute("execTime");
             this.execTime = Float.parseFloat(execTime != null? execTime.toString() : "0");
