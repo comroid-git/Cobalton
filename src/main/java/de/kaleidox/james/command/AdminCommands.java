@@ -6,6 +6,7 @@ import de.kaleidox.javacord.util.commands.CommandGroup;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
 import de.kaleidox.util.eval.EvalFactory;
 import de.kaleidox.util.eval.ExecutionFactory;
+import de.kaleidox.util.eval.Util;
 import de.kaleidox.util.polyfill.Timer;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
@@ -81,7 +82,7 @@ public enum AdminCommands {
 
             result = DefaultEmbedFactory.create()
                     .addField("Executed Code", "```javascript\n" + (eval.isVerbose() ? eval.getFullCode() : eval.getUserCode()) + "```")
-                    .addField("Result", "```" + eval.run() + "```")
+                    .addField("Result", "```" + Util.escapeString(eval.run()) + "```")
                     .addField("Execution Time", "```" + eval.getExecTime() + "ms```")
                     .setAuthor(user)
                     .setUrl("http://kaleidox.de:8111")
@@ -90,7 +91,7 @@ public enum AdminCommands {
         } catch (Throwable t) {
             ExecutionFactory.Execution exec = new ExecutionFactory()._safeBuild(lines);
             result = DefaultEmbedFactory.create()
-                    .addField("Executed Code", "```javascript\n" + (exec.isVerbose() ? exec.toString() : exec.getOriginalCode()) + "```")
+                    .addField("Executed Code", "```javascript\n" + Util.escapeString(exec.isVerbose() ? exec.toString() : exec.getOriginalCode()) + "```")
                     .addField("Message of thrown " + t.getClass().getSimpleName(), "```" + t.getMessage() + "```")
                     .setAuthor(user)
                     .setUrl("http://kaleidox.de:8111")
