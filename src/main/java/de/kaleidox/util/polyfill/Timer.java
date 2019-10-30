@@ -1,6 +1,5 @@
 package de.kaleidox.util.polyfill;
 
-import com.sun.istack.internal.NotNull;
 import de.kaleidox.JamesBot;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -14,19 +13,19 @@ public class Timer {
         this.schedule = JamesBot.API.getThreadPool().getScheduler();
     }
 
-    public ScheduledFuture<?> setInterval(@NotNull Runnable command, long interval) {
+    public ScheduledFuture<?> setInterval(Runnable command, long interval) {
         return this.schedule.scheduleAtFixedRate(command, 0, interval, TimeUnit.MILLISECONDS);
     }
 
-    public void clearInterval(@NotNull ScheduledFuture<?> interval) {
+    public void clearInterval(ScheduledFuture<?> interval) {
         interval.cancel(true);
     }
 
-    public ScheduledFuture<?> setTimeout(@NotNull Runnable command, long timeout) {
+    public ScheduledFuture<?> setTimeout(Runnable command, long timeout) {
         return this.schedule.scheduleWithFixedDelay(command, 0, timeout, TimeUnit.MILLISECONDS);
     }
 
-    public void clearTimeout(@NotNull ScheduledFuture<?> timeout) {
+    public void clearTimeout(ScheduledFuture<?> timeout) {
         timeout.cancel(true);
     }
 }
