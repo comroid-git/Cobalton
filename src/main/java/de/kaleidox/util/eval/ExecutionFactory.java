@@ -49,7 +49,7 @@ public class ExecutionFactory {
                 .append("\t\tif(context.hasOwnProperty(key)\r\n")
                 .append("\t\t\teval('var ' + key + ' = context[key]')\r\n")
                 .append("\t}\r\n")
-                .append("\treturn eval(\"\r\n");
+                .append("\treturn eval(\"");
         StringBuilder code = new StringBuilder();
 
         boolean append;
@@ -82,8 +82,8 @@ public class ExecutionFactory {
         }
         this.originalCode = code.toString();
         this.code
-                .append(this.originalCode)
-                .append("\r\n\");}");
+                .append(this.originalCode.replaceAll("\\r\\n", ";"))
+                .append("\");}");
         return verbose;
     }
 
@@ -93,7 +93,7 @@ public class ExecutionFactory {
                 .append("\t\tif(context.hasOwnProperty(key)\r\n")
                 .append("\t\t\teval('var ' + key + ' = context[key]')\r\n")
                 .append("\t}\r\n")
-                .append("\treturn eval(\"\r\n");
+                .append("\treturn eval(\"");
         StringBuilder code = new StringBuilder();
 
         boolean append;
@@ -132,8 +132,8 @@ public class ExecutionFactory {
         }
         this.originalCode = code.toString();
         this.code
-                .append(this.originalCode)
-                .append("\r\n\");}");
+                .append(this.originalCode.replaceAll("\\r\\n", ";"))
+                .append("\");}");
         return verbose;
     }
 
