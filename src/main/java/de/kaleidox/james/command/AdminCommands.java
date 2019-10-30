@@ -81,7 +81,7 @@ public enum AdminCommands {
             EvalFactory.Eval eval = new EvalFactory(bindings).prepare(lines);
 
             result = DefaultEmbedFactory.create()
-                    .addField("Executed Code", "```javascript\n" + (eval.isVerbose() ? eval.getFullCode() : eval.getUserCode()) + "```")
+                    .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.isVerbose() ? eval.getFullCode() : eval.getUserCode()) + "```")
                     .addField("Result", "```" + Util.escapeString(eval.run()) + "```")
                     .addField("Execution Time", "```" + eval.getExecTime() + "ms```")
                     .setAuthor(user)
