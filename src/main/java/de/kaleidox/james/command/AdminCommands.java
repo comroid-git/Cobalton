@@ -1,16 +1,5 @@
 package de.kaleidox.james.command;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.util.regex.Pattern;
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 import de.kaleidox.JamesBot;
 import de.kaleidox.javacord.util.commands.Command;
 import de.kaleidox.javacord.util.commands.CommandGroup;
@@ -29,16 +18,20 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.util.logging.ExceptionLogger;
 
-import static java.time.temporal.ChronoField.DAY_OF_MONTH;
-import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
-import static java.time.temporal.ChronoField.YEAR;
+import javax.script.*;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.time.temporal.ChronoField.*;
 
 @CommandGroup(name = "Administration Commands", description = "Commands for handling the Server")
 public enum AdminCommands {
     INSTANCE;
 
-    private final ScriptEngineManager mgr = new ScriptEngineManager();
-    private final Pattern ext = Pattern.compile("`{3}(java)?\\n(.*)\\n`{3}");
     final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
             .parseCaseInsensitive()
             .appendValue(DAY_OF_MONTH, 2)
@@ -47,6 +40,8 @@ public enum AdminCommands {
             .appendLiteral('-')
             .appendValue(YEAR, 4)
             .toFormatter();
+    private final ScriptEngineManager mgr = new ScriptEngineManager();
+    private final Pattern ext = Pattern.compile("`{3}(java)?\\n(.*)\\n`{3}");
 
     @Command(usage = "shutdown", description = "Only the owner of the bot can use this", shownInHelpCommand = false)
     public void shutdown(User user) {
@@ -57,7 +52,7 @@ public enum AdminCommands {
             convertStringResultsToEmbed = true,
             useTypingIndicator = true,
             async = true)
-    public Object eval(User user, String[] args, Message command, TextChannel channel, Server server) throws ScriptException, ClassNotFoundException, NoSuchFieldException {
+    public Object eval(User user, String[] args, Message command, TextChannel channel, Server server) {
         if (!(user.isBotOwner() || user.getId() == 292141393739251714L)) {
             command.delete("Unauthorized").join();
             return null;
@@ -89,7 +84,9 @@ public enum AdminCommands {
                 if (line.startsWith("import ")) {
                     append = false;
 
-                    String classname = line.substring("import ".length(), line.length() - ((line.lastIndexOf(';') == line.length()) ? 2 : 1));
+                    Pattern importPattern = Pattern.compile("import (.*?);");
+                    Matcher matcher = importPattern.matcher(line);
+                    String classname = matcher.group(1);
                     Class<?> aClass = Class.forName(classname);
 
                     code.append('\n')
@@ -176,7 +173,8 @@ public enum AdminCommands {
                         newName = channel.getName();
                     else if (!thisChannel & args.length == 2)
                         newName = args[1];
-                    else throw new AssertionError(String.format("Could not get new channel name [thisChannel=%b;args.length=%d]", thisChannel, args.length));
+                    else
+                        throw new AssertionError(String.format("Could not get new channel name [thisChannel=%b;args.length=%d]", thisChannel, args.length));
 
                     newName += '-' + formatter.format(ZonedDateTime.now(ZoneId.of("GMT+2")));
 
