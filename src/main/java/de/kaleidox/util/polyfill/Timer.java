@@ -30,4 +30,13 @@ public class Timer {
     public void clearTimeout(ScheduledFuture<?> timeout) {
         timeout.cancel(true);
     }
+
+    public ScheduledFuture<?> timedInterval(ScriptObjectMirror command, long interval) {
+        return this.timedInterval(command, interval, 5000);
+    }
+
+    public ScheduledFuture<?> timedInterval(ScriptObjectMirror command, long interval, long timeout) {
+        ScheduledFuture<?> handle = this.setInterval(command, interval);
+        return this.schedule.scheduleWithFixedDelay(() -> this.clearInterval(handle), 0, timeout, TimeUnit.MILLISECONDS);
+    }
 }
