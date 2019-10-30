@@ -21,7 +21,7 @@ public class EvalFactory {
         }
 
         public String run() throws ScriptException {
-            long start = System.nanoTime();
+            long start = System.currentTimeMillis();
             String result = this.engine.eval(this.code.toString()).toString();
             this.evalTime = (Math.round(((System.currentTimeMillis() - start) / 10e5) * 100.0) / 100.0);
             this.execTime = Float.parseFloat(this.engine.getContext().getAttribute("execTime").toString());
