@@ -25,7 +25,7 @@ public class EvalFactory {
             String result = this.engine.eval(this.code.toString()).toString();
             this.evalTime = System.nanoTime() - start;
             this.execTime = Float.parseFloat(this.engine.getContext().getAttribute("execTime").toString());
-            return result;
+            return result!= null?result: "";
         }
 
         public float getExecTime() {
