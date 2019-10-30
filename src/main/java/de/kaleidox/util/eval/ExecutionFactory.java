@@ -91,7 +91,7 @@ public class ExecutionFactory {
         this.code.append("function run(context){\r\n")
                 .append("\tfor(var key in context){")
                 .append("\t\tif(context.hasOwnProperty(key)\r\n")
-                .append("\t\t\teval('var ' + key + ' = ')\r\n")
+                .append("\t\t\teval('var ' + key + ' = context[key]')\r\n")
                 .append("\t}\r\n")
                 .append("\treturn eval(\"\r\n");
         StringBuilder code = new StringBuilder();
