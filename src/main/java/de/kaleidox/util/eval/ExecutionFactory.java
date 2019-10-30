@@ -44,7 +44,12 @@ public class ExecutionFactory {
     }
 
     private boolean addCode(String[] lines) throws ClassNotFoundException {
-        this.code.append("function run(){\r\n");
+        this.code.append("function run(context){\r\n")
+                .append("\tfor(var key in context){")
+                .append("\t\tif(context.hasOwnProperty(key)\r\n")
+                .append("\t\t\teval('var ' + key + ' = ')\r\n")
+                .append("\t}\r\n")
+                .append("\treturn eval(\"\r\n");
         StringBuilder code = new StringBuilder();
 
         boolean append;
@@ -78,12 +83,17 @@ public class ExecutionFactory {
         this.originalCode = code.toString();
         this.code
                 .append(this.originalCode)
-                .append("\r\n}");
+                .append("\r\n\");}");
         return verbose;
     }
 
     private boolean safeAddCode(String[] lines) {
-        this.code.append("function run(context){return eval(\"\r\n");
+        this.code.append("function run(context){\r\n")
+                .append("\tfor(var key in context){")
+                .append("\t\tif(context.hasOwnProperty(key)\r\n")
+                .append("\t\t\teval('var ' + key + ' = ')\r\n")
+                .append("\t}\r\n")
+                .append("\treturn eval(\"\r\n");
         StringBuilder code = new StringBuilder();
 
         boolean append;
