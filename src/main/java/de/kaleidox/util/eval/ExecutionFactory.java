@@ -80,9 +80,9 @@ public class ExecutionFactory {
                         .append(line.replaceAll("\"", "'"));
             }
         }
-        this.originalCode = code.toString();
+        this.originalCode = code.toString().trim();
         this.code
-                .append(this.originalCode.replaceAll("\\r\\n", ";"))
+                .append(this.originalCode.replaceAll("\\r\\n", "\"+\""))
                 .append("\");}");
         return verbose;
     }

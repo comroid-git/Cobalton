@@ -9,7 +9,7 @@ public class EvalFactory {
         private ExecutionFactory.Execution code;
         private ScriptEngine engine;
         private float execTime;
-        private long evalTime;
+        private double evalTime;
 
         Eval(ScriptEngine engine, ExecutionFactory.Execution code) {
             this.engine = engine;
@@ -23,16 +23,16 @@ public class EvalFactory {
         public String run() throws ScriptException {
             long start = System.nanoTime();
             String result = this.engine.eval(this.code.toString()).toString();
-            this.evalTime = System.nanoTime() - start;
+            this.evalTime = (Math.round(((System.currentTimeMillis() - start) / 10e5) * 100.0) / 100.0);
             this.execTime = Float.parseFloat(this.engine.getContext().getAttribute("execTime").toString());
-            return result!= null?result: "";
+            return result != null ? result : "";
         }
 
         public float getExecTime() {
             return this.execTime;
         }
 
-        public long getEvalTime() {
+        public double getEvalTime() {
             return this.evalTime;
         }
 
