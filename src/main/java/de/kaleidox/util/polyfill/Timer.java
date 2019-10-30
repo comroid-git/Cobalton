@@ -13,19 +13,19 @@ public class Timer {
         this.schedule = JamesBot.API.getThreadPool().getScheduler();
     }
 
-    public ScheduledFuture<?> setInterval(Runnable command, long interval) {
-        return this.schedule.scheduleAtFixedRate(command, 0, interval, TimeUnit.MILLISECONDS);
+    public ScheduledFuture<?> setInterval(Object command, Object interval) throws ClassCastException {
+        return this.schedule.scheduleAtFixedRate((Runnable) command, 0, (long) interval, TimeUnit.MILLISECONDS);
     }
 
-    public void clearInterval(ScheduledFuture<?> interval) {
-        interval.cancel(true);
+    public void clearInterval(Object interval) throws ClassCastException {
+        ((ScheduledFuture<?>)interval).cancel(true);
     }
 
-    public ScheduledFuture<?> setTimeout(Runnable command, long timeout) {
-        return this.schedule.scheduleWithFixedDelay(command, 0, timeout, TimeUnit.MILLISECONDS);
+    public ScheduledFuture<?> setTimeout(Object command, Object timeout) throws ClassCastException {
+        return this.schedule.scheduleWithFixedDelay((Runnable) command, 0, (long) timeout, TimeUnit.MILLISECONDS);
     }
 
-    public void clearTimeout(ScheduledFuture<?> timeout) {
-        timeout.cancel(true);
+    public void clearTimeout(Object timeout) throws ClassCastException {
+        ((ScheduledFuture<?>)timeout).cancel(true);
     }
 }
