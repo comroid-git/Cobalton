@@ -4,6 +4,8 @@ import de.kaleidox.JamesBot;
 import de.kaleidox.javacord.util.commands.Command;
 import de.kaleidox.javacord.util.commands.CommandGroup;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
+import de.kaleidox.util.eval.EvalFactory;
+import de.kaleidox.util.eval.ExecutionFactory;
 import de.kaleidox.util.polyfill.Timer;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
@@ -18,14 +20,12 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.util.logging.ExceptionLogger;
 
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import static java.time.temporal.ChronoField.*;
@@ -56,72 +56,40 @@ public enum AdminCommands {
             convertStringResultsToEmbed = true,
             useTypingIndicator = true,
             async = true)
-    public Object eval(User user, String[] args, Message command, TextChannel channel, Server server) {
+    public void eval(User user, String[] args, Message command, TextChannel channel, Server server) {
         if (!(user.isBotOwner() || user.getId() == 292141393739251714L)) {
             command.delete("Unauthorized").join();
             channel.sendMessage("User " + user.getDiscriminatedName() + " not authorized.");
-            return null;
+            return;
         }
 
-        String exec = null;
-        Object eval = null;
         EmbedBuilder result;
+        final String argsJoin = String.join(" ", args);
+        final String[] lines = argsJoin.split("\\n");
 
         try {
-            final String argsJoin = String.join(" ", args);
-            final String[] lines = argsJoin.split("\\n");
+            HashMap<String, Object> bindings = new HashMap<String, Object>() {{
+                put("msg", command);
+                put("usr", user);
+                put("chl", channel);
+                put("srv", server);
+                put("api", JamesBot.API);
+                put("timer", new Timer());
+            }};
 
-            final ScriptEngine engine = mgr.getEngineByName("JavaScript");
-            final Bindings bindings = engine.createBindings();
-
-            bindings.put("msg", command);
-            bindings.put("usr", user);
-            bindings.put("chl", channel);
-            bindings.put("srv", server);
-            bindings.put("api", JamesBot.API);
-            bindings.put("timer", new Timer());
-
-            StringBuilder code = new StringBuilder();
-            boolean append;
-
-            for (String line : lines) {
-                append = !line.contains("```");
-
-                if (line.startsWith("import ")) {
-                    append = false;
-
-                    String classname = line.substring("import ".length(), line.length() - ((line.lastIndexOf(';') == line.length()) ? 2 : 1));
-                    Class<?> aClass = Class.forName(classname);
-
-                    code.append('\n')
-                            .append("var sys = Java.type('java.lang.System')\n")
-                            .append("var ")
-                            .append(aClass.getSimpleName())
-                            .append(" = Java.type('")
-                            .append(classname)
-                            .append("')");
-                }
-
-                if (append) {
-                    code.append('\n').append(line.replaceAll("\"", "'"));
-                }
-            }
-
-            engine.setBindings(bindings, ScriptContext.GLOBAL_SCOPE);
-
-            exec = code.append('\n').toString().replaceAll("", "");
-            eval = engine.eval(exec);
+            EvalFactory.Eval eval = new EvalFactory(bindings).prepare(lines);
 
             result = DefaultEmbedFactory.create()
-                    .addField("Executed Code", "```javascript\n" + exec + "```")
-                    .addField("Result", "```" + eval + "```")
+                    .addField("Executed Code", "```javascript\n" + eval.getUserCode() + "```")
+                    .addField("Result", "```" + eval.run() + "```")
                     .setAuthor(user)
                     .setUrl("http://kaleidox.de:8111")
                     .setFooter("Evaluated by " + user.getDiscriminatedName())
                     .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
         } catch (Throwable t) {
+            ExecutionFactory.Execution exec = new ExecutionFactory()._safeBuild(lines);
             result = DefaultEmbedFactory.create()
-                    .addField("Executed Code", (exec == null ? "Your source code was faulty." : "```javascript\n" + exec + "```"))
+                    .addField("Executed Code", "```javascript\n" + exec.toString() + "```")
                     .addField("Message of thrown " + t.getClass().getSimpleName(), "```" + t.getMessage() + "```")
                     .setAuthor(user)
                     .setUrl("http://kaleidox.de:8111")
@@ -130,7 +98,6 @@ public enum AdminCommands {
         }
 
         channel.sendMessage(result).thenRun(command::delete).join();
-        return eval;
     }
 
     @Command
