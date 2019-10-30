@@ -24,7 +24,8 @@ public class EvalFactory {
             long start = System.currentTimeMillis();
             String result = this.engine.eval(this.code.toString()).toString();
             this.evalTime = System.currentTimeMillis() - start;
-            this.execTime = Float.parseFloat(this.engine.getContext().getAttribute("execTime").toString());
+            Object execTime = this.engine.getContext().getAttribute("execTime");
+            this.execTime = Float.parseFloat(execTime != null? execTime.toString() : "0");
             return result != null ? result : "";
         }
 
