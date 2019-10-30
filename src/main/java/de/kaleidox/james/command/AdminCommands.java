@@ -82,7 +82,7 @@ public enum AdminCommands {
             result = DefaultEmbedFactory.create()
                     .addField("Executed Code", "```javascript\n" + (eval.isVerbose() ? eval.getFullCode() : eval.getUserCode()) + "```")
                     .addField("Result", "```" + eval.run() + "```")
-                    .addField("Execution Time", "```" + eval.getExecTime() + "```")
+                    .addField("Execution Time", "```" + eval.getExecTime() + "ms```")
                     .setAuthor(user)
                     .setUrl("http://kaleidox.de:8111")
                     .setFooter("Evaluated by " + user.getDiscriminatedName())

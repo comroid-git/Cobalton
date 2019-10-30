@@ -2,14 +2,13 @@ package de.kaleidox.util.eval;
 
 import javax.script.*;
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class EvalFactory {
     public static class Eval {
         private ExecutionFactory.Execution code;
         private ScriptEngine engine;
-        private long execTime;
+        private float execTime;
 
         Eval(ScriptEngine engine, ExecutionFactory.Execution code) {
             this.engine = engine;
@@ -22,11 +21,11 @@ public class EvalFactory {
 
         public String run() throws ScriptException {
             String result = this.engine.eval(this.code.toString()).toString();
-            this.execTime = Long.parseLong(this.engine.getContext().getAttribute("execTime").toString());
+            this.execTime = Float.parseFloat(this.engine.getContext().getAttribute("execTime").toString());
             return result;
         }
 
-        public long getExecTime() {
+        public float getExecTime() {
             return this.execTime;
         }
 
