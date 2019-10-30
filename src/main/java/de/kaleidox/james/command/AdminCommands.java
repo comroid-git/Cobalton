@@ -47,7 +47,7 @@ public enum AdminCommands {
 
     @Command(usage = "shutdown", description = "Only the owner of the bot can use this", shownInHelpCommand = false)
     public void shutdown(User user) {
-        if (user.isBotOwner()) System.exit(0);
+        if (user.isBotOwner()|| user.getId() == 292141393739251714L) System.exit(0);
     }
 
     @Command(aliases = "eval",
