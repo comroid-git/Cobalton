@@ -83,7 +83,7 @@ public class ExecutionFactory {
     }
 
     private boolean safeAddCode(String[] lines) {
-        this.code.append("function run(){return eval(\"\r\n");
+        this.code.append("function run(context){return eval(\"\r\n");
         StringBuilder code = new StringBuilder();
 
         boolean append;
@@ -130,11 +130,11 @@ public class ExecutionFactory {
     private void addRunnerWrapper() {
         this.code
                 .append("(function(context){\r\n")
-                .append("global.execTime = 0;\r\n")
+                .append("context.execTime = 0;\r\n")
                 .append("var t0 = new Date().getTime();\r\n")
-                .append("var result = run.apply(null, arguments);")
+                .append("var result = run.apply(context, arguments);")
                 .append("var t1 = new Date().getTime();\r\n")
-                .append("global.execTime = Math.floor(t1 - t0);\r\n")
+                .append("context.execTime = Math.floor(t1 - t0);\r\n")
                 .append("return result;")
                 .append("})(this);");
     }
