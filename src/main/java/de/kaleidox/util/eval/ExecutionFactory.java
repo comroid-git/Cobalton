@@ -1,7 +1,6 @@
 package de.kaleidox.util.eval;
 
 
-
 public class ExecutionFactory {
     private final StringBuilder code;
     private String originalCode;
@@ -9,10 +8,16 @@ public class ExecutionFactory {
     public static class Execution {
         private StringBuilder code;
         private String originalCode;
+        private boolean verbose;
 
-        public Execution(StringBuilder code, String originalCode) {
+        public Execution(StringBuilder code, String originalCode, boolean verbose) {
             this.code = code;
             this.originalCode = originalCode;
+            this.verbose = verbose;
+        }
+
+        public boolean isVerbose() {
+            return this.verbose;
         }
 
         public String getOriginalCode() {
@@ -24,6 +29,7 @@ public class ExecutionFactory {
             return "\t" + this.code.toString().trim();
         }
     }
+
     public ExecutionFactory() {
         this.code = new StringBuilder();
         this.addPolyfills();
@@ -37,13 +43,17 @@ public class ExecutionFactory {
          */
     }
 
-    private void addCode(String[] lines) throws ClassNotFoundException {
+    private boolean addCode(String[] lines) throws ClassNotFoundException {
         this.code.append("function run(){\r\n");
         StringBuilder code = new StringBuilder();
 
         boolean append;
+        boolean verbose = false;
         for (String line : lines) {
             append = !line.contains("```");
+            if (!verbose) {
+                verbose = line.startsWith("```verbose");
+            }
             if (line.startsWith("import ")) {
                 append = false;
 
@@ -69,15 +79,20 @@ public class ExecutionFactory {
         this.code
                 .append(this.originalCode)
                 .append("\r\n}");
+        return verbose;
     }
 
-    private void safeAddCode(String[] lines){
-        this.code.append("function run(){\r\n");
+    private boolean safeAddCode(String[] lines) {
+        this.code.append("function run(){return eval(\"\r\n");
         StringBuilder code = new StringBuilder();
 
         boolean append;
+        boolean verbose = false;
         for (String line : lines) {
             append = !line.contains("```");
+            if (!verbose) {
+                verbose = line.startsWith("```verbose");
+            }
             if (line.startsWith("import ")) {
                 append = false;
 
@@ -87,16 +102,16 @@ public class ExecutionFactory {
                 try {
                     Class<?> aClass = Class.forName(classname);
                     simpleClassName = aClass.getSimpleName();
-                } catch (ClassNotFoundException e){
+                } catch (ClassNotFoundException e) {
                     simpleClassName = "__CLASS_NOT_FOUND__";
                 }
                 code.append('\n')
-                        .append("\tvar sys = Java.type('java.lang.System')\r\n")
+                        .append("\tvar sys = Java.type('java.lang.System');\r\n")
                         .append("\tvar ")
                         .append(simpleClassName)
                         .append(" = Java.type('")
                         .append(classname)
-                        .append("')")
+                        .append("');")
                         .append("\r\n");
             }
 
@@ -104,31 +119,34 @@ public class ExecutionFactory {
                 code.append("\r\n")
                         .append(line.replaceAll("\"", "'"));
             }
-
         }
         this.originalCode = code.toString();
         this.code
                 .append(this.originalCode)
-                .append("\r\n}");
+                .append("\r\n\");}");
+        return verbose;
     }
 
     private void addRunnerWrapper() {
         this.code
-                .append("(function(){\r\n")
+                .append("(function(context){\r\n")
+                .append("global.execTime = 0;\r\n")
                 .append("var t0 = new Date().getTime();\r\n")
                 .append("var result = run.apply(null, arguments);")
                 .append("var t1 = new Date().getTime();\r\n")
-                .append("return result || 'execution time: ' +Math.floor(t1 - t0) + 'ms';\r\n")
+                .append("global.execTime = Math.floor(t1 - t0);\r\n")
+                .append("return result;")
                 .append("})(this);");
     }
 
     public Execution build(String[] lines) throws ClassNotFoundException {
-        this.addCode(lines);
-        return new Execution(this.code, originalCode);
+        boolean verbose = this.addCode(lines);
+        return new Execution(this.code, originalCode,verbose);
     }
+
     public Execution _safeBuild(String[] lines) {
-        this.safeAddCode(lines);
-        return new Execution(this.code, originalCode);
+        boolean verbose = this.safeAddCode(lines);
+        return new Execution(this.code, originalCode,verbose);
     }
 
 

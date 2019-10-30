@@ -80,8 +80,9 @@ public enum AdminCommands {
             EvalFactory.Eval eval = new EvalFactory(bindings).prepare(lines);
 
             result = DefaultEmbedFactory.create()
-                    .addField("Executed Code", "```javascript\n" + eval.getUserCode() + "```")
+                    .addField("Executed Code", "```javascript\n" + (eval.isVerbose() ? eval.getFullCode() : eval.getUserCode()) + "```")
                     .addField("Result", "```" + eval.run() + "```")
+                    .addField("Execution Time", "```" + eval.getExecTime() + "```")
                     .setAuthor(user)
                     .setUrl("http://kaleidox.de:8111")
                     .setFooter("Evaluated by " + user.getDiscriminatedName())
@@ -89,7 +90,7 @@ public enum AdminCommands {
         } catch (Throwable t) {
             ExecutionFactory.Execution exec = new ExecutionFactory()._safeBuild(lines);
             result = DefaultEmbedFactory.create()
-                    .addField("Executed Code", "```javascript\n" + exec.toString() + "```")
+                    .addField("Executed Code", "```javascript\n" + (exec.isVerbose() ? exec.toString() : exec.getOriginalCode()) + "```")
                     .addField("Message of thrown " + t.getClass().getSimpleName(), "```" + t.getMessage() + "```")
                     .setAuthor(user)
                     .setUrl("http://kaleidox.de:8111")
@@ -97,8 +98,8 @@ public enum AdminCommands {
                     .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
         }
 
-if (result instanceof EmbedBuilder)
-        channel.sendMessage(result).thenRun(command::delete).join();
+        if (result != null)
+            channel.sendMessage(result).thenRun(command::delete).join();
     }
 
     @Command
