@@ -22,7 +22,7 @@ public class EvalFactory {
 
         public Object run() throws ScriptException {
             long start = System.currentTimeMillis();
-            Object result = this.engine.eval(this.code.toString()).toString();
+            Object result = this.engine.eval(this.code.toString());
             this.evalTime = System.currentTimeMillis() - start;
             Object execTime = this.engine.getContext().getAttribute("execTime");
             this.execTime = Float.parseFloat(execTime != null? execTime.toString() : "0");

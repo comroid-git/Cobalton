@@ -79,8 +79,7 @@ public enum AdminCommands {
             }};
 
             EvalFactory.Eval eval = new EvalFactory(bindings).prepare(lines);
-
-            final Object evalResult = eval.run();
+            Object evalResult = eval.run();
             
             result = DefaultEmbedFactory.create()
                     .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.isVerbose() ? eval.getFullCode() : eval.getUserCode()) + "```")
@@ -105,8 +104,10 @@ public enum AdminCommands {
                     .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
         }
 
-        if (result != null)
+        if (result != null) {
             channel.sendMessage(result).thenRun(command::delete).join();
+        }
+
     }
 
     @Command
