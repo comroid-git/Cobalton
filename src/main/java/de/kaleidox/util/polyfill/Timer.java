@@ -1,31 +1,33 @@
 package de.kaleidox.util.polyfill;
 
 import de.kaleidox.JamesBot;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class Timer {
-    ScheduledExecutorService schedule;
+    private final ScheduledExecutorService schedule;
+
 
     public Timer() {
         this.schedule = JamesBot.API.getThreadPool().getScheduler();
     }
 
-    public ScheduledFuture<?> setInterval(Object command, Object interval) throws ClassCastException {
-        return this.schedule.scheduleAtFixedRate((Runnable) command, 0, (long) interval, TimeUnit.MILLISECONDS);
+    public ScheduledFuture<?> setInterval(ScriptObjectMirror command, long interval) {
+        return this.schedule.scheduleAtFixedRate(() -> command.call(null), 0, interval, TimeUnit.MILLISECONDS);
     }
 
-    public void clearInterval(Object interval) throws ClassCastException {
-        ((ScheduledFuture<?>)interval).cancel(true);
+    public void clearInterval(ScheduledFuture<?> interval) {
+        interval.cancel(true);
     }
 
-    public ScheduledFuture<?> setTimeout(Object command, Object timeout) throws ClassCastException {
-        return this.schedule.scheduleWithFixedDelay((Runnable) command, 0, (long) timeout, TimeUnit.MILLISECONDS);
+    public ScheduledFuture<?> setTimeout(ScriptObjectMirror command, long timeout) {
+        return this.schedule.scheduleWithFixedDelay(() -> command.call(null), 0, timeout, TimeUnit.MILLISECONDS);
     }
 
-    public void clearTimeout(Object timeout) throws ClassCastException {
-        ((ScheduledFuture<?>)timeout).cancel(true);
+    public void clearTimeout(ScheduledFuture<?> timeout) {
+        timeout.cancel(true);
     }
 }
