@@ -3,6 +3,8 @@ package de.kaleidox.util.eval;
 import javax.script.*;
 import java.util.HashMap;
 
+import static java.lang.System.nanoTime;
+
 
 public class EvalFactory {
     public static class Eval {
@@ -21,9 +23,9 @@ public class EvalFactory {
         }
 
         public Object run() throws ScriptException {
-            long start = System.currentTimeMillis();
+            long start = nanoTime();
             Object result = this.engine.eval(this.code.toString());
-            this.evalTime = System.currentTimeMillis() - start;
+            this.evalTime = nanoTime() - start;
             Object execTime = this.engine.getContext().getAttribute("execTime");
             this.execTime = Float.parseFloat(execTime != null? execTime.toString() : "0");
             return result != null ? result : "";
