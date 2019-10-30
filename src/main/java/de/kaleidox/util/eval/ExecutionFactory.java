@@ -65,10 +65,10 @@ public class ExecutionFactory {
                         .append(line.replaceAll("\"", "'"));
             }
         }
-        this.code
-                .append(code.toString())
-                .append("}");
         this.originalCode = code.toString();
+        this.code
+                .append(this.originalCode)
+                .append("\r\n}");
     }
 
     private void safeAddCode(String[] lines){
@@ -83,6 +83,7 @@ public class ExecutionFactory {
 
                 String classname = line.substring("import ".length(), line.length() - ((line.lastIndexOf(';') == line.length()) ? 2 : 1));
                 String simpleClassName;
+
                 try {
                     Class<?> aClass = Class.forName(classname);
                     simpleClassName = aClass.getSimpleName();
@@ -103,11 +104,12 @@ public class ExecutionFactory {
                 code.append("\r\n")
                         .append(line.replaceAll("\"", "'"));
             }
+
         }
-        this.code
-                .append(code.toString())
-                .append("}");
         this.originalCode = code.toString();
+        this.code
+                .append(this.originalCode)
+                .append("\r\n}");
     }
 
     private void addRunnerWrapper() {
