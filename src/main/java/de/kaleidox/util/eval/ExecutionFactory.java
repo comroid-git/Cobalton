@@ -46,7 +46,7 @@ public class ExecutionFactory {
     private boolean addCode(String[] lines) throws ClassNotFoundException {
         this.code.append("function run(context){\r\n")
                 .append("\tfor(var key in context){")
-                .append("\t\tif(context.hasOwnProperty(key)\r\n")
+                .append("\t\tif(context.hasOwnProperty(key))\r\n")
                 .append("\t\t\teval('var ' + key + ' = context[key]')\r\n")
                 .append("\t}\r\n")
                 .append("\treturn eval(\"");
@@ -90,7 +90,7 @@ public class ExecutionFactory {
     private boolean safeAddCode(String[] lines) {
         this.code.append("function run(context){\r\n")
                 .append("\tfor(var key in context){")
-                .append("\t\tif(context.hasOwnProperty(key)\r\n")
+                .append("\t\tif(context.hasOwnProperty(key))\r\n")
                 .append("\t\t\teval('var ' + key + ' = context[key]')\r\n")
                 .append("\t}\r\n")
                 .append("\treturn eval(\"");
