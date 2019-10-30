@@ -87,9 +87,7 @@ public enum AdminCommands {
                 if (line.startsWith("import ")) {
                     append = false;
 
-                    Pattern importPattern = Pattern.compile("import (.*?);");
-                    Matcher matcher = importPattern.matcher(line);
-                    String classname = matcher.group(1);
+                    String classname = line.substring("import ".length(), line.length() - ((line.lastIndexOf(';') == line.length()) ? 2 : 1));
                     Class<?> aClass = Class.forName(classname);
 
                     code.append('\n')
