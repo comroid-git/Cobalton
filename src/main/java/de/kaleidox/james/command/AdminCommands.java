@@ -97,6 +97,7 @@ public enum AdminCommands {
                     .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
         }
 
+if (result instanceof EmbedBuilder)
         channel.sendMessage(result).thenRun(command::delete).join();
     }
 
