@@ -4,7 +4,6 @@ import de.kaleidox.JamesBot;
 import de.kaleidox.javacord.util.commands.Command;
 import de.kaleidox.javacord.util.commands.CommandGroup;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
-
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
@@ -18,7 +17,10 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.util.logging.ExceptionLogger;
 
-import javax.script.*;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -55,6 +57,7 @@ public enum AdminCommands {
     public Object eval(User user, String[] args, Message command, TextChannel channel, Server server) {
         if (!(user.isBotOwner() || user.getId() == 292141393739251714L)) {
             command.delete("Unauthorized").join();
+            channel.sendMessage("User " + user.getDiscriminatedName() + " not authorized.");
             return null;
         }
 
