@@ -85,16 +85,6 @@ public enum AdminCommands {
 
             EvalFactory.Eval eval = new EvalFactory(bindings).prepare(lines);
             Object evalResult = eval.run();
-            
-            result = DefaultEmbedFactory.create()
-                    .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.isVerbose() ? eval.getFullCode() : eval.getUserCode()) + "```")
-                    .addField("Result", "```" + Util.escapeString(String.valueOf(evalResult)) + "```")
-                    .addField("Script Time", "```" + eval.getExecTime() + "ns```", true)
-                    .addField("Evaluation Time", "```" + eval.getEvalTime() + "ns```", true)
-                    .setAuthor(user)
-                    .setUrl("http://kaleidox.de:8111")
-                    .setFooter("Evaluated by " + user.getDiscriminatedName())
-                    .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
 
             if (evalResult instanceof CompletionStage) {
                 ((CompletionStage<?>) evalResult).handleAsync((value, throwable) -> {
@@ -117,10 +107,20 @@ public enum AdminCommands {
                                     .join();
                         }
                     }
-                    
+
                     return null; // nothing we can do at this point
                 });
             }
+            
+            result = DefaultEmbedFactory.create()
+                    .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.isVerbose() ? eval.getFullCode() : eval.getUserCode()) + "```")
+                    .addField("Result", "```" + Util.escapeString(String.valueOf(evalResult)) + "```")
+                    .addField("Script Time", "```" + eval.getExecTime() + "ns```", true)
+                    .addField("Evaluation Time", "```" + eval.getEvalTime() + "ns```", true)
+                    .setAuthor(user)
+                    .setUrl("http://kaleidox.de:8111")
+                    .setFooter("Evaluated by " + user.getDiscriminatedName())
+                    .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
             
             if (evalResult instanceof EmbedBuilder)
                 channel.sendMessage((EmbedBuilder) evalResult).join(); // join for handling
