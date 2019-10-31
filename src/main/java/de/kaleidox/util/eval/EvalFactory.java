@@ -53,7 +53,7 @@ public class EvalFactory {
         }
 
         public String getDisplayCode() {
-            return isVerbose() ? getFullCode() : getUserCode(); // swapped bcs i like it better this way
+            return isVerbose() ? getUserCode() : getFullCode(); // swapped bcs i like it better this way EDIT is it swapped now?
         }
     }
 
