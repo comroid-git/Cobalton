@@ -17,6 +17,7 @@ import de.kaleidox.javacord.util.server.properties.ServerPropertiesManager;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
 import de.kaleidox.util.files.FileProvider;
 
+import org.graalvm.compiler.lir.LIRInstruction;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.activity.ActivityType;
@@ -89,6 +90,9 @@ public final class JamesBot {
                 .ifPresent(weristes -> weristes.addMessageCreateListener(event -> {
                     API.getRoleById(632196120902107137L).ifPresent(event.getMessageAuthor().asUser().get()::removeRole);
                 }));
+        
+        API.getServerTextChannelById(639051738036568064L)
+                .ifPresent(itcrowd -> itcrowd.sendMessage(DefaultEmbedFactory.create().setDescription("Bot restarted!")).join());
     }
 
     private static void terminateAll() {
