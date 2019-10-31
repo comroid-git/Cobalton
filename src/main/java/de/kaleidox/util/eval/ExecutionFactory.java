@@ -36,6 +36,7 @@ public class ExecutionFactory {
                 .append("\t}\r\n")
                 .append("\treturn eval(\"");
         StringBuilder code = new StringBuilder();
+        code.append("\tvar sys = Java.type('java.lang.System');\r\n");
 
         boolean append;
         boolean verbose = false;
@@ -51,7 +52,6 @@ public class ExecutionFactory {
                 Class<?> aClass = Class.forName(classname);
 
                 code.append('\n')
-                        .append("\tvar sys = Java.type('java.lang.System');\r\n")
                         .append("\tvar ")
                         .append(aClass.getSimpleName())
                         .append(" = Java.type('")
