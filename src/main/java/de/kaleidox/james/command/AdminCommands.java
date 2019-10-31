@@ -14,10 +14,7 @@ import de.kaleidox.JamesBot;
 import de.kaleidox.javacord.util.commands.Command;
 import de.kaleidox.javacord.util.commands.CommandGroup;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
-import de.kaleidox.util.eval.EvalFactory;
-import de.kaleidox.util.eval.EvalViewer;
-import de.kaleidox.util.eval.ExecutionFactory;
-import de.kaleidox.util.eval.Util;
+import de.kaleidox.util.eval.*;
 import de.kaleidox.util.polyfill.Timer;
 
 import org.javacord.api.entity.DiscordEntity;
@@ -81,6 +78,7 @@ public enum AdminCommands {
             put("srv", server);
             put("api", JamesBot.API);
             put("timer", new Timer());
+            put("embed", new EvalEmbed(server, user));
         }};
         final EvalFactory eval = new EvalFactory(bindings);
         final EvalViewer viewer = new EvalViewer(eval, command, lines);

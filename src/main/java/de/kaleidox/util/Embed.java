@@ -6,7 +6,7 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
-public abstract class Embed {
+public class Embed {
     protected EmbedBuilder embed;
     public Embed(Server server, User user) {
         this.embed = DefaultEmbedFactory.create()
