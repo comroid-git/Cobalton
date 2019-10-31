@@ -33,14 +33,14 @@ class CompletionViewer {
                         message.edit(message.getEmbeds()
                                 .get(0)
                                 .toBuilder()
-                                .addInlineField("Result Completion Time", String.format("```%1.3fms```", (nanoTime() - this.eval.getStartTime()) / (double) 1000000)))
+                                .addInlineField("Result Completion Time", String.format("```%1.3f ms```", (nanoTime() - this.eval.getStartTime()) / (double) 1000000)))
                                 .join();
                     } else {
                         // exceptionally
                         message.edit(message.getEmbeds()
                                 .get(0)
                                 .toBuilder()
-                                .addInlineField("Result Completion Time", String.format("```%1.3fms```", (nanoTime() - this.eval.getStartTime()) / (double) 1000000))
+                                .addInlineField("Result Completion Time", String.format("```%1.3f ms```", (nanoTime() - this.eval.getStartTime()) / (double) 1000000))
                                 .addField("Result Completion Exception: [" + throwable.getClass().getSimpleName() + "]", "```" + throwable.getMessage() + "```"))
                                 .join();
                     }
@@ -94,8 +94,8 @@ public class EvalViewer {
         }
 
         embed
-                .addField("Script Time", String.format("```%1.0fms```", eval.getExecTime()), true)
-                .addField("Evaluation Time", String.format("```%1.3fms```", eval.getEvalTime() / (double) 1000000), true);
+                .addField("Script Time", String.format("```%1.0f ms```", eval.getExecTime()), true)
+                .addField("Evaluation Time", String.format("```%1.3f ms```", eval.getEvalTime() / (double) 1000000), true);
 
         return embed.getBuilder();
         /*
