@@ -37,7 +37,7 @@ class CompletionViewer {
                                     .get(0)
                                     .toBuilder()
                                     .updateFields((embedField) -> embedField.getName().equals("Result"),
-                                            editableEmbedField -> editableEmbedField.setValue(sentResult.toString()))
+                                            editableEmbedField -> editableEmbedField.setValue("```" + sentResult + "```"))
                                     .addInlineField("Result Completion Time", String.format("```%1.3f ms```", (nanoTime() - this.eval.getStartTime()) / (double) 1000000)))
                                     .join();
                         } else {
@@ -46,7 +46,7 @@ class CompletionViewer {
                                     .get(0)
                                     .toBuilder()
                                     .updateFields((embedField) -> embedField.getName().equals("Result"),
-                                            editableEmbedField -> editableEmbedField.setValue(sentResult.toString()))
+                                            editableEmbedField -> editableEmbedField.setValue("```" + sentResult + "```"))
                                     .addInlineField("Result Completion Time", String.format("```%1.3f ms```", (nanoTime() - this.eval.getStartTime()) / (double) 1000000))
                                     .addField("Result Completion Exception: [" + throwable.getClass().getSimpleName() + "]", "```" + throwable.getMessage() + "```"))
                                     .join();
