@@ -42,7 +42,7 @@ public class ExecutionFactory {
         boolean append;
         boolean verbose = false;
         for (String line : lines) {
-            append = !line.contains("```");
+            append = !line.trim().startsWith("```");
             if (!verbose) {
                 verbose = line.startsWith("```verbose");
             }
