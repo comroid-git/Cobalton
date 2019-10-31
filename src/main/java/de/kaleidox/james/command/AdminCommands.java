@@ -28,8 +28,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.HashMap;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
+import static java.lang.System.nanoTime;
 import static java.time.temporal.ChronoField.*;
 
 @CommandGroup(name = "Administration Commands", description = "Commands for handling the Server")
@@ -69,6 +71,8 @@ public enum AdminCommands {
         final String argsJoin = String.join(" ", args);
         final String[] lines = argsJoin.split("\\n");
 
+        final AtomicReference<Message> sentResult = new AtomicReference<>(null);
+
         try {
             HashMap<String, Object> bindings = new HashMap<String, Object>() {{
                 put("msg", command);
@@ -85,12 +89,38 @@ public enum AdminCommands {
             result = DefaultEmbedFactory.create()
                     .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.isVerbose() ? eval.getFullCode() : eval.getUserCode()) + "```")
                     .addField("Result", "```" + Util.escapeString(String.valueOf(evalResult)) + "```")
-                    .addField("Script Time", "```" + eval.getExecTime() + "ms```", true)
-                    .addField("Evaluation Time", "```" + eval.getEvalTime() + "ms```", true)
+                    .addField("Script Time", "```" + eval.getExecTime() + "ns```", true)
+                    .addField("Evaluation Time", "```" + eval.getEvalTime() + "ns```", true)
                     .setAuthor(user)
                     .setUrl("http://kaleidox.de:8111")
                     .setFooter("Evaluated by " + user.getDiscriminatedName())
                     .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
+
+            if (evalResult instanceof CompletionStage) {
+                ((CompletionStage<?>) evalResult).handleAsync((value, throwable) -> {
+                    final Message message = sentResult.get();
+
+                    if (message != null) {
+                        if (throwable == null) {
+                            // finished nicely
+                            message.edit(message.getEmbeds()
+                                    .get(0)
+                                    .toBuilder()
+                                    .addInlineField("Result Completion Time", "```" + (eval.getStartTime() - nanoTime()) + "ns```"))
+                                    .join();
+                        } else {
+                            // exceptionally
+                            message.edit(message.getEmbeds()
+                                    .get(0)
+                                    .toBuilder()
+                                    .addField("Result Completion Exception: ["+throwable.getClass().getSimpleName()+"]", "```" + throwable.getMessage() + "```"))
+                                    .join();
+                        }
+                    }
+                    
+                    return null; // nothing we can do at this point
+                });
+            }
             
             if (evalResult instanceof EmbedBuilder)
                 channel.sendMessage((EmbedBuilder) evalResult).join(); // join for handling
@@ -106,9 +136,11 @@ public enum AdminCommands {
         }
 
         if (result != null) {
-            channel.sendMessage(result).thenRun(command::delete).join();
+            channel.sendMessage(result)
+                    .thenAccept(sentResult::set)
+                    .thenRun(command::delete)
+                    .join();
         }
-
     }
 
     @Command
