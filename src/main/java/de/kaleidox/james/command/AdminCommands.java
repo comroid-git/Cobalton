@@ -29,6 +29,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
@@ -117,7 +118,7 @@ public enum AdminCommands {
                     .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.isVerbose() ? eval.getFullCode() : eval.getUserCode()) + "```")
                     .addField("Result", "```" + Util.escapeString(String.valueOf(evalResult)) + "```")
                     .addField("Script Time", String.format("```%8fms```", eval.getExecTime()), true)
-                    .addField("Evaluation Time", String.format("```%8.2fms```", eval.getEvalTime() / (double) 10), true)
+                    .addField("Evaluation Time", String.format("```%8.2fms```", eval.getEvalTime() / (double) 1000000), true)
                     .setAuthor(user)
                     .setUrl("http://kaleidox.de:8111")
                     .setFooter("Evaluated by " + user.getDiscriminatedName())
