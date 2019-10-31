@@ -38,7 +38,7 @@ public class StartsWithCommandsEngine implements MessageCreateListener {
 
             final BaldGamescomListener listener = new BaldGamescomListener(acceptanceEmoji, effectiveMentions);
             listener.unregistering = message::delete;
-            
+
             message.addReaction(acceptanceEmoji);
             message.addMessageAttachableListener(listener);
 
@@ -75,7 +75,7 @@ public class StartsWithCommandsEngine implements MessageCreateListener {
     private static class BaldGamescomListener implements ReactionAddListener, ReactionRemoveListener, ReactionRemoveAllListener {
         private final String acceptanceEmoji;
         private final Predicate<User> invited;
-        
+
         private Runnable unregistering;
 
         public BaldGamescomListener(String acceptanceEmoji, Predicate<User> effectiveMentions) {

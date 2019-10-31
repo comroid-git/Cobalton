@@ -82,14 +82,14 @@ public final class JamesBot {
                 .ifPresent(infoChannel -> infoChannel.getMessageById(Prop.ROLE_MESSAGE.getValue(SRV).asLong())
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage))));
         API.addMessageCreateListener(new StartsWithCommandsEngine());
-        
+
         API.addServerMemberJoinListener(event -> API.getRoleById(632196120902107137L).ifPresent(event.getUser()::addRole));
-        
+
         API.getServerTextChannelById(625640036096016404L)
                 .ifPresent(weristes -> weristes.addMessageCreateListener(event -> {
                     API.getRoleById(632196120902107137L).ifPresent(event.getMessageAuthor().asUser().get()::removeRole);
                 }));
-        
+
         API.getServerTextChannelById(639051738036568064L)
                 .ifPresent(itcrowd -> itcrowd.sendMessage(DefaultEmbedFactory.create().setDescription("Bot restarted!")).join());
     }

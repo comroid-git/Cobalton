@@ -1,5 +1,15 @@
 package de.kaleidox.james.command;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.regex.Pattern;
+import javax.script.ScriptEngineManager;
+
 import de.kaleidox.JamesBot;
 import de.kaleidox.javacord.util.commands.Command;
 import de.kaleidox.javacord.util.commands.CommandGroup;
@@ -8,6 +18,7 @@ import de.kaleidox.util.eval.EvalFactory;
 import de.kaleidox.util.eval.ExecutionFactory;
 import de.kaleidox.util.eval.Util;
 import de.kaleidox.util.polyfill.Timer;
+
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
@@ -21,25 +32,17 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.util.logging.ExceptionLogger;
 
-import javax.script.ScriptEngineManager;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Pattern;
-
 import static java.lang.System.nanoTime;
-import static java.time.temporal.ChronoField.*;
+import static java.time.temporal.ChronoField.DAY_OF_MONTH;
+import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
+import static java.time.temporal.ChronoField.YEAR;
 
 @CommandGroup(name = "Administration Commands", description = "Commands for handling the Server")
 public enum AdminCommands {
     INSTANCE;
 
+    private final ScriptEngineManager mgr = new ScriptEngineManager();
+    private final Pattern ext = Pattern.compile("`{3}(java)?\\n(.*)\\n`{3}");
     final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
             .parseCaseInsensitive()
             .appendValue(DAY_OF_MONTH, 2)
@@ -48,8 +51,6 @@ public enum AdminCommands {
             .appendLiteral('-')
             .appendValue(YEAR, 4)
             .toFormatter();
-    private final ScriptEngineManager mgr = new ScriptEngineManager();
-    private final Pattern ext = Pattern.compile("`{3}(java)?\\n(.*)\\n`{3}");
 
     @Command(usage = "shutdown", description = "Only the owner of the bot can use this", shownInHelpCommand = false)
     public void shutdown(User user, String[] args, Message command, TextChannel channel) {
@@ -113,7 +114,7 @@ public enum AdminCommands {
                     return null; // nothing we can do at this point
                 });
             }
-            
+
             result = DefaultEmbedFactory.create()
                     .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.getDisplayCode()) + "```")
                     .addField("Result", "```" + Util.escapeString(String.valueOf(evalResult)) + "```")
@@ -123,7 +124,7 @@ public enum AdminCommands {
                     .setUrl("http://kaleidox.de:8111")
                     .setFooter("Evaluated by " + user.getDiscriminatedName())
                     .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
-            
+
             if (evalResult instanceof EmbedBuilder)
                 channel.sendMessage((EmbedBuilder) evalResult).join(); // join for handling
         } catch (Throwable t) {

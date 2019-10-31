@@ -1,11 +1,12 @@
 package de.kaleidox.util.polyfill;
 
-import de.kaleidox.JamesBot;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
-
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import de.kaleidox.JamesBot;
+
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 public class Timer {
     private final ScheduledExecutorService schedule;

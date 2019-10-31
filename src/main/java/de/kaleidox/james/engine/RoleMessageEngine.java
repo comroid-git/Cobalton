@@ -6,32 +6,26 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import de.kaleidox.JamesBot;
-import de.kaleidox.javacord.util.server.properties.PropertyGroup;
 
 import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.Reaction;
-import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.reaction.ReactionAddEvent;
-import org.javacord.api.event.message.reaction.ReactionRemoveAllEvent;
 import org.javacord.api.event.message.reaction.ReactionRemoveEvent;
-import org.javacord.api.listener.message.MessageDeleteListener;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
-import org.javacord.api.listener.message.reaction.ReactionRemoveAllListener;
 import org.javacord.api.listener.message.reaction.ReactionRemoveListener;
 
 public class RoleMessageEngine implements ReactionAddListener, ReactionRemoveListener {
     private final static Map<String, Long> roles = new ConcurrentHashMap<>();
+    private final Message roleMessage;
 
     static {
         roles.put("\uD83D\uDEAC", 625500083026133004L); // raucher
         roles.put("\uD83C\uDF77", 625500008124383264L); // trinker
         roles.put("\uD83C\uDF3F", 625495132644311042L); // kiffer
-        roles.put("❄",           625500313511526400L); // pepper
+        roles.put("❄", 625500313511526400L); // pepper
         roles.put("\uD83D\uDC8A", 625500251586822174L); // chemikant
     }
-
-    private final Message roleMessage;
 
     public RoleMessageEngine(Message roleMessage) {
         this.roleMessage = roleMessage;

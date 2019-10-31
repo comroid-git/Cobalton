@@ -1,12 +1,30 @@
 package de.kaleidox.util.eval;
 
-import javax.script.*;
 import java.util.HashMap;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import static java.lang.System.nanoTime;
 
 
 public class EvalFactory {
+    private final ScriptEngineManager mgr = new ScriptEngineManager();
+    private final ScriptEngine engine = mgr.getEngineByName("JavaScript");
+    private final Bindings bindings = engine.createBindings();
+    private final ExecutionFactory builder = new ExecutionFactory();
+    public EvalFactory(HashMap<String, Object> bindings) {
+        this.bindings.putAll(bindings);
+        engine.setBindings(this.bindings, ScriptContext.GLOBAL_SCOPE);
+    }
+
+    public Eval prepare(String[] lines) throws ClassNotFoundException {
+        ExecutionFactory.Execution code = this.builder.build(lines);
+        return new Eval(this.engine, code);
+    }
+
     public static class Eval {
         private ExecutionFactory.Execution code;
         private ScriptEngine engine;
@@ -14,13 +32,13 @@ public class EvalFactory {
         private float evalTime;
         private long start;
 
-        public long getStartTime() {
-            return start;
-        }
-
         Eval(ScriptEngine engine, ExecutionFactory.Execution code) {
             this.engine = engine;
             this.code = code;
+        }
+
+        public long getStartTime() {
+            return start;
         }
 
         public boolean isVerbose() {
@@ -32,7 +50,7 @@ public class EvalFactory {
             Object result = this.engine.eval(this.code.toString());
             this.evalTime = nanoTime() - start;
             Object execTime = this.engine.getContext().getAttribute("execTime");
-            this.execTime = Float.parseFloat(execTime != null? execTime.toString() : "0");
+            this.execTime = Float.parseFloat(execTime != null ? execTime.toString() : "0");
             return result != null ? result : "";
         }
 
@@ -53,22 +71,7 @@ public class EvalFactory {
         }
 
         public String getDisplayCode() {
-            return isVerbose() ? getFullCode() : getUserCode(); // swapped bcs i like it better this way EDIT is it swapped now? EDIT :)
+            return isVerbose() ? getFullCode() : getUserCode();
         }
-    }
-
-    private final ScriptEngineManager mgr = new ScriptEngineManager();
-    private final ScriptEngine engine = mgr.getEngineByName("JavaScript");
-    private final Bindings bindings = engine.createBindings();
-    private final ExecutionFactory builder = new ExecutionFactory();
-
-    public EvalFactory(HashMap<String, Object> bindings) {
-        this.bindings.putAll(bindings);
-        engine.setBindings(this.bindings, ScriptContext.GLOBAL_SCOPE);
-    }
-
-    public Eval prepare(String[] lines) throws ClassNotFoundException {
-        ExecutionFactory.Execution code = this.builder.build(lines);
-        return new Eval(this.engine, code);
     }
 }

@@ -5,35 +5,20 @@ public class ExecutionFactory {
     private final StringBuilder code;
     private String originalCode;
 
-    public static class Execution {
-        private StringBuilder code;
-        private String originalCode;
-        private boolean verbose;
-
-        public Execution(StringBuilder code, String originalCode, boolean verbose) {
-            this.code = code;
-            this.originalCode = originalCode;
-            this.verbose = verbose;
-        }
-
-        public boolean isVerbose() {
-            return this.verbose;
-        }
-
-        public String getOriginalCode() {
-            return originalCode;
-        }
-
-        @Override
-        public String toString() {
-            return "\t" + this.code.toString().trim();
-        }
-    }
-
     public ExecutionFactory() {
         this.code = new StringBuilder();
         this.addPolyfills();
         this.addRunnerWrapper();
+    }
+
+    public Execution build(String[] lines) throws ClassNotFoundException {
+        boolean verbose = this.addCode(lines);
+        return new Execution(this.code, originalCode, verbose);
+    }
+
+    public Execution _safeBuild(String[] lines) {
+        boolean verbose = this.safeAddCode(lines);
+        return new Execution(this.code, originalCode, verbose);
     }
 
     private void addPolyfills() {
@@ -149,14 +134,29 @@ public class ExecutionFactory {
                 .append("})(this);");
     }
 
-    public Execution build(String[] lines) throws ClassNotFoundException {
-        boolean verbose = this.addCode(lines);
-        return new Execution(this.code, originalCode,verbose);
-    }
+    public static class Execution {
+        private StringBuilder code;
+        private String originalCode;
+        private boolean verbose;
 
-    public Execution _safeBuild(String[] lines) {
-        boolean verbose = this.safeAddCode(lines);
-        return new Execution(this.code, originalCode,verbose);
+        public Execution(StringBuilder code, String originalCode, boolean verbose) {
+            this.code = code;
+            this.originalCode = originalCode;
+            this.verbose = verbose;
+        }
+
+        public boolean isVerbose() {
+            return this.verbose;
+        }
+
+        public String getOriginalCode() {
+            return originalCode;
+        }
+
+        @Override
+        public String toString() {
+            return "\t" + this.code.toString().trim();
+        }
     }
 
 
