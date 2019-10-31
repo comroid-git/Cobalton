@@ -27,6 +27,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
@@ -71,7 +72,7 @@ public enum AdminCommands {
         final String argsJoin = String.join(" ", args);
         final String[] lines = argsJoin.split("\\n");
 
-        final AtomicReference<Message> sentResult = new AtomicReference<>(null);
+        final CompletableFuture<Message> sentResult = new CompletableFuture<>();
 
         try {
             HashMap<String, Object> bindings = new HashMap<String, Object>() {{
@@ -88,25 +89,25 @@ public enum AdminCommands {
 
             if (evalResult instanceof CompletionStage) {
                 ((CompletionStage<?>) evalResult).handleAsync((value, throwable) -> {
-                    final Message message = sentResult.get();
-
-                    if (message != null) {
-                        if (throwable == null) {
-                            // finished nicely
-                            message.edit(message.getEmbeds()
-                                    .get(0)
-                                    .toBuilder()
-                                    .addInlineField("Result Completion Time", "```" + (eval.getStartTime() - nanoTime()) + "ns```"))
-                                    .join();
-                        } else {
-                            // exceptionally
-                            message.edit(message.getEmbeds()
-                                    .get(0)
-                                    .toBuilder()
-                                    .addField("Result Completion Exception: ["+throwable.getClass().getSimpleName()+"]", "```" + throwable.getMessage() + "```"))
-                                    .join();
+                    sentResult.thenAcceptAsync(message -> {
+                        if (message != null) {
+                            if (throwable == null) {
+                                // finished nicely
+                                message.edit(message.getEmbeds()
+                                        .get(0)
+                                        .toBuilder()
+                                        .addInlineField("Result Completion Time", "```" + (eval.getStartTime() - nanoTime()) + "ns```"))
+                                        .join();
+                            } else {
+                                // exceptionally
+                                message.edit(message.getEmbeds()
+                                        .get(0)
+                                        .toBuilder()
+                                        .addField("Result Completion Exception: [" + throwable.getClass().getSimpleName() + "]", "```" + throwable.getMessage() + "```"))
+                                        .join();
+                            }
                         }
-                    }
+                    });
 
                     return null; // nothing we can do at this point
                 });
@@ -137,7 +138,7 @@ public enum AdminCommands {
 
         if (result != null) {
             channel.sendMessage(result)
-                    .thenAccept(sentResult::set)
+                    .thenAccept(sentResult::complete)
                     .thenRun(command::delete)
                     .join();
         }
