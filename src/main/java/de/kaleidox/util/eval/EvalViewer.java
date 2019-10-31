@@ -71,7 +71,7 @@ public class EvalViewer {
         try {
             this.eval = eval.prepare(lines);
             this.evalResult = this.eval.run();
-        } catch (ClassNotFoundException | ScriptException e) {
+        } catch (Throwable e) {
             this.evalResult = e;
         }
     }
