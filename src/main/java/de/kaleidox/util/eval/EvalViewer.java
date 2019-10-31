@@ -14,9 +14,19 @@ import static java.lang.System.nanoTime;
 class CompletionViewer {
     private final CompletableFuture<Message> sentResult = new CompletableFuture<>();
     private EvalFactory.Eval eval;
+    private CompletionStage<?> evalResult;
 
-    private CompletionViewer(EvalFactory.Eval eval, CompletionStage<?> evalResult) {
+    public CompletionViewer(EvalFactory.Eval eval, CompletionStage<?> evalResult) {
         this.eval = eval;
+        this.evalResult = evalResult;
+    }
+
+    public void handle(EvalEmbed embed) {
+        embed
+                .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.getDisplayCode()) + "```")
+                .addField("Result", "```" + Util.escapeString(String.valueOf(evalResult)) + "```")
+                .addField("Script Time", String.format("```%1.0fms```", eval.getExecTime()), true)
+                .addField("Evaluation Time", String.format("```%1.3fms```", eval.getEvalTime() / (double) 1000000), true);
         evalResult.handleAsync((value, throwable) -> {
             sentResult.thenAcceptAsync(message -> {
                 if (message != null) {
@@ -25,13 +35,14 @@ class CompletionViewer {
                         message.edit(message.getEmbeds()
                                 .get(0)
                                 .toBuilder()
-                                .addInlineField("Result Completion Time", String.format("```%1.3fms```", (nanoTime() - eval.getStartTime()) / (double) 1000000)))
+                                .addInlineField("Result Completion Time", String.format("```%1.3fms```", (nanoTime() - this.eval.getStartTime()) / (double) 1000000)))
                                 .join();
                     } else {
                         // exceptionally
                         message.edit(message.getEmbeds()
                                 .get(0)
                                 .toBuilder()
+                                .addInlineField("Result Completion Time", String.format("```%1.3fms```", (nanoTime() - this.eval.getStartTime()) / (double) 1000000))
                                 .addField("Result Completion Exception: [" + throwable.getClass().getSimpleName() + "]", "```" + throwable.getMessage() + "```"))
                                 .join();
                     }
@@ -40,10 +51,6 @@ class CompletionViewer {
 
             return null; // nothing we can do at this point
         });
-    }
-
-    public static void handle(EvalFactory.Eval eval, CompletionStage<?> evalResult) {
-        new CompletionViewer(eval, evalResult);
     }
 }
 
@@ -74,12 +81,16 @@ public class EvalViewer {
                 embed
                         .addField("Executed Code", "```javascript\n" + Util.escapeString(exec.isVerbose() ? exec.toString() : exec.getOriginalCode()) + "```")
                         .addField("Message of thrown " + this.evalResult.getClass().getSimpleName(), "```" + ((Throwable) this.evalResult).getMessage() + "```");
+            } else if (this.evalResult instanceof CompletionStage) {
+                CompletionViewer viewer = new CompletionViewer(this.eval, (CompletionStage<?>) this.evalResult);
+                viewer.handle(embed);
             } else {
                 embed
                         .addField("Executed Code", "```javascript\n" + Util.escapeString(this.eval.getDisplayCode()) + "```")
                         .addField("Result", "```" + Util.escapeString(String.valueOf(evalResult)) + "```")
                         .addField("Script Time", String.format("```%1.0fms```", eval.getExecTime()), true)
-                        .addField("Evaluation Time", String.format("```%1.3fms```", eval.getEvalTime() / (double) 1000000), true);
+                        .addField("Evaluation Time", String.format("```%1.3fms```", eval.getEvalTime() / (double) 1000000), true)
+                        .addField("Result Completion Time", String.format("```%1.3fms```", (nanoTime() - eval.getStartTime()) / (double) 1000000), true);
             }
         }
 
