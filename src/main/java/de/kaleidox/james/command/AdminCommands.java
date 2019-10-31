@@ -97,7 +97,7 @@ public enum AdminCommands {
                                 message.edit(message.getEmbeds()
                                         .get(0)
                                         .toBuilder()
-                                        .addInlineField("Result Completion Time", "```" + (eval.getStartTime() - nanoTime()) + "ns```"))
+                                        .addInlineField("Result Completion Time", String.format("```%1.3fms```", (eval.getStartTime() - nanoTime()) / (double) 1000000)))
                                         .join();
                             } else {
                                 // exceptionally
