@@ -72,15 +72,7 @@ public enum AdminCommands {
         EmbedBuilder result;
         final String argsJoin = String.join(" ", args);
         final String[] lines = argsJoin.split("\\n");
-        final HashMap<String, Object> bindings = new HashMap<String, Object>() {{
-            put("msg", command);
-            put("usr", user);
-            put("chl", channel);
-            put("srv", server);
-            put("api", JamesBot.API);
-            put("timer", new Timer());
-            put("embed", new Embed(server, user));
-        }};
+        final BindingFactory bindings = new BindingFactory(user, command, channel, server);
         final EvalFactory eval = new EvalFactory(bindings);
         final EvalViewer viewer = new EvalViewer(eval, command, lines);
 

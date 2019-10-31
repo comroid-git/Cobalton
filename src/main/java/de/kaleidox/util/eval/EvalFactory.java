@@ -15,8 +15,9 @@ public class EvalFactory {
     private final ScriptEngine engine = mgr.getEngineByName("JavaScript");
     private final Bindings bindings = engine.createBindings();
     private final ExecutionFactory builder = new ExecutionFactory();
-    public EvalFactory(HashMap<String, Object> bindings) {
-        this.bindings.putAll(bindings);
+
+    public EvalFactory(BindingFactory bindings) {
+        this.bindings.putAll(bindings.getBindings());
         engine.setBindings(this.bindings, ScriptContext.GLOBAL_SCOPE);
     }
 
