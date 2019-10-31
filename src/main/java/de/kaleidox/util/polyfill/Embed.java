@@ -8,7 +8,7 @@ public class Embed {
     Server server;
     User user;
 
-    Embed(Server server, User user) {
+    public Embed(Server server, User user) {
         this.server = server;
         this.user = user;
     }
