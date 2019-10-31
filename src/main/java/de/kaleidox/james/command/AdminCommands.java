@@ -115,7 +115,7 @@ public enum AdminCommands {
             }
             
             result = DefaultEmbedFactory.create()
-                    .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.isVerbose() ? eval.getFullCode() : eval.getUserCode()) + "```")
+                    .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.getDisplayCode()) + "```")
                     .addField("Result", "```" + Util.escapeString(String.valueOf(evalResult)) + "```")
                     .addField("Script Time", String.format("```%1.0fms```", eval.getExecTime()), true)
                     .addField("Evaluation Time", String.format("```%1.3fms```", eval.getEvalTime() / (double) 1000000), true)

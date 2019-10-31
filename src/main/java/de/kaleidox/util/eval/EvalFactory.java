@@ -51,6 +51,10 @@ public class EvalFactory {
         public String getFullCode() {
             return this.code.toString();
         }
+
+        public String getDisplayCode() {
+            return isVerbose() ? getFullCode() : getUserCode(); // swapped bcs i like it better this way
+        }
     }
 
     private final ScriptEngineManager mgr = new ScriptEngineManager();
