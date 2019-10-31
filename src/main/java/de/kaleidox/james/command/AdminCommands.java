@@ -27,6 +27,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.HashMap;
+import java.util.concurrent.CompletionStage;
 import java.util.regex.Pattern;
 
 import static java.time.temporal.ChronoField.*;
@@ -84,8 +85,8 @@ public enum AdminCommands {
             result = DefaultEmbedFactory.create()
                     .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.isVerbose() ? eval.getFullCode() : eval.getUserCode()) + "```")
                     .addField("Result", "```" + Util.escapeString(String.valueOf(evalResult)) + "```")
-                    .addField("Execution Time", "```" + eval.getExecTime() + "ms```")
-                    .addField("Evaluation Performance", "```" + eval.getEvalTime() + "ms```")
+                    .addField("Script Time", "```" + eval.getExecTime() + "ms```", true)
+                    .addField("Evaluation Time", "```" + eval.getEvalTime() + "ms```", true)
                     .setAuthor(user)
                     .setUrl("http://kaleidox.de:8111")
                     .setFooter("Evaluated by " + user.getDiscriminatedName())
