@@ -17,7 +17,6 @@ import de.kaleidox.javacord.util.server.properties.ServerPropertiesManager;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
 import de.kaleidox.util.files.FileProvider;
 
-import org.graalvm.compiler.lir.LIRInstruction;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.activity.ActivityType;
