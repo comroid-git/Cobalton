@@ -129,7 +129,7 @@ public class ExecutionFactory {
                 .append("var t0 = new Date().getTime();\r\n")
                 .append("var result = run.apply(context, arguments);")
                 .append("var t1 = new Date().getTime();\r\n")
-                .append("context.execTime = Math.floor(t1 - t0);\r\n")
+                .append("context.execTime = t1 - t0;\r\n")
                 .append("return result;")
                 .append("})(this);");
     }
