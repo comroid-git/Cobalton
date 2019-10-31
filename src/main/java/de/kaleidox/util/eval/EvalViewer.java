@@ -25,30 +25,32 @@ class CompletionViewer {
         embed
                 .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.getDisplayCode()) + "```")
                 .addField("Result", "```" + Util.escapeString(String.valueOf(evalResult)) + "```");
-        evalResult.handleAsync((value, throwable) -> {
-            sentResult.thenAcceptAsync(message -> {
-                if (message != null) {
-                    if (throwable == null) {
-                        // finished nicely
-                        message.edit(message.getEmbeds()
-                                .get(0)
-                                .toBuilder()
-                                .addInlineField("Result Completion Time", String.format("```%1.3f ms```", (nanoTime() - this.eval.getStartTime()) / (double) 1000000)))
-                                .join();
-                    } else {
-                        // exceptionally
-                        message.edit(message.getEmbeds()
-                                .get(0)
-                                .toBuilder()
-                                .addInlineField("Result Completion Time", String.format("```%1.3f ms```", (nanoTime() - this.eval.getStartTime()) / (double) 1000000))
-                                .addField("Result Completion Exception: [" + throwable.getClass().getSimpleName() + "]", "```" + throwable.getMessage() + "```"))
-                                .join();
+        if (evalResult != null) {
+            evalResult.handleAsync((value, throwable) -> {
+                sentResult.thenAcceptAsync(message -> {
+                    if (message != null) {
+                        if (throwable == null) {
+                            // finished nicely
+                            message.edit(message.getEmbeds()
+                                    .get(0)
+                                    .toBuilder()
+                                    .addInlineField("Result Completion Time", String.format("```%1.3f ms```", (nanoTime() - this.eval.getStartTime()) / (double) 1000000)))
+                                    .join();
+                        } else {
+                            // exceptionally
+                            message.edit(message.getEmbeds()
+                                    .get(0)
+                                    .toBuilder()
+                                    .addInlineField("Result Completion Time", String.format("```%1.3f ms```", (nanoTime() - this.eval.getStartTime()) / (double) 1000000))
+                                    .addField("Result Completion Exception: [" + throwable.getClass().getSimpleName() + "]", "```" + throwable.getMessage() + "```"))
+                                    .join();
+                        }
                     }
-                }
-            });
+                });
 
-            return null; // nothing we can do at this point
-        });
+                return null; // nothing we can do at this point
+            });
+        }
     }
 
     public boolean complete(Message message) {
