@@ -12,6 +12,11 @@ public class EvalFactory {
         private ScriptEngine engine;
         private float execTime;
         private float evalTime;
+        private long start;
+
+        public long getStartTime() {
+            return start;
+        }
 
         Eval(ScriptEngine engine, ExecutionFactory.Execution code) {
             this.engine = engine;
@@ -23,7 +28,7 @@ public class EvalFactory {
         }
 
         public Object run() throws ScriptException {
-            long start = nanoTime();
+            this.start = nanoTime();
             Object result = this.engine.eval(this.code.toString());
             this.evalTime = nanoTime() - start;
             Object execTime = this.engine.getContext().getAttribute("execTime");
