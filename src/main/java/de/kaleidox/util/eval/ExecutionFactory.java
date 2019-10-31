@@ -99,7 +99,7 @@ public class ExecutionFactory {
                     Class<?> aClass = Class.forName(classname);
                     simpleClassName = aClass.getSimpleName();
                 } catch (ClassNotFoundException e) {
-                    simpleClassName = "__CLASS_NOT_FOUND__";
+                    simpleClassName = "__CLASS_NOT_FOUND_" + classname + "__";
                 }
                 code.append('\n')
                         .append("\tvar ")
