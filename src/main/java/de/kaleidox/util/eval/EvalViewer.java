@@ -2,6 +2,7 @@ package de.kaleidox.util.eval;
 
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.message.embed.EmbedField;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
@@ -34,6 +35,8 @@ class CompletionViewer {
                             message.edit(message.getEmbeds()
                                     .get(0)
                                     .toBuilder()
+                                    .updateFields((embedField) -> embedField.getName().equals("Result"),
+                                            editableEmbedField -> editableEmbedField.setValue(message.getContent()))
                                     .addInlineField("Result Completion Time", String.format("```%1.3f ms```", (nanoTime() - this.eval.getStartTime()) / (double) 1000000)))
                                     .join();
                         } else {
@@ -41,6 +44,8 @@ class CompletionViewer {
                             message.edit(message.getEmbeds()
                                     .get(0)
                                     .toBuilder()
+                                    .updateFields((embedField) -> embedField.getName().equals("Result"),
+                                            editableEmbedField -> editableEmbedField.setValue(message.getContent()))
                                     .addInlineField("Result Completion Time", String.format("```%1.3f ms```", (nanoTime() - this.eval.getStartTime()) / (double) 1000000))
                                     .addField("Result Completion Exception: [" + throwable.getClass().getSimpleName() + "]", "```" + throwable.getMessage() + "```"))
                                     .join();
