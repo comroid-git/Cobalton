@@ -1,0 +1,187 @@
+package de.kaleidox.util.eval;
+
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.user.User;
+
+import javax.script.ScriptException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
+import static java.lang.System.nanoTime;
+
+class CompletionViewer {
+    private final CompletableFuture<Message> sentResult = new CompletableFuture<>();
+    private EvalFactory.Eval eval;
+
+    private CompletionViewer(EvalFactory.Eval eval, CompletionStage<?> evalResult) {
+        this.eval = eval;
+        evalResult.handleAsync((value, throwable) -> {
+            sentResult.thenAcceptAsync(message -> {
+                if (message != null) {
+                    if (throwable == null) {
+                        // finished nicely
+                        message.edit(message.getEmbeds()
+                                .get(0)
+                                .toBuilder()
+                                .addInlineField("Result Completion Time", String.format("```%1.3fms```", (nanoTime() - eval.getStartTime()) / (double) 1000000)))
+                                .join();
+                    } else {
+                        // exceptionally
+                        message.edit(message.getEmbeds()
+                                .get(0)
+                                .toBuilder()
+                                .addField("Result Completion Exception: [" + throwable.getClass().getSimpleName() + "]", "```" + throwable.getMessage() + "```"))
+                                .join();
+                    }
+                }
+            });
+
+            return null; // nothing we can do at this point
+        });
+    }
+
+    public static void handle(EvalFactory.Eval eval, CompletionStage<?> evalResult) {
+        new CompletionViewer(eval, evalResult);
+    }
+}
+
+public class EvalViewer {
+    private CompletionViewer viewer;
+    private EvalFactory.Eval eval;
+    private Object evalResult;
+    private Message command;
+    private String[] lines;
+
+    public EvalViewer(EvalFactory eval, Message command, String[] lines) {
+        this.command = command;
+        this.lines = lines;
+        try {
+            this.eval = eval.prepare(lines);
+            this.evalResult = this.eval.run();
+        } catch (ClassNotFoundException | ScriptException e) {
+            this.evalResult = e;
+        }
+    }
+
+
+    public EmbedBuilder createEmbed(Server server, User user) {
+        final EvalEmbed embed = new EvalEmbed(server, user);
+        if (this.evalResult != null) {
+            if (this.evalResult instanceof Throwable) {
+                ExecutionFactory.Execution exec = new ExecutionFactory()._safeBuild(lines);
+                embed
+                        .addField("Executed Code", "```javascript\n" + Util.escapeString(exec.isVerbose() ? exec.toString() : exec.getOriginalCode()) + "```")
+                        .addField("Message of thrown " + this.evalResult.getClass().getSimpleName(), "```" + ((Throwable) this.evalResult).getMessage() + "```");
+            } else {
+                embed
+                        .addField("Executed Code", "```javascript\n" + Util.escapeString(this.eval.getDisplayCode()) + "```")
+                        .addField("Result", "```" + Util.escapeString(String.valueOf(evalResult)) + "```")
+                        .addField("Script Time", String.format("```%1.0fms```", eval.getExecTime()), true)
+                        .addField("Evaluation Time", String.format("```%1.3fms```", eval.getEvalTime() / (double) 1000000), true);
+            }
+        }
+
+
+        return embed.getBuilder();
+        /*
+        DefaultEmbedFactory.create()
+                .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.getDisplayCode()) + "```")
+                .addField("Result", "```" + Util.escapeString(String.valueOf(evalResult)) + "```")
+                .addField("Script Time", String.format("```%1.0fms```", eval.getExecTime()), true)
+                .addField("Evaluation Time", String.format("```%1.3fms```", eval.getEvalTime() / (double) 1000000), true)
+                .setAuthor(user)
+                .setUrl("http://kaleidox.de:8111")
+                .setFooter("Evaluated by " + user.getDiscriminatedName())
+                .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
+         */
+    }
+}
+
+/*
+ private void handleCompletion(String[] lines) {
+        try {
+            this.evalResult = this.eval.run();
+        } catch (ScriptException e) {
+            this.evalResult = new ExecutionFactory()._safeBuild(lines);
+        }
+
+        if (this.evalResult instanceof CompletionStage) {
+            CompletionViewer.handle(this.eval, (CompletionStage<?>) this.evalResult);
+        }
+    }
+*/
+ /*
+        final CompletableFuture<Message> sentResult = new CompletableFuture<>();
+
+        try {
+            HashMap<String, Object> bindings = new HashMap<String, Object>() {{
+                put("msg", command);
+                put("usr", user);
+                put("chl", channel);
+                put("srv", server);
+                put("api", JamesBot.API);
+                put("timer", new Timer());
+            }};
+
+            EvalFactory.Eval eval = new EvalFactory(bindings).prepare(lines);
+            EvalViewer viewer = new EvalViewer(eval,lines);
+            Object evalResult = eval.run();
+
+            if (evalResult instanceof CompletionStage) {
+                ((CompletionStage<?>) evalResult).handleAsync((value, throwable) -> {
+                    sentResult.thenAcceptAsync(message -> {
+                        if (message != null) {
+                            if (throwable == null) {
+                                // finished nicely
+                                message.edit(message.getEmbeds()
+                                        .get(0)
+                                        .toBuilder()
+                                        .addInlineField("Result Completion Time", String.format("```%1.3fms```", (nanoTime() - eval.getStartTime()) / (double) 1000000)))
+                                        .join();
+                            } else {
+                                // exceptionally
+                                message.edit(message.getEmbeds()
+                                        .get(0)
+                                        .toBuilder()
+                                        .addField("Result Completion Exception: [" + throwable.getClass().getSimpleName() + "]", "```" + throwable.getMessage() + "```"))
+                                        .join();
+                            }
+                        }
+                    });
+
+                    return null; // nothing we can do at this point
+                });
+            }
+
+            result = DefaultEmbedFactory.create()
+                    .addField("Executed Code", "```javascript\n" + Util.escapeString(eval.getDisplayCode()) + "```")
+                    .addField("Result", "```" + Util.escapeString(String.valueOf(evalResult)) + "```")
+                    .addField("Script Time", String.format("```%1.0fms```", eval.getExecTime()), true)
+                    .addField("Evaluation Time", String.format("```%1.3fms```", eval.getEvalTime() / (double) 1000000), true)
+                    .setAuthor(user)
+                    .setUrl("http://kaleidox.de:8111")
+                    .setFooter("Evaluated by " + user.getDiscriminatedName())
+                    .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
+
+            if (evalResult instanceof EmbedBuilder)
+                channel.sendMessage((EmbedBuilder) evalResult).join(); // join for handling
+        } catch (Throwable t) {
+            ExecutionFactory.Execution exec = new ExecutionFactory()._safeBuild(lines);
+            result = DefaultEmbedFactory.create()
+                    .addField("Executed Code", "```javascript\n" + Util.escapeString(exec.isVerbose() ? exec.toString() : exec.getOriginalCode()) + "```")
+                    .addField("Message of thrown " + t.getClass().getSimpleName(), "```" + t.getMessage() + "```")
+                    .setAuthor(user)
+                    .setUrl("http://kaleidox.de:8111")
+                    .setFooter("Evaluated by " + user.getDiscriminatedName())
+                    .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
+        }
+
+        if (result != null) {
+            channel.sendMessage(result)
+                    .thenAccept(sentResult::complete)
+                    .thenRun(command::delete)
+                    .join();
+        }
+         */
