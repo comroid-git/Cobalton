@@ -50,6 +50,10 @@ class CompletionViewer {
             return null; // nothing we can do at this point
         });
     }
+
+    public boolean complete(Message message) {
+        return this.sentResult.complete(message);
+    }
 }
 
 public class EvalViewer {
@@ -80,7 +84,7 @@ public class EvalViewer {
                         .addField("Executed Code", "```javascript\n" + Util.escapeString(exec.isVerbose() ? exec.toString() : exec.getOriginalCode()) + "```")
                         .addField("Message of thrown " + this.evalResult.getClass().getSimpleName(), "```" + ((Throwable) this.evalResult).getMessage() + "```");
             } else if (this.evalResult instanceof CompletionStage) {
-                CompletionViewer viewer = new CompletionViewer(this.eval, (CompletionStage<?>) this.evalResult);
+                this.viewer = new CompletionViewer(this.eval, (CompletionStage<?>) this.evalResult);
                 viewer.handle(embed);
             } else {
                 embed
@@ -106,21 +110,12 @@ public class EvalViewer {
                 .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
          */
     }
+
+    public boolean complete(Message message) {
+        return this.viewer.complete(message);
+    }
 }
 
-/*
- private void handleCompletion(String[] lines) {
-        try {
-            this.evalResult = this.eval.run();
-        } catch (ScriptException e) {
-            this.evalResult = new ExecutionFactory()._safeBuild(lines);
-        }
-
-        if (this.evalResult instanceof CompletionStage) {
-            CompletionViewer.handle(this.eval, (CompletionStage<?>) this.evalResult);
-        }
-    }
-*/
  /*
         final CompletableFuture<Message> sentResult = new CompletableFuture<>();
 

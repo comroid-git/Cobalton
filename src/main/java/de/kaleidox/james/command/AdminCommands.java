@@ -83,8 +83,13 @@ public enum AdminCommands {
             put("timer", new Timer());
         }};
         final EvalFactory eval = new EvalFactory(bindings);
+        final EvalViewer viewer = new EvalViewer(eval, command, lines);
 
-        channel.sendMessage(new EvalViewer(eval, command,lines).createEmbed(server,user));
+        channel
+                .sendMessage(viewer.createEmbed(server, user))
+                .thenAccept(viewer::complete)
+                .thenRun(command::delete)
+                .join();
     }
 
     @Command
