@@ -22,6 +22,8 @@ public class ExecutionFactory {
     }
 
     private void addPolyfills() {
+
+        this.code.append("var sys = Java.type('java.lang.System');\r\n");
         /*
            this.code
                 .append(Polyfill.timeout);
@@ -36,7 +38,6 @@ public class ExecutionFactory {
                 .append("\t}\r\n")
                 .append("\treturn eval(\"");
         StringBuilder code = new StringBuilder();
-        code.append("\tvar sys = Java.type('java.lang.System');\r\n");
 
         boolean append;
         boolean verbose = false;
@@ -52,7 +53,7 @@ public class ExecutionFactory {
                 Class<?> aClass = Class.forName(classname);
 
                 code.append('\n')
-                        .append("\tvar ")
+                        .append("var ")
                         .append(aClass.getSimpleName())
                         .append(" = Java.type('")
                         .append(classname)
@@ -101,7 +102,6 @@ public class ExecutionFactory {
                     simpleClassName = "__CLASS_NOT_FOUND__";
                 }
                 code.append('\n')
-                        .append("\tvar sys = Java.type('java.lang.System');\r\n")
                         .append("\tvar ")
                         .append(simpleClassName)
                         .append(" = Java.type('")
