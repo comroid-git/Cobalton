@@ -66,12 +66,12 @@ public class ExecutionFactory {
                 Class<?> aClass = Class.forName(classname);
 
                 code.append('\n')
-                        .append("\tvar sys = Java.type('java.lang.System')\r\n")
+                        .append("\tvar sys = Java.type('java.lang.System');\r\n")
                         .append("\tvar ")
                         .append(aClass.getSimpleName())
                         .append(" = Java.type('")
                         .append(classname)
-                        .append("')")
+                        .append("');")
                         .append("\r\n");
             }
 
