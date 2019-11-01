@@ -6,6 +6,7 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
@@ -23,7 +24,7 @@ public class SkribblEmbed extends Embed {
             HashMap<?, ?> room = (HashMap<?, ?>) roomResult;
             this.embed.addField("Skribbl Room", (String) room.get("url"));
         } catch (Throwable t) {
-            this.embed.addField("Error", t.getMessage());
+            this.embed.addField("Error", "```" + Arrays.toString(t.getStackTrace()) + "```");
         }
     }
 
