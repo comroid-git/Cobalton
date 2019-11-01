@@ -33,11 +33,11 @@ dependencies {
             { exclude group: 'org.javacord' }
 
     // Socket
-    implementation 'io.socket:socket.io-client:1.0.0'
-
-    // BotList artifact
-    //implementation 'de.kaleidox:discordbotlist-stats-javacord:0.1.4'
-    // is this needed?
+    compileOnly('io.socket:socket.io-client:1.0.0') 
+            { exclude group: 'org.json' }
+    
+    // Custom Artifact Builds
+    runtimeOnly fileTree("./modifiedArtifacts")
 
     // Other dependencies
     compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.10.0.pr3'
