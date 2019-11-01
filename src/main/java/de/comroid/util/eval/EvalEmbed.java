@@ -1,6 +1,6 @@
-package de.kaleidox.util.eval;
+package de.comroid.util.eval;
 
-import de.kaleidox.util.Embed;
+import de.comroid.util.Embed;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 

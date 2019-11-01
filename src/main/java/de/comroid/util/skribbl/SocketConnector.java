@@ -1,4 +1,4 @@
-package de.kaleidox.util.skribbl;
+package de.comroid.util.skribbl;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;

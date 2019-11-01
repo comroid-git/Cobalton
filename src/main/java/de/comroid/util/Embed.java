@@ -1,6 +1,6 @@
-package de.kaleidox.util;
+package de.comroid.util;
 
-import de.kaleidox.JamesBot;
+import de.comroid.JamesBot;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;

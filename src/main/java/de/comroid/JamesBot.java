@@ -1,4 +1,4 @@
-package de.kaleidox;
+package de.comroid;
 
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -7,15 +7,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import de.kaleidox.james.command.AdminCommands;
-import de.kaleidox.james.command.JamesCommands;
-import de.kaleidox.james.engine.RoleMessageEngine;
-import de.kaleidox.james.engine.StartsWithCommandsEngine;
+import de.comroid.james.command.AdminCommands;
+import de.comroid.james.command.JamesCommands;
+import de.comroid.james.engine.RoleMessageEngine;
+import de.comroid.james.engine.StartsWithCommandsEngine;
 import de.kaleidox.javacord.util.commands.CommandHandler;
 import de.kaleidox.javacord.util.server.properties.PropertyGroup;
 import de.kaleidox.javacord.util.server.properties.ServerPropertiesManager;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
-import de.kaleidox.util.files.FileProvider;
+import de.comroid.util.files.FileProvider;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;

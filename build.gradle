@@ -1,4 +1,4 @@
-group 'de.kaleidox'
+group 'de.comroid'
 version '1.00'
 
 apply plugin: 'java'
@@ -6,7 +6,7 @@ apply plugin: 'application'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-mainClassName = 'de.kaleidox.JamesBot'
+mainClassName = 'de.comroid.JamesBot'
 
 wrapper {
     gradleVersion = '5.6'

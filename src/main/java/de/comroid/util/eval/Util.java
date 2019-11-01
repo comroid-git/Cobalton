@@ -1,4 +1,4 @@
-package de.kaleidox.util.eval;
+package de.comroid.util.eval;
 
 public class Util {
     public static String escapeString(String input) {

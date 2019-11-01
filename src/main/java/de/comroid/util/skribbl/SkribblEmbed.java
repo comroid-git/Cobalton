@@ -1,6 +1,6 @@
-package de.kaleidox.util.skribbl;
+package de.comroid.util.skribbl;
 
-import de.kaleidox.util.Embed;
+import de.comroid.util.Embed;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 

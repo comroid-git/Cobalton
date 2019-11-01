@@ -1,13 +1,10 @@
-package de.kaleidox.util.eval;
+package de.comroid.util.eval;
 
-import de.kaleidox.util.Embed;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.message.embed.EmbedField;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
-import javax.script.ScriptException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 

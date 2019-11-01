@@ -1,6 +1,5 @@
-package de.kaleidox.util.eval;
+package de.comroid.util.eval;
 
-import java.util.HashMap;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;

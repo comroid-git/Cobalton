@@ -1,9 +1,9 @@
-package de.kaleidox.james.engine;
+package de.comroid.james.engine;
 
 import java.util.Collection;
 import java.util.function.Predicate;
 
-import de.kaleidox.JamesBot.Prop;
+import de.comroid.JamesBot.Prop;
 
 import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.message.Message;
@@ -19,7 +19,7 @@ import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.javacord.api.listener.message.reaction.ReactionRemoveAllListener;
 import org.javacord.api.listener.message.reaction.ReactionRemoveListener;
 
-import static de.kaleidox.JamesBot.API;
+import static de.comroid.JamesBot.API;
 
 public class StartsWithCommandsEngine implements MessageCreateListener {
     private static long activeMessage;

@@ -1,12 +1,12 @@
-package de.kaleidox.james.command;
+package de.comroid.james.command;
 
-import de.kaleidox.JamesBot;
+import de.comroid.JamesBot;
 import de.kaleidox.javacord.util.commands.Command;
 import de.kaleidox.javacord.util.commands.CommandGroup;
-import de.kaleidox.util.eval.BindingFactory;
-import de.kaleidox.util.eval.EvalFactory;
-import de.kaleidox.util.eval.EvalViewer;
-import de.kaleidox.util.skribbl.SkribblEmbed;
+import de.comroid.util.eval.BindingFactory;
+import de.comroid.util.eval.EvalFactory;
+import de.comroid.util.eval.EvalViewer;
+import de.comroid.util.skribbl.SkribblEmbed;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
@@ -24,7 +24,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
 import static java.time.temporal.ChronoField.*;

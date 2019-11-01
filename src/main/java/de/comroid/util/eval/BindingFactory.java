@@ -1,14 +1,14 @@
-package de.kaleidox.util.eval;
+package de.comroid.util.eval;
 
 import java.util.HashMap;
 
+import de.comroid.JamesBot;
+import de.comroid.util.polyfill.Embed;
+import de.comroid.util.polyfill.Timer;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.server.Server;
-import de.kaleidox.JamesBot;
-import de.kaleidox.util.polyfill.Embed;
-import de.kaleidox.util.polyfill.Timer;
 
 
 public class BindingFactory {

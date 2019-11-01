@@ -1,11 +1,11 @@
-package de.kaleidox.james.engine;
+package de.comroid.james.engine;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import de.kaleidox.JamesBot;
+import de.comroid.JamesBot;
 
 import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.message.Message;

@@ -1,10 +1,10 @@
-package de.kaleidox.util.polyfill;
+package de.comroid.util.polyfill;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import de.kaleidox.JamesBot;
+import de.comroid.JamesBot;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 

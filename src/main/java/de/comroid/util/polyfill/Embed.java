@@ -1,4 +1,4 @@
-package de.kaleidox.util.polyfill;
+package de.comroid.util.polyfill;
 
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
@@ -14,6 +14,6 @@ public class Embed {
     }
 
     public EmbedBuilder create() {
-        return new de.kaleidox.util.Embed(this.server, this.user).getBuilder();
+        return new de.comroid.util.Embed(this.server, this.user).getBuilder();
     }
 }
