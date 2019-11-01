@@ -20,6 +20,7 @@ import de.kaleidox.util.files.FileProvider;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.activity.ActivityType;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.UserStatus;
@@ -92,6 +93,13 @@ public final class JamesBot {
 
         API.getServerTextChannelById(639051738036568064L)
                 .ifPresent(itcrowd -> itcrowd.sendMessage(DefaultEmbedFactory.create().setDescription("Bot restarted!")).join());
+        
+        API.addMessageCreateListener(event -> {
+            final Message message = event.getMessage();
+            
+            if (message.getReadableContent().toLowerCase().matches(".*t[o0][8b][e3]r[s5].*"))
+                message.delete("Unauthorized");
+        });
     }
 
     private static void terminateAll() {
