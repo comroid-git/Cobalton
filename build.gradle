@@ -44,6 +44,7 @@ dependencies {
 
     // Runtime logger dependency
     runtimeOnly 'log4j:log4j:1.2.17'
+    runtimeOnly 'log4j:log4j-api:1.2.17'
     compileOnly 'com.google.flogger:flogger:0.4'
     runtimeOnly 'com.google.flogger:flogger-log4j-backend:0.4'
 }
