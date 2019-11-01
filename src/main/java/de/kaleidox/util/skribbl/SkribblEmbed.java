@@ -1,14 +1,10 @@
 package de.kaleidox.util.skribbl;
 
 import de.kaleidox.util.Embed;
-import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
-import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
 
 public class SkribblEmbed extends Embed {
     //    private final CompletableFuture<Object> result = new CompletableFuture<>();
