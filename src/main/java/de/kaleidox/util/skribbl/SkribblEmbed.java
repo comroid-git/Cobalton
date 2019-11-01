@@ -14,8 +14,8 @@ public class SkribblEmbed extends Embed {
         try {
             SkribblConnector connector = new SkribblConnector();
             Object roomResult = connector.getRoom();
-            if (roomResult instanceof Throwable) {
-                throw (Throwable) roomResult;
+            if (roomResult instanceof String) {
+                throw new Exception((String) roomResult);
             }
             HashMap<?, ?> room = (HashMap<?, ?>) roomResult;
             this.embed.addField("Skribbl Room", (String) room.get("url"));
