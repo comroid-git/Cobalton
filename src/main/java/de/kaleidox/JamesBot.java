@@ -97,7 +97,7 @@ public final class JamesBot {
         API.addMessageCreateListener(event -> {
             final Message message = event.getMessage();
             
-            if (message.getReadableContent().toLowerCase().matches(".*t[o0][8b][e3]r[s5].*"))
+            if (message.getReadableContent().toLowerCase().matches(".*t\\s*[o0]|(\\[])|(\\(\\))|(\\{})|(<>)\\s*[8b]\\s*[e3]\\s*r\\s*[s5].*"))
                 message.delete("Unauthorized");
         });
     }
