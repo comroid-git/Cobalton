@@ -32,7 +32,7 @@ public class SkribblConnector extends SocketConnector {
                     .put("createPrivate", true);
             socket.emit("userData", this.userData);
         } catch (JSONException e) {
-            this.result.complete("JSONException in onConnect");
+            this.result.complete(e);
         }
     }
 
@@ -46,7 +46,7 @@ public class SkribblConnector extends SocketConnector {
             }};
             this.result.complete(result);
         } catch (JSONException e) {
-            this.result.complete("JSONException in onLobbyConnected");
+            this.result.complete(e);
         }
     }
 
