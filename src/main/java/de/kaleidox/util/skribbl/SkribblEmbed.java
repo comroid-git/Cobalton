@@ -24,7 +24,7 @@ public class SkribblEmbed extends Embed {
             HashMap<?, ?> room = (HashMap<?, ?>) roomResult;
             this.embed.addField("Skribbl Room", (String) room.get("url"));
         } catch (Throwable t) {
-            this.embed.addField("Error", "```" + Arrays.toString(t.getStackTrace()) + "```");
+            this.embed.addField("Error", "```" + t.getMessage() + "```");
         }
     }
 
