@@ -1,19 +1,11 @@
 package de.kaleidox.james.command;
 
-import java.net.URISyntaxException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.util.concurrent.CompletableFuture;
-import java.util.regex.Pattern;
-import javax.script.ScriptEngineManager;
-
 import de.kaleidox.JamesBot;
 import de.kaleidox.javacord.util.commands.Command;
 import de.kaleidox.javacord.util.commands.CommandGroup;
-import de.kaleidox.util.eval.*;
-
+import de.kaleidox.util.eval.BindingFactory;
+import de.kaleidox.util.eval.EvalFactory;
+import de.kaleidox.util.eval.EvalViewer;
 import de.kaleidox.util.skribbl.SkribblEmbed;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
@@ -27,16 +19,20 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.util.logging.ExceptionLogger;
 
-import static java.time.temporal.ChronoField.DAY_OF_MONTH;
-import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
-import static java.time.temporal.ChronoField.YEAR;
+import javax.script.ScriptEngineManager;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
+
+import static java.time.temporal.ChronoField.*;
 
 @CommandGroup(name = "Administration Commands", description = "Commands for handling the Server")
 public enum AdminCommands {
     INSTANCE;
 
-    private final ScriptEngineManager mgr = new ScriptEngineManager();
-    private final Pattern ext = Pattern.compile("`{3}(java)?\\n(.*)\\n`{3}");
     final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
             .parseCaseInsensitive()
             .appendValue(DAY_OF_MONTH, 2)
@@ -45,6 +41,8 @@ public enum AdminCommands {
             .appendLiteral('-')
             .appendValue(YEAR, 4)
             .toFormatter();
+    private final ScriptEngineManager mgr = new ScriptEngineManager();
+    private final Pattern ext = Pattern.compile("`{3}(java)?\\n(.*)\\n`{3}");
 
     @Command(usage = "shutdown", description = "Only the owner of the bot can use this", shownInHelpCommand = false)
     public void shutdown(User user, String[] args, Message command, TextChannel channel) {
@@ -57,8 +55,7 @@ public enum AdminCommands {
             convertStringResultsToEmbed = true,
             useTypingIndicator = true,
             async = true)
-    public void skribbl(User user, String[] args, Message command, TextChannel channel, Server server) {
-        final CompletableFuture<?> skribblResult = new CompletableFuture<>();
+    public void skribbl(Server server, User user, TextChannel channel, Message command) {
         final SkribblEmbed embed = new SkribblEmbed(server, user);
         channel.sendMessage(embed.getBuilder())
                 .thenRun(command::delete)
