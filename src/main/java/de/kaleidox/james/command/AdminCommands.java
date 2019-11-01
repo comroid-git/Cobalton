@@ -1,37 +1,32 @@
 package de.kaleidox.james.command;
 
+import java.net.URISyntaxException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import java.util.regex.Pattern;
 import javax.script.ScriptEngineManager;
 
 import de.kaleidox.JamesBot;
 import de.kaleidox.javacord.util.commands.Command;
 import de.kaleidox.javacord.util.commands.CommandGroup;
-import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
 import de.kaleidox.util.eval.*;
-import de.kaleidox.util.polyfill.Embed;
-import de.kaleidox.util.polyfill.Timer;
 
+import de.kaleidox.util.skribbl.SkribblEmbed;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.channel.ServerTextChannelUpdater;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.util.logging.ExceptionLogger;
 
-import static java.lang.System.nanoTime;
 import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
 import static java.time.temporal.ChronoField.YEAR;
@@ -58,6 +53,18 @@ public enum AdminCommands {
         channel.sendMessage("User " + user.getDiscriminatedName() + " not authorized.");
     }
 
+    @Command(aliases = "skribbl",
+            convertStringResultsToEmbed = true,
+            useTypingIndicator = true,
+            async = true)
+    public void skribbl(User user, String[] args, Message command, TextChannel channel, Server server) {
+        final CompletableFuture<?> skribblResult = new CompletableFuture<>();
+        final SkribblEmbed embed = new SkribblEmbed(server, user);
+        channel.sendMessage(embed.getBuilder())
+                .thenRun(command::delete)
+                .join();
+    }
+
     @Command(aliases = "eval",
             convertStringResultsToEmbed = true,
             useTypingIndicator = true,
@@ -69,7 +76,6 @@ public enum AdminCommands {
             return;
         }
 
-        EmbedBuilder result;
         final String argsJoin = String.join(" ", args);
         final String[] lines = argsJoin.split("\\n");
         final BindingFactory bindings = new BindingFactory(user, command, channel, server);
