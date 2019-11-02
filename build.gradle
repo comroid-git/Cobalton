@@ -36,6 +36,9 @@ dependencies {
     compileOnly('io.socket:socket.io-client:1.0.0') 
             { exclude group: 'org.json' }
     
+    // JSON Serialization Solution
+    implementation('com.github.burdoto:Jimson:e96712f2ef')
+    
     // Custom Artifact Builds
     runtimeOnly fileTree("./modifiedArtifacts")
 
