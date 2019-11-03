@@ -13,6 +13,9 @@ public class SkribblEmbed extends Embed {
         this.embed.setDescription("Lass uns skribbl spielen!");
         try {
             SkribblConnector connector = new SkribblConnector();
+            connector.on("connect", () -> this.embed.addField("connect", "connected to socket.io servers."));
+            connector.on("lobbyConnected", () -> this.embed.addField("lobbyConnected", "connected to custom lobby."));
+            connector.on("lobbyPlayerConnected", () -> this.embed.addField("lobbyPlayerConnected", "player connected to lobby."));
             Object roomResult = connector.getRoom();
             if (roomResult instanceof Throwable) {
                 throw (Throwable) roomResult;
