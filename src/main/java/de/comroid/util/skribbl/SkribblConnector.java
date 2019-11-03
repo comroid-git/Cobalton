@@ -26,7 +26,7 @@ public class SkribblConnector extends SocketConnector {
     @Override
     protected void onConnect(Object... args) {
         final ArrayNode avatar = JsonNodeFactory.instance.arrayNode(AVATAR.length);
-        for (int i : AVATAR) avatar.add(AVATAR[i]);
+        for (int i : AVATAR) avatar.add(i);
 
         userData.put("name", "Cobalton");
         userData.put("avatar", avatar);
