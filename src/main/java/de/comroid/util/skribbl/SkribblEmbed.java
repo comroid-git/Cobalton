@@ -11,6 +11,7 @@ public class SkribblEmbed extends Embed {
     public SkribblEmbed(Server server, User user) /*throws URISyntaxException*/ {
         super(server, user);
         this.embed.setDescription("Lass uns skribbl spielen!");
+        /*
         try {
             SkribblConnector connector = new SkribblConnector();
             connector.on("connect", () -> this.embed.addField("connect", "connected to socket.io servers."));
@@ -25,6 +26,7 @@ public class SkribblEmbed extends Embed {
         } catch (Throwable t) {
             this.embed.addField("Error", "```" + t.getMessage() + "```");
         }
+         */
     }
 
 //    public boolean complete(Message message) {
