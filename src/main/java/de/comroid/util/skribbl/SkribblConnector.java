@@ -16,14 +16,14 @@ public class SkribblConnector extends SocketConnector {
 
     SkribblConnector() throws URISyntaxException {
         super(baseUrl + ":" + port);
-        this
+        this.socket
                 .on("lobbyConnected", this::onLobbyConnected)
                 .on("lobbyPlayerConnected", this::onLobbyPlayerConnected);
     }
 
     @Override
     protected void onConnect(Object... args) {
-        HashMap userData = new HashMap<String, Object>() {
+        final HashMap userData = new HashMap<String, Object>() {
             {
                 put("name", "Cobalton");
                 put("avatar", AVATAR);
@@ -31,7 +31,6 @@ public class SkribblConnector extends SocketConnector {
                 put("createPrivate", true);
             }
         };
-
         socket.emit("userData", userData);
     }
 
@@ -39,18 +38,13 @@ public class SkribblConnector extends SocketConnector {
         try {
             final JsonNode data = new ObjectMapper().readTree(args[0].toString());
             final String id = data.get("key").asText();
-            final String url = baseUrl + "/?" + id;
-            final HashMap<String, String> result = new HashMap<String, String>() {{
-                put("id", id);
-                put("url", url);
-            }};
-            this.result.complete(result);
+            this.result.complete(baseUrl + "/?" + id);
         } catch (Throwable t) {
             this.result.complete(new Throwable(t.getMessage() + " onLobbyConnected"));
         }
     }
 
-    private void onLobbyPlayerConnected(Object... args) {
+    private void onLobbyPlayerConnected(Object... objects) {
         this.socket.disconnect();
     }
 

@@ -17,8 +17,7 @@ public class SkribblEmbed extends Embed {
             if (roomResult instanceof Throwable) {
                 throw (Throwable) roomResult;
             }
-            HashMap<?, ?> room = (HashMap<?, ?>) roomResult;
-            this.embed.addField("Skribbl Room", (String) room.get("url"));
+            this.embed.addField("Skribbl Room", (String) roomResult);
         } catch (Throwable t) {
             this.embed.addField("Error", "```" + t.getMessage() + "```");
         }
