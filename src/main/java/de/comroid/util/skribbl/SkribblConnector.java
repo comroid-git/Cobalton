@@ -11,14 +11,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class SkribblConnector extends SocketConnector {
     private static final int[] AVATAR = {5, 0, 2, -1};
-    private final ObjectNode userData = JsonNodeFactory.instance.objectNode();
     private static final String baseUrl = "https://skribbl.io";
     private static final String port = "5001";
+    private final ObjectNode userData = JsonNodeFactory.instance.objectNode();
     private final CompletableFuture<Object> result = new CompletableFuture<>();
 
     SkribblConnector() throws URISyntaxException {
         super(baseUrl + ":" + port);
-        this.socket
+        this
                 .on("lobbyConnected", this::onLobbyConnected)
                 .on("lobbyPlayerConnected", this::onLobbyPlayerConnected);
     }
@@ -29,7 +29,7 @@ public class SkribblConnector extends SocketConnector {
         for (int i : AVATAR) avatar.add(i);
 
         userData.put("name", "Cobalton");
-        userData.put("avatar", avatar);
+        userData.set("avatar", avatar);
         userData.put("language", "German");
         userData.put("createPrivate", true);
 
@@ -46,7 +46,7 @@ public class SkribblConnector extends SocketConnector {
         this.result.complete(result);
     }
 
-    private void onLobbyPlayerConnected(Object... objects) {
+    private void onLobbyPlayerConnected(Object... args) {
         this.socket.disconnect();
     }
 
