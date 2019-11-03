@@ -33,7 +33,7 @@ dependencies {
             { exclude group: 'org.javacord' }
 
     // Socket
-    compileOnly('io.socket:socket.io-client:1.0.0') 
+    implementation('io.socket:socket.io-client:1.0.0')
             { exclude group: 'org.json' }
     
     // JSON Serialization Solution
