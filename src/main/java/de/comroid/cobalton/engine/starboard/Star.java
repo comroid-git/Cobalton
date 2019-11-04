@@ -32,4 +32,17 @@ class Star implements StarMap {
     public int getCount() {
         return count;
     }
+
+    public Star addStar() {
+        this.count++;
+        return this;
+    }
+
+    public Star removeStar() {
+        // ensure message always is minimum 0
+        if (this.count - 1 >= 0) {
+            this.count--;
+        }
+        return this;
+    }
 }

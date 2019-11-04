@@ -51,7 +51,7 @@ public final class Cobalton {
 
             API.updateStatus(UserStatus.DO_NOT_DISTURB);
             API.updateActivity("Booting up...");
-            
+
             API.addMessageCreateListener(event -> {
                 final Message message = event.getMessage();
                 if (message.getReadableContent().toLowerCase().matches(".*t\\s*[o0]|(\\[])|(\\(\\))|(\\{})|(<>)\\s*[8b]\\s*[e3]\\s*r\\s*[s5].*"))
@@ -78,8 +78,8 @@ public final class Cobalton {
             Runtime.getRuntime().addShutdownHook(new Thread(Cobalton::terminateAll));
 
             SRV = API.getServerById(625494140427173889L).orElseThrow(IllegalStateException::new);
-            
-            STAR = new Starboard(API, FileProvider.getFile("data/starboard.json"), "✅");
+
+            STAR = new Starboard(API, FileProvider.getFile("data/starboard.json"), "✅", 639051738036568064L);
 
             API.updateActivity(ActivityType.LISTENING, CMD.prefixes[0] + "help");
             API.updateStatus(UserStatus.ONLINE);
@@ -88,7 +88,7 @@ public final class Cobalton {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         API.getServerTextChannelById(Prop.INFO_CHANNEL.getValue(SRV).asLong())
                 .ifPresent(infoChannel -> infoChannel.getMessageById(Prop.ROLE_MESSAGE.getValue(SRV).asLong())
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage))));
