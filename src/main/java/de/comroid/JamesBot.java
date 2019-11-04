@@ -11,6 +11,7 @@ import de.comroid.james.command.AdminCommands;
 import de.comroid.james.command.JamesCommands;
 import de.comroid.james.engine.RoleMessageEngine;
 import de.comroid.james.engine.StartsWithCommandsEngine;
+import de.comroid.util.starboard.Starboard;
 import de.kaleidox.javacord.util.commands.CommandHandler;
 import de.kaleidox.javacord.util.server.properties.PropertyGroup;
 import de.kaleidox.javacord.util.server.properties.ServerPropertiesManager;
@@ -78,7 +79,7 @@ public final class JamesBot {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         API.getServerTextChannelById(Prop.INFO_CHANNEL.getValue(SRV).asLong())
                 .ifPresent(infoChannel -> infoChannel.getMessageById(Prop.ROLE_MESSAGE.getValue(SRV).asLong())
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage))));
@@ -93,10 +94,13 @@ public final class JamesBot {
 
         API.getServerTextChannelById(639051738036568064L)
                 .ifPresent(itcrowd -> itcrowd.sendMessage(DefaultEmbedFactory.create().setDescription("Bot restarted!")).join());
-        
+
+
+        final Starboard starboard = new Starboard(FileProvider.getFile("data/starboard.json"), "✅");
+        starboard.attach();
+
         API.addMessageCreateListener(event -> {
             final Message message = event.getMessage();
-            
             if (message.getReadableContent().toLowerCase().matches(".*t\\s*[o0]|(\\[])|(\\(\\))|(\\{})|(<>)\\s*[8b]\\s*[e3]\\s*r\\s*[s5].*"))
                 message.delete("Unauthorized");
         });
