@@ -4,7 +4,12 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.script.ScriptEngineManager;
 
 import de.comroid.Cobalton;
@@ -20,6 +25,8 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.channel.ServerTextChannelUpdater;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.emoji.CustomEmoji;
+import org.javacord.api.entity.emoji.CustomEmojiBuilder;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
@@ -93,6 +100,31 @@ public enum AdminCommands {
         if (!executor.isBotOwner()) return null;
 
         return String.join(" ", args);
+    }
+
+    @Command(
+            enablePrivateChat = false,
+            convertStringResultsToEmbed = true,
+            requiredDiscordPermission = PermissionType.MANAGE_EMOJIS
+    )
+    public String copyEmoji(Server srv, Message msg) {
+        final List<CustomEmoji> customEmojis = msg.getCustomEmojis();
+        Collection<CustomEmojiBuilder> builders = new ArrayList<>();
+
+        for (CustomEmoji emoji : customEmojis) {
+            final CustomEmojiBuilder builder = srv.createCustomEmojiBuilder();
+
+            builder.setName(emoji.getName())
+                    .setImage(emoji.getImage());
+
+            builders.add(builder);
+        }
+
+        return builders.stream()
+                .map(CustomEmojiBuilder::create)
+                .map(CompletableFuture::join)
+                .map(CustomEmoji::getMentionTag)
+                .collect(Collectors.joining(" ", "Added emojis:", ""));
     }
 
     @Command(aliases = "archive",
