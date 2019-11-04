@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.kaleidox.util.interfaces.Initializable;
 import org.javacord.api.entity.message.Message;
+import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.event.message.reaction.ReactionRemoveEvent;
 
@@ -36,7 +37,12 @@ public class Starboard implements Initializable, Closeable {
     }
 
     private void addReaction(ReactionAddEvent event) {
-        if (event.getEmoji().asUnicodeEmoji().map(this.favReaction::equals).orElse(true)) {
+        if (event.getUser().isYourself()) {
+            return;
+        }
+        if (!event.getServer().isPresent()) return;
+
+        if (event.getEmoji().asUnicodeEmoji().map(this.favReaction::equals).orElse(false)) {
             // test if bot reacts to configured reaction
             event.removeReaction();
             event.getChannel().sendMessage("successfully found reaction");
@@ -48,6 +54,12 @@ public class Starboard implements Initializable, Closeable {
     }
 
     private void removeReaction(ReactionRemoveEvent event) {
+    }
+
+    private void testReaction(MessageCreateEvent event) {
+        if (event.getMessage().getContent().equals("__starboard_test__")) {
+            event.getMessage().addReaction("✅");
+        }
     }
 
     private void readData() throws IOException {
@@ -73,7 +85,9 @@ public class Starboard implements Initializable, Closeable {
     }
 
     public void attach() {
+        API.addMessageCreateListener(this::testReaction);
         API.addReactionAddListener(this::addReaction);
         API.addReactionRemoveListener(this::removeReaction);
     }
+
 }
