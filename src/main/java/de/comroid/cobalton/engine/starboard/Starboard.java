@@ -72,16 +72,16 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
                                     .get(0)
                                     .toBuilder()
                                     .updateFields((embedField) -> embedField.getName().equals("Score"),
-                                            editableEmbedField -> editableEmbedField.setValue(String.format("```%d Stars```", star.getCount())))
+                                            editableEmbedField -> editableEmbedField.setValue(String.format("```%d %s```", star.getCount(), this.favReaction)))
                     ).join();
                     this.stars.replace(id, star);
                 } else {
                     // Message was not yet starred
                     final Message destination = this.starChannel.sendMessage(
                             new Embed(event.getServer().get(), event.getUser())
-                                    .addField("Message", event.getMessage().get().getContent())
-                                    .addField("Score", "1 Star")
+                                    .addField("Score", String.format("```1 %s```", this.favReaction))
                                     .getBuilder()
+                                    .setDescription(event.getMessage().get().getContent())
                     ).join();
                     this.stars.put(id, new Star(event.getMessage().get(), destination, 1));
                 }
@@ -112,7 +112,7 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
                                         .get(0)
                                         .toBuilder()
                                         .updateFields((embedField) -> embedField.getName().equals("Score"),
-                                                editableEmbedField -> editableEmbedField.setValue(String.format("```%d Stars```", star.getCount())))
+                                                editableEmbedField -> editableEmbedField.setValue(String.format("```%d %s```", star.getCount(), this.favReaction)))
                         ).join();
                         this.stars.replace(id, star);
                     }
