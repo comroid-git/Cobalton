@@ -16,12 +16,13 @@ import org.javacord.api.entity.message.Message;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.event.message.reaction.ReactionRemoveEvent;
+import org.javacord.api.listener.message.MessageCreateListener;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.javacord.api.listener.message.reaction.ReactionRemoveListener;
 
 import static de.comroid.Cobalton.API;
 
-public class Starboard implements Initializable, Closeable, ReactionAddListener, ReactionRemoveListener {
+public class Starboard implements Initializable, Closeable, ReactionAddListener, ReactionRemoveListener, MessageCreateListener {
     private final ArrayList<StarMap> stars;
     private final File starboardFile;
     private final String favReaction;
@@ -45,6 +46,13 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
     @Override
     public void close() throws IOException {
         this.writeData();
+    }
+
+    @Override 
+    public void onMessageCreate(MessageCreateEvent event) {
+        if (event.getMessage().getContent().equals("gumo test")) {
+            event.getMessage().addReaction(favReaction);
+        }
     }
 
     @Override
@@ -72,6 +80,7 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
     @Override
     public void onReactionRemove(ReactionRemoveEvent event) {
     }
+
 
     private void readData() throws IOException {
         final ObjectMapper mapper = new ObjectMapper();
