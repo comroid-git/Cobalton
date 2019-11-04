@@ -81,7 +81,10 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
 
     private void readData() throws IOException {
         final ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readTree(new FileInputStream(this.starboardFile));
+        JsonNode node = mapper.readTree(this.starboardFile);
+        
+        if (node == null) return; // nothing to serialize
+        
         node.forEach(starNode -> {
                     if (starNode.isNull()) return; // must skip node
 
