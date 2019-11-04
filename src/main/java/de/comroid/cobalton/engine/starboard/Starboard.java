@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import de.comroid.cobalton.model.Embed;
 import de.kaleidox.util.interfaces.Initializable;
@@ -91,8 +93,11 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
                 try {
                     this.writeData();
                 } catch (IOException e) {
-                    event.getChannel().sendMessage(String.format("failed to save database!\r\n```%s```", String.join("\r\n",
-                            Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).toString())));
+                    event.getChannel().sendMessage(String.format("failed to save database!\r\n```%s```",
+                            Stream
+                                    .of(e.getStackTrace())
+                                    .map(StackTraceElement::toString)
+                                    .collect(Collectors.joining("\r\n"))));
                 }
             }
         }
@@ -130,8 +135,11 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
                     try {
                         this.writeData();
                     } catch (IOException e) {
-                        event.getChannel().sendMessage(String.format("failed to save database!\r\n```%s```", String.join("\r\n",
-                                Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).toString())));
+                        event.getChannel().sendMessage(String.format("failed to save database!\r\n```%s```",
+                                Stream
+                                        .of(e.getStackTrace())
+                                        .map(StackTraceElement::toString)
+                                        .collect(Collectors.joining("\r\n"))));
                     }
                 }
             }
@@ -148,7 +156,11 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
             try {
                 this.stars.put(star.getOrigin().getId(), star);
             } catch (Throwable t) {
-                t.printStackTrace();
+                this.starChannel.sendMessage(String.format("failed to save database!\r\n```%s```",
+                        Stream
+                                .of(t.getStackTrace())
+                                .map(StackTraceElement::toString)
+                                .collect(Collectors.joining("\r\n"))));
             }
         }));
     }
