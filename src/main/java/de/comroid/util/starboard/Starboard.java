@@ -10,6 +10,8 @@ import org.javacord.api.entity.message.Message;
 import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.event.message.reaction.ReactionRemoveEvent;
 
+import static de.comroid.JamesBot.API;
+
 public class Starboard implements Initializable, Closeable {
     private final ArrayList<StarMap> stars;
     private final File starboardFile;
@@ -33,7 +35,7 @@ public class Starboard implements Initializable, Closeable {
         this.writeData();
     }
 
-    public void addReaction(ReactionAddEvent event) {
+    private void addReaction(ReactionAddEvent event) {
         if (event.getEmoji().asUnicodeEmoji().map(this.favReaction::equals).orElse(false)) {
             // test if bot reacts to configured reaction
             event.removeReaction();
@@ -45,7 +47,7 @@ public class Starboard implements Initializable, Closeable {
 //        }
     }
 
-    public void removeReaction(ReactionRemoveEvent event) {
+    private void removeReaction(ReactionRemoveEvent event) {
     }
 
     private void readData() throws IOException {
@@ -68,5 +70,10 @@ public class Starboard implements Initializable, Closeable {
         final ObjectMapper mapper = new ObjectMapper();
         stream.write(mapper.writeValueAsString(this.stars).getBytes());
         stream.close();
+    }
+
+    public void attach() {
+        API.addReactionAddListener(this::addReaction);
+        API.addReactionRemoveListener(this::removeReaction);
     }
 }

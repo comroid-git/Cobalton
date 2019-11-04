@@ -97,8 +97,7 @@ public final class JamesBot {
 
 
         final Starboard starboard = new Starboard(FileProvider.getFile("data/starboard.json"), "✅");
-        API.addReactionAddListener(starboard::addReaction);
-        API.addReactionRemoveListener(starboard::removeReaction);
+        starboard.attach();
 
         API.addMessageCreateListener(event -> {
             final Message message = event.getMessage();
