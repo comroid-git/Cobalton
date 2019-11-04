@@ -2,12 +2,10 @@ package de.comroid.cobalton.engine.starboard;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import de.comroid.cobalton.model.Embed;
 import de.kaleidox.util.interfaces.Initializable;
@@ -17,10 +15,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
-import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.event.message.reaction.ReactionRemoveEvent;
-import org.javacord.api.listener.message.MessageCreateListener;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.javacord.api.listener.message.reaction.ReactionRemoveListener;
 
@@ -29,6 +25,7 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
     private final File starboardFile;
     private final String favReaction;
     private final ServerTextChannel starChannel;
+    private final DiscordApi api;
 
     public Starboard(DiscordApi api, File starboardFile, String favReaction, long starChannel) throws IOException {
         if (!starboardFile.exists()) starboardFile.createNewFile();
@@ -36,6 +33,7 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
         this.stars = new HashMap<>();
         this.favReaction = favReaction;
         this.starChannel = api.getServerTextChannelById(starChannel).get();
+        this.api = api;
         init();
 
         api.addListener(this);
@@ -64,7 +62,7 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
                 final long id = event.getMessageId();
                 final Star star = this.stars.get(id);
                 if (star != null) {
-                    // message was already starred
+                    // Message was already starred
                     final Message destination = star.getDestination();
                     star.addStar();
                     destination.edit(
@@ -121,23 +119,19 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
         }
     }
 
+
     private void readData() throws IOException {
         final ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(this.starboardFile);
 
         if (node == null) return; // nothing to serialize
-
-        node.forEach((starNode) -> {
-                    if (starNode.isNull()) return; // must skip node
-                    final Message origin = ((Message) starNode.get("origin"));
-                    this.stars.put(origin.getId(),
-                            new Star(origin,
-                                    (Message) starNode.get("destination"),
-                                    starNode.get("stars").asInt()
-                            )
-                    );
-                }
-        );
+        node.forEach(Star.map(this.api, star -> {
+            try {
+                this.stars.put(star.getOrigin().getId(), star);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }));
     }
 
     private void writeData() throws IOException {
@@ -145,7 +139,7 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
         this.starboardFile.createNewFile();
         FileOutputStream stream = new FileOutputStream(this.starboardFile);
         final ObjectMapper mapper = new ObjectMapper();
-        stream.write(mapper.writeValueAsString(this.stars.values()).getBytes());
+        stream.write(mapper.writeValueAsString(this.stars.values().stream().map(SerializableStar::new)).getBytes());
         stream.close();
     }
 }
