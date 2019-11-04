@@ -76,7 +76,9 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
                 } else {
                     // Message was not yet starred
                     final Message destination = this.starChannel.sendMessage(
-                            new Embed(event.getServer().get(), event.getUser())
+                            new Embed(event.getServer().get(),
+                                    event.getMessage().get().getUserAuthor().get()
+                            )
                                     .addField("Score", String.format("```1 %s```", this.favReaction))
                                     .getBuilder()
                                     .setDescription(event.getMessage().get().getContent())
