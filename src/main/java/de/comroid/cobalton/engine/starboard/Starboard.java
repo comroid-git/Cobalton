@@ -64,6 +64,8 @@ public class Starboard implements Initializable, Closeable {
     private void onTestReaction(MessageCreateEvent event) {
         if (event.getMessage().getContent().equals("--starboard_test--")) {
             event.getMessage().addReaction("✅").join();
+        } else if (event.getChannel().getId() == 639051738036568064L) {
+            event.getMessage().addReaction("\uD83D\uDC40").join();
         }
     }
 
