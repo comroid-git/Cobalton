@@ -24,7 +24,10 @@ public class BindingFactory {
             put("api", Cobalton.API);
             put("timer", new Timer());
             put("embed", new Embed(server, user));
-            put("prev", channel.getMessagesBefore(1, command).join().getOldestMessage().get());
+            channel.getMessagesBefore(1, command)
+                    .join()
+                    .getOldestMessage()
+                    .ifPresent(prev -> put("prev", prev));
         }});
     }
 
