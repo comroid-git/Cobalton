@@ -20,7 +20,7 @@ import org.javacord.api.listener.message.MessageCreateListener;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.javacord.api.listener.message.reaction.ReactionRemoveListener;
 
-public class Starboard implements Initializable, Closeable, ReactionAddListener, ReactionRemoveListener, MessageCreateListener {
+public class Starboard implements Initializable, Closeable, ReactionAddListener, ReactionRemoveListener {
     private final ArrayList<StarMap> stars;
     private final File starboardFile;
     private final String favReaction;
@@ -43,16 +43,6 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
     @Override
     public void close() throws IOException {
         this.writeData();
-    }
-
-    @Override 
-    public void onMessageCreate(MessageCreateEvent event) {
-        System.out.println("event = " + event);
-        System.out.println("event.getMessage() = " + event.getMessage());
-
-        if (event.getMessage().getContent().equals("gumo test")) {
-            event.getMessage().addReaction(favReaction);
-        }
     }
 
     @Override
