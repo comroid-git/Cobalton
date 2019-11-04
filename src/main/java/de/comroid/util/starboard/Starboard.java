@@ -57,7 +57,7 @@ public class Starboard implements Initializable, Closeable {
     }
 
     private void testReaction(MessageCreateEvent event) {
-        if (event.getMessage().getContent().equals("__starboard_test__")) {
+        if (event.getMessage().getContent().equals("--starboard_test--")) {
             event.getMessage().addReaction("✅");
         }
     }
