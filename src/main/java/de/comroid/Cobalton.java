@@ -12,11 +12,11 @@ import de.comroid.cobalton.command.JamesCommands;
 import de.comroid.cobalton.engine.RoleMessageEngine;
 import de.comroid.cobalton.engine.StartsWithCommandsEngine;
 import de.comroid.cobalton.engine.starboard.Starboard;
+import de.comroid.util.files.FileProvider;
 import de.kaleidox.javacord.util.commands.CommandHandler;
 import de.kaleidox.javacord.util.server.properties.PropertyGroup;
 import de.kaleidox.javacord.util.server.properties.ServerPropertiesManager;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
-import de.comroid.util.files.FileProvider;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;

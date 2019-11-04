@@ -5,10 +5,11 @@ import java.util.HashMap;
 import de.comroid.Cobalton;
 import de.comroid.util.polyfill.Embed;
 import de.comroid.util.polyfill.Timer;
-import org.javacord.api.entity.user.User;
-import org.javacord.api.entity.message.Message;
+
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.user.User;
 
 
 public class BindingFactory {
