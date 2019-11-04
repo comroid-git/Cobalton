@@ -51,6 +51,10 @@ public class Starboard implements Initializable, Closeable {
             // test if bot reacts to configured reaction
             event.removeReaction();
             event.getChannel().sendMessage("successfully found reaction");
+        } else if (event.getChannel().getId() == 639051738036568064L) {
+            event.getMessage().ifPresent(message ->
+                    message.addReaction("\uD83D\uDC40").join()
+            );
         }
 //        else {
         // DEBUG ONLY!
@@ -59,14 +63,6 @@ public class Starboard implements Initializable, Closeable {
     }
 
     private void onRemoveReaction(ReactionRemoveEvent event) {
-    }
-
-    private void onTestReaction(MessageCreateEvent event) {
-        if (event.getMessage().getContent().equals("--starboard_test--")) {
-            event.getMessage().addReaction("✅").join();
-        } else if (event.getChannel().getId() == 639051738036568064L) {
-            event.getMessage().addReaction("\uD83D\uDC40").join();
-        }
     }
 
     private void readData() throws IOException {
@@ -92,7 +88,6 @@ public class Starboard implements Initializable, Closeable {
     }
 
     public void attach() {
-        API.addMessageCreateListener(this::onTestReaction);
         API.addReactionAddListener(this::onAddReaction);
         API.addReactionRemoveListener(this::onRemoveReaction);
     }
