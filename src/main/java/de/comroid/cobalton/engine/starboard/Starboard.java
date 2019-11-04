@@ -20,8 +20,6 @@ import org.javacord.api.listener.message.MessageCreateListener;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.javacord.api.listener.message.reaction.ReactionRemoveListener;
 
-import static de.comroid.Cobalton.API;
-
 public class Starboard implements Initializable, Closeable, ReactionAddListener, ReactionRemoveListener, MessageCreateListener {
     private final ArrayList<StarMap> stars;
     private final File starboardFile;
@@ -81,17 +79,19 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
     public void onReactionRemove(ReactionRemoveEvent event) {
     }
 
-
     private void readData() throws IOException {
         final ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(new FileInputStream(this.starboardFile));
-        node.forEach(starNode ->
-                this.stars.add(
-                        new Star(((Message) starNode.get("origin")),
-                                (Message) starNode.get("destination"),
-                                starNode.get("stars").asInt()
-                        )
-                )
+        node.forEach(starNode -> {
+                    if (starNode.isNull()) return; // must skip node
+
+                    this.stars.add(
+                            new Star(((Message) starNode.get("origin")),
+                                    (Message) starNode.get("destination"),
+                                    starNode.get("stars").asInt()
+                            )
+                    );
+                }
         );
     }
 
