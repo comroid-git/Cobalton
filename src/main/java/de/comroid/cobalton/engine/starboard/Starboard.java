@@ -32,8 +32,7 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
         this.favReaction = favReaction;
         init();
         
-        api.addReactionAddListener(this);
-        api.addReactionRemoveListener(this);
+        api.addListener(this);
     }
 
     @Override
