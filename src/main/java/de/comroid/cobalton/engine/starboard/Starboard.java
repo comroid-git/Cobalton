@@ -4,9 +4,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -75,7 +73,7 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
                                     .updateFields((embedField) -> embedField.getName().equals("Score"),
                                             editableEmbedField -> editableEmbedField.setValue(String.format("```%d %s```", star.getCount(), this.favReaction)))
                     ).join();
-                    this.stars.replace(id, star);
+                    this.stars.put(id, star);
                 } else {
                     // Message was not yet starred
                     final Message destination = this.starChannel.sendMessage(
@@ -128,7 +126,7 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
                                         .updateFields((embedField) -> embedField.getName().equals("Score"),
                                                 editableEmbedField -> editableEmbedField.setValue(String.format("```%d %s```", star.getCount(), this.favReaction)))
                         ).join();
-                        this.stars.replace(id, star);
+                        this.stars.put(id, star);
                     }
 
                     // update database
