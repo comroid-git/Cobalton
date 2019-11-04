@@ -62,23 +62,25 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
             // check if event channel is starboard
             if (event.getChannel().getId() == this.starChannel.getId()) {
                 final long id = event.getMessageId();
-                Star star = this.stars.get(id);
+                final Star star = this.stars.get(id);
                 if (star != null) {
                     // message was already starred
-                    this.stars.replace(id, star.addStar());
-                    this.starChannel.getMessageById(star.getDestination().getId()).thenAccept(starEmbed -> starEmbed.edit(
-                            starEmbed.getEmbeds()
+                    final Message destination = star.getDestination();
+                    star.addStar();
+                    destination.edit(
+                            destination.getEmbeds()
                                     .get(0)
                                     .toBuilder()
                                     .updateFields((embedField) -> embedField.getName().equals("Score"),
                                             editableEmbedField -> editableEmbedField.setValue(String.format("```%d Stars```", star.getCount())))
-                    ).join());
+                    ).join();
+                    this.stars.replace(id, star);
                 } else {
                     // Message was not yet starred
-                    Message destination = this.starChannel.sendMessage(
+                    final Message destination = this.starChannel.sendMessage(
                             new Embed(event.getServer().get(), event.getUser())
                                     .addField("Message", event.getMessage().get().getContent())
-                                    .addField("Score", String.valueOf(this.stars.get(id).getCount()))
+                                    .addField("Score", "1 Star")
                                     .getBuilder()
                     ).join();
                     this.stars.put(id, new Star(event.getMessage().get(), destination, 1));
@@ -93,28 +95,26 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
                 !event.getServer().isPresent()
         ) return;
 
-
         if (event.getEmoji().asUnicodeEmoji().map(this.favReaction::equals).orElse(false)) {
             // check if event channel is starboard
             if (event.getChannel().getId() == this.starChannel.getId()) {
                 final long id = event.getMessageId();
                 Star star = this.stars.get(id);
                 if (star != null) {
-                    if (star.removeStar().getCount() == 0) {
+                    star.removeStar();
+                    if (star.getCount() == 0) {
                         this.stars.remove(id, star);
-                        this.starChannel.deleteMessages(star.getDestination()).join();
+                        star.getDestination().delete().join();
                     } else {
-                        this.starChannel.getMessageById(star.getDestination().getId()).thenAccept(starEmbed -> {
-                            star.removeStar();
-                            this.stars.replace(id, star);
-                            starEmbed.edit(
-                                    starEmbed.getEmbeds()
-                                            .get(0)
-                                            .toBuilder()
-                                            .updateFields((embedField) -> embedField.getName().equals("Score"),
-                                                    editableEmbedField -> editableEmbedField.setValue(String.format("```%d Stars```", star.getCount())))
-                            ).join();
-                        }).join();
+                        final Message destination = star.getDestination();
+                        destination.edit(
+                                destination.getEmbeds()
+                                        .get(0)
+                                        .toBuilder()
+                                        .updateFields((embedField) -> embedField.getName().equals("Score"),
+                                                editableEmbedField -> editableEmbedField.setValue(String.format("```%d Stars```", star.getCount())))
+                        ).join();
+                        this.stars.replace(id, star);
                     }
                 }
             }
