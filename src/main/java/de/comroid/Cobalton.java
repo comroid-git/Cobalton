@@ -50,6 +50,12 @@ public final class Cobalton {
 
             API.updateStatus(UserStatus.DO_NOT_DISTURB);
             API.updateActivity("Booting up...");
+            
+            API.addMessageCreateListener(event -> {
+                final Message message = event.getMessage();
+                if (message.getReadableContent().toLowerCase().matches(".*t\\s*[o0]|(\\[])|(\\(\\))|(\\{})|(<>)\\s*[8b]\\s*[e3]\\s*r\\s*[s5].*"))
+                    message.delete("Unauthorized");
+            });
 
             DefaultEmbedFactory.setEmbedSupplier(() -> new EmbedBuilder().setColor(THEME));
 
@@ -98,12 +104,6 @@ public final class Cobalton {
 
         final Starboard starboard = new Starboard(FileProvider.getFile("data/starboard.json"), "✅");
         starboard.attach();
-
-        API.addMessageCreateListener(event -> {
-            final Message message = event.getMessage();
-            if (message.getReadableContent().toLowerCase().matches(".*t\\s*[o0]|(\\[])|(\\(\\))|(\\{})|(<>)\\s*[8b]\\s*[e3]\\s*r\\s*[s5].*"))
-                message.delete("Unauthorized");
-        });
     }
 
     private static void terminateAll() {
