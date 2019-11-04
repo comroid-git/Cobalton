@@ -55,7 +55,7 @@ public enum AdminCommands {
 
     @Command(usage = "shutdown", description = "Only the owner of the bot can use this", shownInHelpCommand = false)
     public void shutdown(User user, String[] args, Message command, TextChannel channel) {
-        if (user.isBotOwner() || user.getId() == 292141393739251714L) System.exit(0);
+        if (user.isBotOwner() || user.getId() == 292141393739251714L) System.exit(1);
         command.delete("Unauthorized").join();
         channel.sendMessage("User " + user.getDiscriminatedName() + " not authorized.");
     }
