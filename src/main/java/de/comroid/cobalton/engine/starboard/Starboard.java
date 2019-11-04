@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
@@ -85,6 +86,14 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
                     ).join();
                     this.stars.put(id, new Star(event.getMessage().get(), destination, 1));
                 }
+
+                // update database
+                try {
+                    this.writeData();
+                } catch (IOException e) {
+                    event.getChannel().sendMessage(String.format("failed to save database!\r\n```%s```", String.join("\r\n",
+                            Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).toString())));
+                }
             }
         }
     }
@@ -115,6 +124,14 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
                                                 editableEmbedField -> editableEmbedField.setValue(String.format("```%d %s```", star.getCount(), this.favReaction)))
                         ).join();
                         this.stars.replace(id, star);
+                    }
+
+                    // update database
+                    try {
+                        this.writeData();
+                    } catch (IOException e) {
+                        event.getChannel().sendMessage(String.format("failed to save database!\r\n```%s```", String.join("\r\n",
+                                Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).toString())));
                     }
                 }
             }
