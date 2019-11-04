@@ -1,12 +1,12 @@
-package de.comroid.james.command;
+package de.comroid.cobalton.command;
 
-import de.comroid.JamesBot;
+import de.comroid.Cobalton;
 import de.kaleidox.javacord.util.commands.Command;
 import de.kaleidox.javacord.util.commands.CommandGroup;
-import de.comroid.util.eval.BindingFactory;
-import de.comroid.util.eval.EvalFactory;
-import de.comroid.util.eval.EvalViewer;
-import de.comroid.util.skribbl.SkribblEmbed;
+import de.comroid.cobalton.command.eval.BindingFactory;
+import de.comroid.cobalton.command.eval.EvalFactory;
+import de.comroid.cobalton.command.eval.EvalViewer;
+import de.comroid.cobalton.command.skribbl.SkribblEmbed;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
@@ -106,11 +106,11 @@ public enum AdminCommands {
 
         if (stc.getCategory()
                 .map(DiscordEntity::getId)
-                .map(id -> JamesBot.Prop.ARCHIVE_CATEGORY.getValue(srv).asLong() == id)
+                .map(id -> Cobalton.Prop.ARCHIVE_CATEGORY.getValue(srv).asLong() == id)
                 .orElse(false))
             throw new IllegalStateException("Channel is already archived!");
 
-        JamesBot.API.getChannelCategoryById(JamesBot.Prop.ARCHIVE_CATEGORY
+        Cobalton.API.getChannelCategoryById(Cobalton.Prop.ARCHIVE_CATEGORY
                 .getValue(srv)
                 .asLong())
                 .ifPresent(archive -> {

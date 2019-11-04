@@ -1,4 +1,4 @@
-package de.comroid.util.eval;
+package de.comroid.cobalton.command.eval;
 
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;

@@ -1,4 +1,4 @@
-package de.comroid.util.starboard;
+package de.comroid.cobalton.engine.starboard;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.event.message.reaction.ReactionRemoveEvent;
 
-import static de.comroid.JamesBot.API;
+import static de.comroid.Cobalton.API;
 
 public class Starboard implements Initializable, Closeable {
     private final ArrayList<StarMap> stars;

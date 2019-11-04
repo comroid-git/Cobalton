@@ -1,6 +1,6 @@
-package de.comroid.util.eval;
+package de.comroid.cobalton.command.eval;
 
-import de.comroid.util.Embed;
+import de.comroid.cobalton.model.Embed;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 

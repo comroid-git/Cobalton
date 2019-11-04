@@ -1,10 +1,8 @@
-package de.comroid.util.skribbl;
+package de.comroid.cobalton.command.skribbl;
 
-import de.comroid.util.Embed;
+import de.comroid.cobalton.model.Embed;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
-
-import java.util.HashMap;
 
 public class SkribblEmbed extends Embed {
     //    private final CompletableFuture<Object> result = new CompletableFuture<>();

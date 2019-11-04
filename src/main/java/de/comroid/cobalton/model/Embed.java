@@ -1,6 +1,6 @@
-package de.comroid.util;
+package de.comroid.cobalton.model;
 
-import de.comroid.JamesBot;
+import de.comroid.Cobalton;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
@@ -11,7 +11,7 @@ public class Embed {
     public Embed(Server server, User user) {
         this.embed = DefaultEmbedFactory.create()
                 .setAuthor(user)
-                .setColor(user.getRoleColor(server).orElse(JamesBot.THEME));
+                .setColor(user.getRoleColor(server).orElse(Cobalton.THEME));
     }
     public Embed addField(String name, String value) {
         this.embed.addField(name, value);

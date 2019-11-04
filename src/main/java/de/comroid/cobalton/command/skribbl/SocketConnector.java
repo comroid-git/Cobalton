@@ -1,4 +1,4 @@
-package de.comroid.util.skribbl;
+package de.comroid.cobalton.command.skribbl;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;

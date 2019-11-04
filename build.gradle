@@ -6,7 +6,7 @@ apply plugin: 'application'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-mainClassName = 'de.comroid.JamesBot'
+mainClassName = 'de.comroid.Cobalton'
 
 wrapper {
     gradleVersion = '5.6'

@@ -4,7 +4,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import de.comroid.JamesBot;
+import de.comroid.Cobalton;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
@@ -13,7 +13,7 @@ public class Timer {
 
 
     public Timer() {
-        this.schedule = JamesBot.API.getThreadPool().getScheduler();
+        this.schedule = Cobalton.API.getThreadPool().getScheduler();
     }
 
     public ScheduledFuture<?> setInterval(ScriptObjectMirror command, long interval) {

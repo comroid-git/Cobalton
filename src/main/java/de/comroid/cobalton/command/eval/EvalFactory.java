@@ -1,4 +1,4 @@
-package de.comroid.util.eval;
+package de.comroid.cobalton.command.eval;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;

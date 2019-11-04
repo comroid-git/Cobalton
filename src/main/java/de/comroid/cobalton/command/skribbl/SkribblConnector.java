@@ -1,4 +1,4 @@
-package de.comroid.util.skribbl;
+package de.comroid.cobalton.command.skribbl;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;

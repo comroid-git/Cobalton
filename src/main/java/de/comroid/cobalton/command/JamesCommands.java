@@ -1,4 +1,4 @@
-package de.comroid.james.command;
+package de.comroid.cobalton.command;
 
 import de.kaleidox.javacord.util.commands.Command;
 

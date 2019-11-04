@@ -1,8 +1,8 @@
-package de.comroid.util.eval;
+package de.comroid.cobalton.command.eval;
 
 import java.util.HashMap;
 
-import de.comroid.JamesBot;
+import de.comroid.Cobalton;
 import de.comroid.util.polyfill.Embed;
 import de.comroid.util.polyfill.Timer;
 import org.javacord.api.entity.user.User;
@@ -20,7 +20,7 @@ public class BindingFactory {
             put("usr", user);
             put("chl", channel);
             put("srv", server);
-            put("api", JamesBot.API);
+            put("api", Cobalton.API);
             put("timer", new Timer());
             put("embed", new Embed(server, user));
             put("prev", channel.getMessagesBefore(1, command).join().getOldestMessage().get());

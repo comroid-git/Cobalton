@@ -14,6 +14,6 @@ public class Embed {
     }
 
     public EmbedBuilder create() {
-        return new de.comroid.util.Embed(this.server, this.user).getBuilder();
+        return new de.comroid.cobalton.model.Embed(this.server, this.user).getBuilder();
     }
 }

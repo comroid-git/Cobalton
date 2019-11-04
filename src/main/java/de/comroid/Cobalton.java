@@ -7,11 +7,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import de.comroid.james.command.AdminCommands;
-import de.comroid.james.command.JamesCommands;
-import de.comroid.james.engine.RoleMessageEngine;
-import de.comroid.james.engine.StartsWithCommandsEngine;
-import de.comroid.util.starboard.Starboard;
+import de.comroid.cobalton.command.AdminCommands;
+import de.comroid.cobalton.command.JamesCommands;
+import de.comroid.cobalton.engine.RoleMessageEngine;
+import de.comroid.cobalton.engine.StartsWithCommandsEngine;
+import de.comroid.cobalton.engine.starboard.Starboard;
 import de.kaleidox.javacord.util.commands.CommandHandler;
 import de.kaleidox.javacord.util.server.properties.PropertyGroup;
 import de.kaleidox.javacord.util.server.properties.ServerPropertiesManager;
@@ -27,7 +27,7 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.UserStatus;
 import org.javacord.api.util.logging.ExceptionLogger;
 
-public final class JamesBot {
+public final class Cobalton {
     public final static Color THEME = new Color(0x0f7eb1);
 
     public static final long BOT_ID = 625651396410343424L;
@@ -67,8 +67,8 @@ public final class JamesBot {
 
             API.getThreadPool()
                     .getScheduler()
-                    .scheduleAtFixedRate(JamesBot::storeAllData, 5, 5, TimeUnit.MINUTES);
-            Runtime.getRuntime().addShutdownHook(new Thread(JamesBot::terminateAll));
+                    .scheduleAtFixedRate(Cobalton::storeAllData, 5, 5, TimeUnit.MINUTES);
+            Runtime.getRuntime().addShutdownHook(new Thread(Cobalton::terminateAll));
 
             SRV = API.getServerById(625494140427173889L).orElseThrow(IllegalStateException::new);
 
