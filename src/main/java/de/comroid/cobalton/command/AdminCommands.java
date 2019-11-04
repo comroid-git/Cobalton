@@ -105,7 +105,8 @@ public enum AdminCommands {
     @Command(
             enablePrivateChat = false,
             convertStringResultsToEmbed = true,
-            requiredDiscordPermission = PermissionType.MANAGE_EMOJIS
+            requiredDiscordPermission = PermissionType.MANAGE_EMOJIS,
+            useTypingIndicator = true
     )
     public String copyEmoji(Server srv, Message msg) {
         final List<CustomEmoji> customEmojis = msg.getCustomEmojis();
