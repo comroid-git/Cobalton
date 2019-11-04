@@ -36,7 +36,7 @@ public class Starboard implements Initializable, Closeable {
         this.writeData();
     }
 
-    private void addReaction(ReactionAddEvent event) {
+    private void onAddReaction(ReactionAddEvent event) {
         if (event.getUser().isYourself()) {
             return;
         }
@@ -53,12 +53,12 @@ public class Starboard implements Initializable, Closeable {
 //        }
     }
 
-    private void removeReaction(ReactionRemoveEvent event) {
+    private void onRemoveReaction(ReactionRemoveEvent event) {
     }
 
-    private void testReaction(MessageCreateEvent event) {
+    private void onTestReaction(MessageCreateEvent event) {
         if (event.getMessage().getContent().equals("--starboard_test--")) {
-            event.getMessage().addReaction("✅");
+            event.getMessage().addReaction("✅").join();
         }
     }
 
@@ -85,9 +85,9 @@ public class Starboard implements Initializable, Closeable {
     }
 
     public void attach() {
-        API.addMessageCreateListener(this::testReaction);
-        API.addReactionAddListener(this::addReaction);
-        API.addReactionRemoveListener(this::removeReaction);
+        API.addMessageCreateListener(this::onTestReaction);
+        API.addReactionAddListener(this::onAddReaction);
+        API.addReactionRemoveListener(this::onRemoveReaction);
     }
 
 }
