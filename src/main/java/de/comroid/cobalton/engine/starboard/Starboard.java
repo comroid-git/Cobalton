@@ -11,24 +11,30 @@ import de.kaleidox.util.interfaces.Initializable;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.event.message.reaction.ReactionRemoveEvent;
+import org.javacord.api.listener.message.reaction.ReactionAddListener;
+import org.javacord.api.listener.message.reaction.ReactionRemoveListener;
 
 import static de.comroid.Cobalton.API;
 
-public class Starboard implements Initializable, Closeable {
+public class Starboard implements Initializable, Closeable, ReactionAddListener, ReactionRemoveListener {
     private final ArrayList<StarMap> stars;
     private final File starboardFile;
     private final String favReaction;
 
-    public Starboard(File starboardFile, String favReaction) throws IOException {
+    public Starboard(DiscordApi api, File starboardFile, String favReaction) throws IOException {
         if (!starboardFile.exists()) starboardFile.createNewFile();
         this.starboardFile = starboardFile;
         this.stars = new ArrayList<>();
         this.favReaction = favReaction;
         init();
+        
+        api.addReactionAddListener(this);
+        api.addReactionRemoveListener(this);
     }
 
     @Override
@@ -41,7 +47,8 @@ public class Starboard implements Initializable, Closeable {
         this.writeData();
     }
 
-    private void onAddReaction(ReactionAddEvent event) {
+    @Override
+    public void onReactionAdd(ReactionAddEvent event) {
         if (event.getUser().isYourself()) {
             return;
         }
@@ -62,7 +69,8 @@ public class Starboard implements Initializable, Closeable {
 //        }
     }
 
-    private void onRemoveReaction(ReactionRemoveEvent event) {
+    @Override
+    public void onReactionRemove(ReactionRemoveEvent event) {
     }
 
     private void readData() throws IOException {
@@ -86,10 +94,4 @@ public class Starboard implements Initializable, Closeable {
         stream.write(mapper.writeValueAsString(this.stars).getBytes());
         stream.close();
     }
-
-    public void attach() {
-        API.addReactionAddListener(this::onAddReaction);
-        API.addReactionRemoveListener(this::onRemoveReaction);
-    }
-
 }

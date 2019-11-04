@@ -35,6 +35,7 @@ public final class Cobalton {
     public static final DiscordApi API;
     public static final CommandHandler CMD;
     public static final ServerPropertiesManager PROP;
+    public static final Starboard STAR;
 
     public static final Server SRV;
 
@@ -77,6 +78,8 @@ public final class Cobalton {
             Runtime.getRuntime().addShutdownHook(new Thread(Cobalton::terminateAll));
 
             SRV = API.getServerById(625494140427173889L).orElseThrow(IllegalStateException::new);
+            
+            STAR = new Starboard(API, FileProvider.getFile("data/starboard.json"), "✅");
 
             API.updateActivity(ActivityType.LISTENING, CMD.prefixes[0] + "help");
             API.updateStatus(UserStatus.ONLINE);
@@ -100,10 +103,6 @@ public final class Cobalton {
 
         API.getServerTextChannelById(639051738036568064L)
                 .ifPresent(itcrowd -> itcrowd.sendMessage(DefaultEmbedFactory.create().setDescription("Bot restarted!")).join());
-
-
-        final Starboard starboard = new Starboard(FileProvider.getFile("data/starboard.json"), "✅");
-        starboard.attach();
     }
 
     private static void terminateAll() {
