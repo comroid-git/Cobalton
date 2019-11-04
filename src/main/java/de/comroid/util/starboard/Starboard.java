@@ -36,7 +36,7 @@ public class Starboard implements Initializable, Closeable {
     }
 
     private void addReaction(ReactionAddEvent event) {
-        if (event.getEmoji().asUnicodeEmoji().map(this.favReaction::equals).orElse(false)) {
+        if (event.getEmoji().asUnicodeEmoji().map(this.favReaction::equals).orElse(true)) {
             // test if bot reacts to configured reaction
             event.removeReaction();
             event.getChannel().sendMessage("successfully found reaction");
