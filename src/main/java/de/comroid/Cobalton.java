@@ -43,7 +43,6 @@ public final class Cobalton {
         try {
             File file = FileProvider.getFile("login/token.cred");
             System.out.println("Looking for token file at " + file.getAbsolutePath());
-
             API = new DiscordApiBuilder()
                     .setToken(new BufferedReader(new FileReader(file)).readLine())
                     .login()
@@ -52,78 +51,58 @@ public final class Cobalton {
 
             API.updateStatus(UserStatus.DO_NOT_DISTURB);
             API.updateActivity("Booting up...");
-            try {
-                API.addMessageCreateListener(event -> {
-                    final Message message = event.getMessage();
-                    if (message.getReadableContent().toLowerCase().matches(".*t\\s*[o0]|(\\[])|(\\(\\))|(\\{})|(<>)\\s*[8b]\\s*[e3]\\s*r\\s*[s5].*"))
-                        message.delete("Unauthorized");
-                });
+            
+            API.addMessageCreateListener(event -> {
+                final Message message = event.getMessage();
+                if (message.getReadableContent().toLowerCase().matches(".*t\\s*[o0]|(\\[])|(\\(\\))|(\\{})|(<>)\\s*[8b]\\s*[e3]\\s*r\\s*[s5].*"))
+                    message.delete("Unauthorized");
+            });
 
-                DefaultEmbedFactory.setEmbedSupplier(() -> new EmbedBuilder().setColor(THEME));
+            DefaultEmbedFactory.setEmbedSupplier(() -> new EmbedBuilder().setColor(THEME));
 
-                CMD = new CommandHandler(API);
-                CMD.prefixes = new String[]{"cobalton!", "c!"};
-                CMD.useDefaultHelp(null);
-                CMD.registerCommands(JamesCommands.INSTANCE);
-                CMD.registerCommands(AdminCommands.INSTANCE);
+            CMD = new CommandHandler(API);
+            CMD.prefixes = new String[]{"cobalton!", "c!"};
+            CMD.useDefaultHelp(null);
+            CMD.registerCommands(JamesCommands.INSTANCE);
+            CMD.registerCommands(AdminCommands.INSTANCE);
 
-                PROP = new ServerPropertiesManager(FileProvider.getFile("data/serverProps.json"));
-                PROP.usePropertyCommand(null, CMD);
-                Prop.init();
+            PROP = new ServerPropertiesManager(FileProvider.getFile("data/serverProps.json"));
+            PROP.usePropertyCommand(null, CMD);
+            Prop.init();
 
-                CMD.withCustomPrefixProvider(Prop.PREFIX);
+            CMD.withCustomPrefixProvider(Prop.PREFIX);
 
-                API.getThreadPool()
-                        .getScheduler()
-                        .scheduleAtFixedRate(Cobalton::storeAllData, 5, 5, TimeUnit.MINUTES);
-                Runtime.getRuntime().addShutdownHook(new Thread(Cobalton::terminateAll));
+            API.getThreadPool()
+                    .getScheduler()
+                    .scheduleAtFixedRate(Cobalton::storeAllData, 5, 5, TimeUnit.MINUTES);
+            Runtime.getRuntime().addShutdownHook(new Thread(Cobalton::terminateAll));
 
-                SRV = API.getServerById(625494140427173889L).orElseThrow(IllegalStateException::new);
+            SRV = API.getServerById(625494140427173889L).orElseThrow(IllegalStateException::new);
+            
+            STAR = new Starboard(API, FileProvider.getFile("data/starboard.json"), "✅");
 
-                STAR = new Starboard(API, FileProvider.getFile("data/starboard.json"), "✅");
-            } catch (Throwable t) {
-                API.updateActivity("Init Errored");
-                API.getServerTextChannelById(639051738036568064L)
-                        .ifPresent(it -> it.sendMessage(new EmbedBuilder()
-                                .setColor(Color.RED)
-                                .addField("Stacktrace of " + t.getClass().getSimpleName() + " in init:", t.getMessage())));
-
-                System.exit(1);
-                throw new AssertionError("compiler thingy");
-            }
+            API.updateActivity(ActivityType.LISTENING, CMD.prefixes[0] + "help");
+            API.updateStatus(UserStatus.ONLINE);
         } catch (Exception e) {
             throw new RuntimeException("Error in initializer", e);
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            API.getServerTextChannelById(Prop.INFO_CHANNEL.getValue(SRV).asLong())
-                    .ifPresent(infoChannel -> infoChannel.getMessageById(Prop.ROLE_MESSAGE.getValue(SRV).asLong())
-                            .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage))));
-            API.addMessageCreateListener(new StartsWithCommandsEngine());
+    public static void main(String[] args) throws IOException {
+        API.getServerTextChannelById(Prop.INFO_CHANNEL.getValue(SRV).asLong())
+                .ifPresent(infoChannel -> infoChannel.getMessageById(Prop.ROLE_MESSAGE.getValue(SRV).asLong())
+                        .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage))));
+        API.addMessageCreateListener(new StartsWithCommandsEngine());
 
-            API.addServerMemberJoinListener(event -> API.getRoleById(632196120902107137L).ifPresent(event.getUser()::addRole));
+        API.addServerMemberJoinListener(event -> API.getRoleById(632196120902107137L).ifPresent(event.getUser()::addRole));
 
-            API.getServerTextChannelById(625640036096016404L)
-                    .ifPresent(weristes -> weristes.addMessageCreateListener(event -> {
-                        API.getRoleById(632196120902107137L).ifPresent(event.getMessageAuthor().asUser().get()::removeRole);
-                    }));
+        API.getServerTextChannelById(625640036096016404L)
+                .ifPresent(weristes -> weristes.addMessageCreateListener(event -> {
+                    API.getRoleById(632196120902107137L).ifPresent(event.getMessageAuthor().asUser().get()::removeRole);
+                }));
 
-            API.getServerTextChannelById(639051738036568064L)
-                    .ifPresent(itcrowd -> itcrowd.sendMessage(DefaultEmbedFactory.create().setDescription("Bot restarted!")).join());
-        } catch (Throwable t) {
-            API.updateActivity("Startup Errored");
-            API.getServerTextChannelById(639051738036568064L)
-                    .ifPresent(it -> it.sendMessage(new EmbedBuilder()
-                            .setColor(Color.RED)
-                            .addField("Stacktrace of " + t.getClass().getSimpleName() + " in startup:", t.getMessage())));
-
-            return;
-        }
-
-        API.updateActivity(ActivityType.LISTENING, CMD.prefixes[0] + "help");
-        API.updateStatus(UserStatus.ONLINE);
+        API.getServerTextChannelById(639051738036568064L)
+                .ifPresent(itcrowd -> itcrowd.sendMessage(DefaultEmbedFactory.create().setDescription("Bot restarted!")).join());
     }
 
     private static void terminateAll() {
