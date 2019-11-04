@@ -48,6 +48,9 @@ public class Starboard implements Initializable, Closeable, ReactionAddListener,
 
     @Override 
     public void onMessageCreate(MessageCreateEvent event) {
+        System.out.println("event = " + event);
+        System.out.println("event.getMessage() = " + event.getMessage());
+
         if (event.getMessage().getContent().equals("gumo test")) {
             event.getMessage().addReaction(favReaction);
         }
