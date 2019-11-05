@@ -17,6 +17,7 @@ import de.comroid.cobalton.command.eval.BindingFactory;
 import de.comroid.cobalton.command.eval.EvalFactory;
 import de.comroid.cobalton.command.eval.EvalViewer;
 import de.comroid.cobalton.command.skribbl.SkribblEmbed;
+import de.comroid.util.ExceptionLogger;
 import de.kaleidox.javacord.util.commands.Command;
 import de.kaleidox.javacord.util.commands.CommandGroup;
 
@@ -32,7 +33,6 @@ import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
-import org.javacord.api.util.logging.ExceptionLogger;
 
 import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.ChronoField.MONTH_OF_YEAR;

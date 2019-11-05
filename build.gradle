@@ -48,8 +48,5 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:3.0.0-SNAPSHOT'
 
     // Runtime logger dependency
-    runtimeOnly('org.apache.logging.log4j:log4j-core:2.11.0') {
-        exclude group: 'org.javacord'
-        exclude group: 'org.fasterxml.jackson.core'
-    }
+    runtimeOnly 'org.apache.logging.log4j:log4j-core:2.12.1'
 }
