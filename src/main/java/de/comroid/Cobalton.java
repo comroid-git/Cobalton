@@ -47,10 +47,11 @@ public final class Cobalton {
                     .setToken(new BufferedReader(new FileReader(file)).readLine())
                     .login()
                     .thenApply(api -> {
+                        System.out.println("Successfully connected to Discord services");
                         api.getOwner()
                                 .thenAccept(ExceptionLogger::addReportTarget)
                                 .join();
-                        
+
                         return api;
                     })
                     .join();
@@ -66,18 +67,23 @@ public final class Cobalton {
 
             DefaultEmbedFactory.setEmbedSupplier(() -> new EmbedBuilder().setColor(THEME));
 
+            System.out.println("Initializing command handlers");
             CMD = new CommandHandler(API);
             CMD.prefixes = new String[]{"cobalton!", "c!"};
+            System.out.printf("Setting command prefixes: '%s'", String.join("', '", CMD.prefixes));
             CMD.useDefaultHelp(null);
             CMD.registerCommands(JamesCommands.INSTANCE);
             CMD.registerCommands(AdminCommands.INSTANCE);
 
+            System.out.println("Initialzing server properties");
             PROP = new ServerPropertiesManager(FileProvider.getFile("data/serverProps.json"));
             PROP.usePropertyCommand(null, CMD);
             Prop.init();
 
+            System.out.println("Registering prefix provider");
             CMD.withCustomPrefixProvider(Prop.PREFIX);
 
+            System.out.println("Registering runtime hooks");
             API.getThreadPool()
                     .getScheduler()
                     .scheduleAtFixedRate(Cobalton::storeAllData, 5, 5, TimeUnit.MINUTES);
@@ -85,10 +91,12 @@ public final class Cobalton {
 
             SRV = API.getServerById(625494140427173889L).orElseThrow(IllegalStateException::new);
 
+            System.out.println("Initializing Starboard");
             STAR = new Starboard(API, FileProvider.getFile("data/starboard.json"), "✅", 639051738036568064L);
 
             API.updateActivity(ActivityType.LISTENING, CMD.prefixes[0] + "help");
             API.updateStatus(UserStatus.ONLINE);
+            System.out.println("Bot ready and listening");
         } catch (Exception e) {
             ExceptionLogger.get().apply(e);
             System.exit(1);
@@ -118,6 +126,7 @@ public final class Cobalton {
     }
 
     private static void terminateAll() {
+        System.out.println("Trying to shutdown gracefully");
         try {
             PROP.close();
         } catch (IOException e) {
@@ -126,6 +135,7 @@ public final class Cobalton {
     }
 
     private static void storeAllData() {
+        System.out.println("Trying to save bot rpoperties");
         try {
             PROP.storeData();
         } catch (Exception e) {
