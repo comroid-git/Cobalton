@@ -19,6 +19,8 @@ import de.kaleidox.javacord.util.server.properties.PropertyGroup;
 import de.kaleidox.javacord.util.server.properties.ServerPropertiesManager;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.activity.ActivityType;
@@ -28,6 +30,7 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.UserStatus;
 
 public final class Cobalton {
+    public final static Logger logger = LogManager.getLogger();
     public final static Color THEME = new Color(0x0f7eb1);
 
     public static final long BOT_ID = 625651396410343424L;
@@ -42,12 +45,12 @@ public final class Cobalton {
     static {
         try {
             File file = FileProvider.getFile("login/token.cred");
-            System.out.println("Looking for token file at " + file.getAbsolutePath());
+            logger.info("Looking for token file at " + file.getAbsolutePath());
             API = new DiscordApiBuilder()
                     .setToken(new BufferedReader(new FileReader(file)).readLine())
                     .login()
                     .thenApply(api -> {
-                        System.out.println("Successfully connected to Discord services");
+                        logger.info("Successfully connected to Discord services");
                         api.getOwner()
                                 .thenAccept(ExceptionLogger::addReportTarget)
                                 .join();
@@ -67,23 +70,23 @@ public final class Cobalton {
 
             DefaultEmbedFactory.setEmbedSupplier(() -> new EmbedBuilder().setColor(THEME));
 
-            System.out.println("Initializing command handlers");
+            logger.info("Initializing command handlers");
             CMD = new CommandHandler(API);
             CMD.prefixes = new String[]{"cobalton!", "c!"};
-            System.out.printf("Setting command prefixes: '%s'", String.join("', '", CMD.prefixes));
+            logger.info(String.format("Setting command prefixes: '%s'", String.join("', '", CMD.prefixes)));
             CMD.useDefaultHelp(null);
             CMD.registerCommands(JamesCommands.INSTANCE);
             CMD.registerCommands(AdminCommands.INSTANCE);
 
-            System.out.println("Initialzing server properties");
+            logger.info("Initialzing server properties");
             PROP = new ServerPropertiesManager(FileProvider.getFile("data/serverProps.json"));
             PROP.usePropertyCommand(null, CMD);
             Prop.init();
 
-            System.out.println("Registering prefix provider");
+            logger.info("Registering prefix provider");
             CMD.withCustomPrefixProvider(Prop.PREFIX);
 
-            System.out.println("Registering runtime hooks");
+            logger.info("Registering runtime hooks");
             API.getThreadPool()
                     .getScheduler()
                     .scheduleAtFixedRate(Cobalton::storeAllData, 5, 5, TimeUnit.MINUTES);
@@ -91,12 +94,12 @@ public final class Cobalton {
 
             SRV = API.getServerById(625494140427173889L).orElseThrow(IllegalStateException::new);
 
-            System.out.println("Initializing Starboard");
+            logger.info("Initializing Starboard");
             STAR = new Starboard(API, FileProvider.getFile("data/starboard.json"), "✅", 639051738036568064L);
 
             API.updateActivity(ActivityType.LISTENING, CMD.prefixes[0] + "help");
             API.updateStatus(UserStatus.ONLINE);
-            System.out.println("Bot ready and listening");
+            logger.info("Bot ready and listening");
         } catch (Exception e) {
             ExceptionLogger.get().apply(e);
             System.exit(1);
@@ -126,7 +129,7 @@ public final class Cobalton {
     }
 
     private static void terminateAll() {
-        System.out.println("Trying to shutdown gracefully");
+        logger.info("Trying to shutdown gracefully");
         try {
             PROP.close();
         } catch (IOException e) {
@@ -135,7 +138,7 @@ public final class Cobalton {
     }
 
     private static void storeAllData() {
-        System.out.println("Trying to save bot rpoperties");
+        logger.info("Trying to save bot properties");
         try {
             PROP.storeData();
         } catch (Exception e) {
