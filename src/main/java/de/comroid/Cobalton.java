@@ -12,6 +12,7 @@ import de.comroid.cobalton.command.JamesCommands;
 import de.comroid.cobalton.engine.RoleMessageEngine;
 import de.comroid.cobalton.engine.StartsWithCommandsEngine;
 import de.comroid.cobalton.engine.starboard.Starboard;
+import de.comroid.util.ExceptionLogger;
 import de.comroid.util.files.FileProvider;
 import de.kaleidox.javacord.util.commands.CommandHandler;
 import de.kaleidox.javacord.util.server.properties.PropertyGroup;
@@ -25,7 +26,6 @@ import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.UserStatus;
-import org.javacord.api.util.logging.ExceptionLogger;
 
 public final class Cobalton {
     public final static Color THEME = new Color(0x0f7eb1);
@@ -46,7 +46,13 @@ public final class Cobalton {
             API = new DiscordApiBuilder()
                     .setToken(new BufferedReader(new FileReader(file)).readLine())
                     .login()
-                    .exceptionally(ExceptionLogger.get())
+                    .thenApply(api -> {
+                        api.getOwner()
+                                .thenAccept(ExceptionLogger::addReportTarget)
+                                .join();
+                        
+                        return api;
+                    })
                     .join();
 
             API.updateStatus(UserStatus.DO_NOT_DISTURB);
@@ -94,15 +100,18 @@ public final class Cobalton {
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage))));
         API.addMessageCreateListener(new StartsWithCommandsEngine());
 
-        API.addServerMemberJoinListener(event -> API.getRoleById(632196120902107137L).ifPresent(event.getUser()::addRole));
+        API.addServerMemberJoinListener(event -> API.getRoleById(632196120902107137L)
+                .ifPresent(event.getUser()::addRole));
 
         API.getServerTextChannelById(625640036096016404L)
                 .ifPresent(weristes -> weristes.addMessageCreateListener(event -> {
-                    API.getRoleById(632196120902107137L).ifPresent(event.getMessageAuthor().asUser().get()::removeRole);
+                    API.getRoleById(632196120902107137L)
+                            .ifPresent(event.getMessageAuthor().asUser().get()::removeRole);
                 }));
 
         API.getServerTextChannelById(639051738036568064L)
-                .ifPresent(itcrowd -> itcrowd.sendMessage(DefaultEmbedFactory.create().setDescription("Bot restarted!")).join());
+                .ifPresent(itcrowd -> itcrowd.sendMessage(DefaultEmbedFactory.create()
+                        .setDescription("Bot restarted!")).join());
     }
 
     private static void terminateAll() {
