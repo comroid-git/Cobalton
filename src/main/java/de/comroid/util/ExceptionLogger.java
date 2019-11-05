@@ -2,6 +2,7 @@ package de.comroid.util;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -11,6 +12,14 @@ import java.util.function.Function;
 import de.comroid.Cobalton;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
 
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.Core;
+import org.apache.logging.log4j.core.Filter;
+import org.apache.logging.log4j.core.Layout;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
+import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.Mentionable;
 import org.javacord.api.entity.channel.TextChannel;
@@ -62,5 +71,28 @@ public class ExceptionLogger {
 
             return null;
         };
+    }
+
+    @Plugin(
+            name = "CobaltonLog4J2Appender",
+            category = Core.CATEGORY_NAME,
+            elementType = Appender.ELEMENT_TYPE)
+    public static class CobaltonLog4J2Appender extends AbstractAppender {
+        private final Function<Throwable, ?> logger;
+
+        protected CobaltonLog4J2Appender(String name, Filter filter, Layout<? extends Serializable> layout, boolean ignoreExceptions, Property[] properties) {
+            super(name, filter, layout, ignoreExceptions, properties);
+
+            //noinspection RedundantTypeArguments
+            this.logger = ExceptionLogger.<Object>get();
+        }
+
+        @Override
+        public void append(LogEvent event) {
+            final Throwable throwable = event.getThrown();
+            
+            if (throwable != null) 
+                logger.apply(throwable);
+        }
     }
 }

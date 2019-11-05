@@ -7,11 +7,15 @@
         <File name="logfile" filename="/var/bots/james/latest.log" bufferedIo="false" append="false">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </File>
+        <CobaltonLog4J2Appender name="CobaltonLog4J2Appender">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </CobaltonLog4J2Appender>
     </Appenders>
     <Loggers>
         <Root level="trace">
             <AppenderRef ref="Console" level="info" />
             <AppenderRef ref="logfile" level="error" />
+            <AppenderRef ref="CobaltonLog4J2Appender" level="error" />
         </Root>
     </Loggers>
 </Configuration>
