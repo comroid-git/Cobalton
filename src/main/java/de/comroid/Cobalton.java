@@ -90,14 +90,15 @@ public final class Cobalton {
             API.updateActivity(ActivityType.LISTENING, CMD.prefixes[0] + "help");
             API.updateStatus(UserStatus.ONLINE);
         } catch (Exception e) {
-            throw new RuntimeException("Error in initializer", e);
+            ExceptionLogger.get().apply(e);
         }
     }
 
     public static void main(String[] args) {
         API.getServerTextChannelById(Prop.INFO_CHANNEL.getValue(SRV).asLong())
                 .ifPresent(infoChannel -> infoChannel.getMessageById(Prop.ROLE_MESSAGE.getValue(SRV).asLong())
-                        .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage))));
+                        .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage)))
+                        .exceptionally(ExceptionLogger.get()));
         API.addMessageCreateListener(new StartsWithCommandsEngine());
 
         API.addServerMemberJoinListener(event -> API.getRoleById(632196120902107137L)
