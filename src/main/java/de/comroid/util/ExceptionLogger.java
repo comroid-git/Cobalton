@@ -80,7 +80,7 @@ public class ExceptionLogger {
     public static class CobaltonLog4J2Appender extends AbstractAppender {
         private final Function<Throwable, ?> logger;
 
-        protected CobaltonLog4J2Appender(String name, Filter filter, Layout<? extends Serializable> layout, boolean ignoreExceptions, Property[] properties) {
+        public CobaltonLog4J2Appender(String name, Filter filter, Layout<? extends Serializable> layout, boolean ignoreExceptions, Property[] properties) {
             super(name, filter, layout, ignoreExceptions, properties);
 
             //noinspection RedundantTypeArguments
