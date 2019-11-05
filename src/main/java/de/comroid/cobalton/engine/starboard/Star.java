@@ -3,6 +3,7 @@ package de.comroid.cobalton.engine.starboard;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import de.comroid.util.ExceptionLogger;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.Message;
 
@@ -57,7 +58,7 @@ class Star implements StarMap {
                         ))
                 );
             } catch (Throwable t) {
-                t.printStackTrace();
+                ExceptionLogger.get().apply(t);
             }
         };
     }
