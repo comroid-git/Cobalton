@@ -91,6 +91,8 @@ public final class Cobalton {
             API.updateStatus(UserStatus.ONLINE);
         } catch (Exception e) {
             ExceptionLogger.get().apply(e);
+            System.exit(1);
+            throw new AssertionError();
         }
     }
 
