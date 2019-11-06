@@ -17,9 +17,11 @@ public class StarMap implements Initializable, Closeable {
     public final Logger logger = LogManager.getLogger();
     private final ObjectMapper mapper = new ObjectMapper();
     private final HashMap<Long, Star> stars = new HashMap<>();
+    private final DiscordApi api;
     private final File starboardFile;
 
-    public StarMap(File file) {
+    public StarMap(DiscordApi api, File file) {
+        this.api = api;
         this.starboardFile = file;
     }
 
@@ -64,6 +66,24 @@ public class StarMap implements Initializable, Closeable {
 
     public void put(Star star) {
         this.stars.put(star.getOrigin().id, star);
+        if (star.getScore() <= 0) {
+            api.getChannelById(star.getDestination().channel).ifPresent(destination ->
+                    {
+                        try {
+                            destination
+                                    .asTextChannel().get()
+                                    .getMessageById(star.getDestination().id).get()
+                                    .delete().thenAccept((Void v) ->
+                                    this.stars.remove(star.getOrigin().id))
+                                    .join();
+                        } catch (ExecutionException | InterruptedException e) {
+                            this.logger.error("error unstarring message", e);
+                        }
+                    }
+            );
+        } else {
+            this.stars.put(star.getOrigin().id, star);
+        }
     }
 
     public void put(Message origin, Message destination) {

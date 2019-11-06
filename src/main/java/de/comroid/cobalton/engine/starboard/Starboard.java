@@ -30,7 +30,7 @@ public class Starboard implements ReactionAddListener, ReactionRemoveListener {
 
     public Starboard(DiscordApi api, File starboardFile, String favReaction, long starChannel) throws IOException {
         if (!starboardFile.exists()) starboardFile.createNewFile();
-        this.stars = new StarMap(starboardFile);
+        this.stars = new StarMap(api, starboardFile);
         this.favReaction = favReaction;
         this.starChannel = api.getServerTextChannelById(starChannel).get();
         this.api = api;
