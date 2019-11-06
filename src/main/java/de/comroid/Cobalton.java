@@ -45,20 +45,19 @@ public final class Cobalton {
 
     static {
         try {
-            File file = FileProvider.getFile("login/token.cred");
-            logger.info("Looking for token file at " + file.getAbsolutePath());
-            API = new DiscordApiBuilder()
-                    .setToken(new BufferedReader(new FileReader(file)).readLine())
-                    .login()
-                    .thenApply(api -> {
-                        logger.info("Successfully connected to Discord services");
-                        return api;
-                    })
-                    .exceptionally(throwable -> {
-                        logger.error(throwable);
-                        return null;
-                    })
-                    .join();
+            File token = FileProvider.getFile("login/token.cred");
+            logger.info("Looking for token file at " + token.getAbsolutePath());
+
+            try {
+                API = new DiscordApiBuilder()
+                        .setToken(new BufferedReader(new FileReader(token)).readLine())
+                        .login()
+                        .get();
+            } catch (Throwable t) {
+                throw new RuntimeException("Failed to login to discord servers", t);
+            }
+
+            logger.info("Successfully connected to Discord services");
 
             API.updateStatus(UserStatus.DO_NOT_DISTURB);
             API.updateActivity("Booting up...");
