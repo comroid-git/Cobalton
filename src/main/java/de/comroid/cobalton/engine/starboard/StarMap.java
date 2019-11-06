@@ -38,7 +38,7 @@ public class StarMap implements Initializable, Closeable {
             if (!this.starboardFile.exists()) this._init();
 
             Star[] stars = this.mapper.readerFor(Star[].class).readValue(this.starboardFile);
-            if (stars.length == 0) return;
+            if (stars.length == 0) this._init();
             for (Star star : stars) {
                 if (star.getScore() == 0 ||
                         star.getOrigin() == null ||
@@ -46,6 +46,7 @@ public class StarMap implements Initializable, Closeable {
                 ) break;
                 this.stars.put(star.getOrigin().id, star);
             }
+            logger.info("starboard initialized successfully");
         } catch (IOException e) {
             throw new RuntimeException("error initializing starboard store", e);
         }
