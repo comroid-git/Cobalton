@@ -1,23 +1,14 @@
 package de.comroid.cobalton.engine.starboard;
 
-import java.io.Closeable;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import de.comroid.cobalton.model.Embed;
-import de.kaleidox.util.interfaces.Initializable;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
-import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.reaction.ReactionAddEvent;
+import org.javacord.api.event.message.reaction.ReactionEvent;
 import org.javacord.api.event.message.reaction.ReactionRemoveEvent;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.javacord.api.listener.message.reaction.ReactionRemoveListener;
@@ -46,19 +37,33 @@ public class Starboard implements ReactionAddListener, ReactionRemoveListener {
                 .setDescription(event.getMessage().get().getContent());
     }
 
+
     private void updateEmbed(Star star) {
-        this.starChannel.getMessageById(star.getDestination().id).thenAccept(destination ->
-                destination.edit(
-                        destination.getEmbeds()
-                                .get(0)
-                                .toBuilder()
-                                .updateFields((embedField) -> embedField.getName().equals("Score"),
-                                        editableEmbedField -> editableEmbedField.setValue(
-                                                String.format("```%d %s```", star.getScore(), this.favReaction)
+        this.starChannel
+                .getMessageById(star.getDestination().id)
+                .thenAccept(destination ->
+                        destination.edit(
+                                destination.getEmbeds()
+                                        .get(0)
+                                        .toBuilder()
+                                        .updateFields((embedField) -> embedField.getName().equals("Score"),
+                                                editableEmbedField -> editableEmbedField.setValue(
+                                                        String.format("```%d %s```", star.getScore(), this.favReaction)
+                                                )
                                         )
-                                )
+                        )
                 )
-        ).thenAccept((Void v) -> this.stars.put(star)).join();
+                .thenAccept((Void v) -> this.stars.put(star))
+                .join();
+    }
+
+    private <T extends ReactionEvent> boolean isStarboardChannel(T event) {
+        if (event instanceof ReactionAddEvent) {
+            return ((ReactionAddEvent) event).getEmoji().asUnicodeEmoji().map(Starboard.this.favReaction::equals).orElse(false);
+        } else if (event instanceof ReactionRemoveEvent) {
+            return ((ReactionRemoveEvent) event).getEmoji().asUnicodeEmoji().map(Starboard.this.favReaction::equals).orElse(false);
+        }
+        return false;
     }
 
     @Override
@@ -66,7 +71,7 @@ public class Starboard implements ReactionAddListener, ReactionRemoveListener {
         if (event.getUser().isYourself() ||
                 !event.getServer().isPresent()
         ) return;
-        if (event.getEmoji().asUnicodeEmoji().map(this.favReaction::equals).orElse(false)) {
+        if (this.isStarboardChannel(event)) {
             // check if event channel is starboard
             /* TODO: flip expression once feature works,
                 since we want to check that reaction does not happen
@@ -79,7 +84,10 @@ public class Starboard implements ReactionAddListener, ReactionRemoveListener {
                     this.updateEmbed(star);
                 } else {
                     // Message was not yet starred
-                    event.getChannel().sendMessage(this.getBuilder(event)).thenAccept(destination -> this.stars.put(event.getMessage().get(), destination)).join();
+                    event.getChannel()
+                            .sendMessage(this.getBuilder(event))
+                            .thenAccept(destination -> this.stars.put(event.getMessage().get(), destination))
+                            .join();
                 }
             }
         }
@@ -91,7 +99,7 @@ public class Starboard implements ReactionAddListener, ReactionRemoveListener {
                 !event.getServer().isPresent()
         ) return;
 
-        if (event.getEmoji().asUnicodeEmoji().map(this.favReaction::equals).orElse(false)) {
+        if (this.isStarboardChannel(event)) {
             // check if event channel is starboard
             /* TODO: flip expression once feature works,
                 since we want to check that reaction does not happen
