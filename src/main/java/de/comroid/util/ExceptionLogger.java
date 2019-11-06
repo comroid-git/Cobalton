@@ -12,6 +12,8 @@ import java.util.function.Function;
 import de.comroid.Cobalton;
 import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.Core;
 import org.apache.logging.log4j.core.Filter;
@@ -32,6 +34,7 @@ import org.javacord.api.entity.user.User;
 
 public class ExceptionLogger {
     private static Collection<Long> reportTo = new ArrayList<>();
+    private final static Logger logger = LogManager.getLogger();
 
     public static void addReportTarget(Messageable reportTo) {
         if (reportTo instanceof User) {
@@ -66,12 +69,16 @@ public class ExceptionLogger {
                     .addField(String.format("An [%s] was thrown in a future:", throwable.getClass().getSimpleName()),
                             String.format("```\n%s\n```", out.str));
 
-            reportTo.stream()
-                    .map(Cobalton.API::getTextChannelById)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .map(tc -> tc.sendMessage(embedBuilder))
-                    .map(CompletableFuture::join);
+            if (Cobalton.API != null) {
+                reportTo.stream()
+                        .map(Cobalton.API::getTextChannelById)
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .map(tc -> tc.sendMessage(embedBuilder))
+                        .map(CompletableFuture::join);
+            } else {
+                logger.error("cannot log exception to channels [API=Null]");
+            }
 
             return null;
         };
