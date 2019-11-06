@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="warn" monitorInterval="60" packages="de.comroid.util">
+    <Properties>
+        <Property name="LS">${sys:file.separator}</Property>
+        <Property name="LOG_FILE">${LS}var${LS}bots${LS}james${LS}latest.log</Property>
+    </Properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-        <File name="logfile" filename="/var/bots/james/latest.log" bufferedIo="false" append="false">
+        <File name="logfile" filename="${env:LOG_FILE:-LOG_FILE}" bufferedIo="true" append="false">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </File>
         <CobaltonLog4J2Appender name="CobaltonLog4J2Appender">
@@ -13,9 +17,9 @@
     </Appenders>
     <Loggers>
         <Root level="trace">
-            <AppenderRef ref="Console" level="info" />
-            <AppenderRef ref="logfile" level="debug" />
-            <AppenderRef ref="CobaltonLog4J2Appender" level="error" />
+            <AppenderRef ref="Console" level="info"/>
+            <AppenderRef ref="logfile" level="debug"/>
+            <AppenderRef ref="CobaltonLog4J2Appender" level="error"/>
         </Root>
     </Loggers>
 </Configuration>
