@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.activity.ActivityType;
+import org.javacord.api.entity.channel.Channel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
@@ -54,8 +55,14 @@ public final class Cobalton {
                         api.getOwner()
                                 .thenAccept(ExceptionLogger::addReportTarget)
                                 .join();
-
+                        api.getChannelById(639051738036568064L)
+                                .flatMap(Channel::asTextChannel)
+                                .ifPresent(ExceptionLogger::addReportTarget);
                         return api;
+                    })
+                    .exceptionally(throwable -> {
+                        logger.error(throwable);
+                        return null;
                     })
                     .join();
 
