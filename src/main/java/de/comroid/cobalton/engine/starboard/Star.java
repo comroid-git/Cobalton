@@ -1,134 +1,77 @@
 package de.comroid.cobalton.engine.starboard;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-import de.comroid.util.ExceptionLogger;
-import org.javacord.api.DiscordApi;
+
 import org.javacord.api.entity.message.Message;
 
-import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
-
-interface StarMap {
-    Message origin = null;
-    Message destination = null;
-}
-
-interface SerializableStarMap {
-    long origin = 0L;
-    long destination = 0L;
-}
-
-class Star implements StarMap {
-    private final Message origin;
-    private final Message destination;
-    private int count;
+class StarMessage {
+    public long id;
+    public long channel;
 
     @JsonCreator
-    public Star(@JsonProperty("origin") Message origin, @JsonProperty("destination") Message destination, int stars) {
+    StarMessage(@JsonProperty long id, @JsonProperty long channel) {
+        this.id = id;
+        this.channel = channel;
+    }
+}
+
+public class Star {
+    private int score;
+    private StarMessage origin;
+    private StarMessage destination;
+
+    @JsonCreator
+    public Star(@JsonProperty int score, @JsonProperty StarMessage origin, @JsonProperty StarMessage destination) {
+        this.score = score;
         this.origin = origin;
         this.destination = destination;
-        this.count = stars;
     }
 
-    private static Message getMessage(DiscordApi api, long id, long channel) throws ExecutionException, InterruptedException {
-        return api.getMessageById(id, api.getChannelById(channel).get().asTextChannel().get()).get();
+    public Star(int score, Message origin, Message destination) {
+        this.score = score;
+        this.setOrigin(origin);
+        this.setDestination(destination);
     }
 
-    Star(DiscordApi api, SerializableStar star) throws ExecutionException, InterruptedException {
-        this(
-                getMessage(api, star.originMessage, star.originChannel),
-                getMessage(api, star.destinationMessage, star.destinationChannel),
-                star.count
-        );
+    @JsonGetter("score")
+    public int getScore() {
+        return this.score;
     }
 
-    public static Consumer<? super JsonNode> map(DiscordApi api, Consumer<? super Star> consumer) {
-        return jsonNode -> {
-            try {
-                consumer.accept(new Star(
-                        api,
-                        new SerializableStar(
-                                jsonNode.get("originMessage").asLong(),
-                                jsonNode.get("originChannel").asLong(),
-                                jsonNode.get("destinationMessage").asLong(),
-                                jsonNode.get("destinationChannel").asLong(),
-                                jsonNode.get("count").asInt()
-                        ))
-                );
-            } catch (Throwable t) {
-                ExceptionLogger.get().apply(t);
-            }
-        };
+    @JsonGetter("origin")
+    public StarMessage getOrigin() {
+        return this.origin;
     }
-//    public static Consumer<? super JsonNode> map(Runnable r) {
-//        final String origin = starNode.get("origin");
-//        final String destination = starnode.get("destination");
-//        r.run(new SerializableStar(origin, destination));
-//    }
 
-
-    public Message getDestination() {
+    @JsonGetter("destination")
+    public StarMessage getDestination() {
         return this.destination;
     }
 
-    public Message getOrigin() {
-        return origin;
+    @JsonProperty
+    public void setScore(int score) {
+        this.score = score;
     }
 
-    public int getCount() {
-        return count;
+    @JsonProperty
+    public void setOrigin(Message origin) {
+        this.origin = new StarMessage(origin.getId(), origin.getChannel().getId());
     }
 
-    public Star addStar() {
-        this.count++;
-        return this;
+    @JsonProperty
+    public void setDestination(Message destination) {
+        this.destination = new StarMessage(destination.getId(), destination.getChannel().getId());
     }
 
-    public Star removeStar() {
-        // ensure message always is minimum 0
-        if (this.count - 1 >= 0) {
-            this.count--;
-        }
-        return this;
-    }
-}
-
-class SerializableStar implements SerializableStarMap {
-    public long originMessage;
-    public long destinationMessage;
-    public long originChannel;
-    public long destinationChannel;
-    public int count;
-
-    @JsonCreator
-    public SerializableStar(@JsonProperty("originMesage") Message origin,
-                            @JsonProperty("destinationMessage") Message destination,
-                            @JsonProperty("count") int count) {
-        this.originMessage = origin.getId();
-        this.originChannel = origin.getChannel().getId();
-        this.destinationMessage = destination.getId();
-        this.destinationChannel = destination.getChannel().getId();
-        this.count = count;
+    public int incScore() {
+        this.score++;
+        return this.score;
     }
 
-    @JsonCreator
-    public SerializableStar(@JsonProperty("originMesage") long origin,
-                            @JsonProperty("originChannel") long originChannel,
-                            @JsonProperty("destinationMessage") long destination,
-                            @JsonProperty("destinationMessage") long destinationChannel,
-                            int count) {
-        this.originMessage = origin;
-        this.originChannel = originChannel;
-        this.destinationMessage = destination;
-        this.destinationChannel = destinationChannel;
-        this.count = count;
+    public int decScore() {
+        this.score--;
+        return this.score;
     }
-
-    @JsonCreator
-    public SerializableStar(Star star) {
-        this(star.getOrigin(), star.getDestination(), star.getCount());
-    }
-
 }
