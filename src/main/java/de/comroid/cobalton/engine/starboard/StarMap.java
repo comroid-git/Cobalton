@@ -73,7 +73,8 @@ public class StarMap implements Initializable, Closeable {
     public void put(int score, Message origin, Message destination) {
         if (score <= 0) {
             destination.delete().thenAccept((Void v) -> this.stars.remove(origin.getId())).join();
+        } else {
+            this.stars.put(origin.getId(), new Star(score, origin, destination));
         }
-        this.stars.put(origin.getId(), new Star(score, origin, destination));
     }
 }
