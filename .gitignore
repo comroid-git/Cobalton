@@ -106,3 +106,5 @@ gradle-app.setting
 
 run/
 .idea/
+data/
+login/
