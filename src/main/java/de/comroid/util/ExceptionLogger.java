@@ -26,13 +26,14 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.Mentionable;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.Messageable;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 
 public class ExceptionLogger {
     private static Collection<Long> reportTo = new ArrayList<>();
 
-    public static void addReportTarget(Mentionable reportTo) {
+    public static void addReportTarget(Messageable reportTo) {
         if (reportTo instanceof User) {
             ((User) reportTo).openPrivateChannel()
                     .thenApply(DiscordEntity::getId)
@@ -46,7 +47,7 @@ public class ExceptionLogger {
     public static boolean removeReportTarget(long id) {
         return reportTo.remove(id);
     }
-    
+
     public static <T> Function<Throwable, T> get() {
         return throwable -> {
             class StringOutputStream extends OutputStream {
@@ -57,7 +58,7 @@ public class ExceptionLogger {
                     str += (char) b;
                 }
             }
-            
+
             final StringOutputStream out = new StringOutputStream();
             throwable.printStackTrace(new PrintStream(out));
 
