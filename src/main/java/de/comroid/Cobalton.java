@@ -52,12 +52,6 @@ public final class Cobalton {
                     .login()
                     .thenApply(api -> {
                         logger.info("Successfully connected to Discord services");
-                        api.getOwner()
-                                .thenAccept(ExceptionLogger::addReportTarget)
-                                .join();
-                        api.getChannelById(639051738036568064L)
-                                .flatMap(Channel::asTextChannel)
-                                .ifPresent(ExceptionLogger::addReportTarget);
                         return api;
                     })
                     .exceptionally(throwable -> {
@@ -115,6 +109,13 @@ public final class Cobalton {
     }
 
     public static void main(String[] args) {
+        API.getOwner()
+                .thenAccept(ExceptionLogger::addReportTarget)
+                .join();
+        API.getChannelById(639051738036568064L)
+                .flatMap(Channel::asTextChannel)
+                .ifPresent(ExceptionLogger::addReportTarget);
+
         API.getServerTextChannelById(Prop.INFO_CHANNEL.getValue(SRV).asLong())
                 .ifPresent(infoChannel -> infoChannel.getMessageById(Prop.ROLE_MESSAGE.getValue(SRV).asLong())
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage)))
