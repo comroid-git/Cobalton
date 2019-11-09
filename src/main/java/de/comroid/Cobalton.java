@@ -121,7 +121,13 @@ public final class Cobalton {
                 .ifPresent(infoChannel -> infoChannel.getMessageById(Prop.ROLE_MESSAGE.getValue(SRV).asLong())
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage)))
                         .exceptionally(ExceptionLogger.get()));
-        
+
+        SRV.addServerMemberJoinListener(event -> {
+            SRV.getSystemChannel()
+                    .ifPresent(stc -> stc.sendMessage(DefaultEmbedFactory.create().addField("Willkommen zum Abriss, " + event.getUser().getDiscriminatedName() + "!",
+                            "Bitte stell dich doch kurz in <#625640036096016404> mit ein paar Zeilen vor, dann kannst du alle Channel benutzen!")));
+        });
+
         // init gamescom engine
         new GamescomEngine(API);
 
