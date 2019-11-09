@@ -121,7 +121,9 @@ public final class Cobalton {
                 .ifPresent(infoChannel -> infoChannel.getMessageById(Prop.ROLE_MESSAGE.getValue(SRV).asLong())
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage)))
                         .exceptionally(ExceptionLogger.get()));
-        API.addListener(new GamescomEngine());
+        
+        // init gamescom engine
+        new GamescomEngine(API);
 
         API.addServerMemberJoinListener(event -> API.getRoleById(632196120902107137L)
                 .ifPresent(event.getUser()::addRole));
