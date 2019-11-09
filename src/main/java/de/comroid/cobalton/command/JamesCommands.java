@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import de.comroid.cobalton.command.skribbl.SkribblEmbed;
 import de.comroid.javacord.util.commands.Command;
+import de.comroid.javacord.util.commands.CommandGroup;
 
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.TextChannel;
@@ -21,6 +22,7 @@ import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
+@CommandGroup(name = "Cobalton Tools", description = "Basic tools provided by Cobalton")
 public enum JamesCommands {
     INSTANCE;
 
