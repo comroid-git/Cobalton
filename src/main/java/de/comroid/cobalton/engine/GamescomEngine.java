@@ -29,7 +29,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
     public void onServerVoiceChannelMemberLeave(ServerVoiceChannelMemberLeaveEvent event) {
         final ServerVoiceChannel svc = event.getChannel();
         
-        if (svc .getId() != GAMESCOM_VOICE) return;
+        if (svc.getId() != GAMESCOM_VOICE) return;
 
         if (svc.getConnectedUserIds().size() == 0) {
             // trigger guna
