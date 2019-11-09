@@ -9,15 +9,16 @@ import java.util.concurrent.TimeUnit;
 
 import de.comroid.cobalton.command.AdminCommands;
 import de.comroid.cobalton.command.JamesCommands;
+import de.comroid.cobalton.engine.GamescomEngine;
 import de.comroid.cobalton.engine.RoleMessageEngine;
-import de.comroid.cobalton.engine.StartsWithCommandsEngine;
 import de.comroid.cobalton.engine.starboard.Starboard;
-import de.comroid.util.ExceptionLogger;
-import de.comroid.util.files.FileProvider;
+import de.comroid.eval.EvalCommand;
 import de.comroid.javacord.util.commands.CommandHandler;
 import de.comroid.javacord.util.server.properties.PropertyGroup;
 import de.comroid.javacord.util.server.properties.ServerPropertiesManager;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import de.comroid.util.ExceptionLogger;
+import de.comroid.util.files.FileProvider;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -77,6 +78,7 @@ public final class Cobalton {
             CMD.useDefaultHelp(null);
             CMD.registerCommands(JamesCommands.INSTANCE);
             CMD.registerCommands(AdminCommands.INSTANCE);
+            CMD.registerCommands(EvalCommand.INSTANCE);
 
             logger.info("Initialzing server properties");
             PROP = new ServerPropertiesManager(FileProvider.getFile("data/serverProps.json"));
@@ -119,7 +121,9 @@ public final class Cobalton {
                 .ifPresent(infoChannel -> infoChannel.getMessageById(Prop.ROLE_MESSAGE.getValue(SRV).asLong())
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage)))
                         .exceptionally(ExceptionLogger.get()));
-        API.addMessageCreateListener(new StartsWithCommandsEngine());
+        
+        // init gamescom engine
+        new GamescomEngine(API);
 
         API.addServerMemberJoinListener(event -> API.getRoleById(632196120902107137L)
                 .ifPresent(event.getUser()::addRole));

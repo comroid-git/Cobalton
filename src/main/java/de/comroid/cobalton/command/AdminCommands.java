@@ -13,13 +13,10 @@ import java.util.stream.Collectors;
 import javax.script.ScriptEngineManager;
 
 import de.comroid.Cobalton;
-import de.comroid.cobalton.command.eval.BindingFactory;
-import de.comroid.cobalton.command.eval.EvalFactory;
-import de.comroid.cobalton.command.eval.EvalViewer;
 import de.comroid.cobalton.command.skribbl.SkribblEmbed;
-import de.comroid.util.ExceptionLogger;
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
+import de.comroid.util.ExceptionLogger;
 
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
@@ -67,30 +64,6 @@ public enum AdminCommands {
     public void skribbl(Server server, User user, TextChannel channel, Message command) {
         final SkribblEmbed embed = new SkribblEmbed(server, user);
         channel.sendMessage(embed.getBuilder())
-                .thenRun(command::delete)
-                .join();
-    }
-
-    @Command(aliases = "eval",
-            convertStringResultsToEmbed = true,
-            useTypingIndicator = true,
-            async = true)
-    public void eval(User user, String[] args, Message command, TextChannel channel, Server server) {
-        if (!(user.isBotOwner() || user.getId() == 292141393739251714L)) {
-            command.delete("Unauthorized").join();
-            //channel.sendMessage("User " + user.getDiscriminatedName() + " not authorized."); unfriendly :(
-            return;
-        }
-
-        final String argsJoin = String.join(" ", args);
-        final String[] lines = argsJoin.split("\\n");
-        final BindingFactory bindings = new BindingFactory(user, command, channel, server);
-        final EvalFactory eval = new EvalFactory(bindings);
-        final EvalViewer viewer = new EvalViewer(eval, command, lines);
-
-        channel
-                .sendMessage(viewer.createEmbed(server, user))
-                .thenAccept(viewer::complete)
                 .thenRun(command::delete)
                 .join();
     }
