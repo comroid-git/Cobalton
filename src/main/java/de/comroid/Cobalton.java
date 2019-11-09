@@ -12,6 +12,7 @@ import de.comroid.cobalton.command.JamesCommands;
 import de.comroid.cobalton.engine.RoleMessageEngine;
 import de.comroid.cobalton.engine.StartsWithCommandsEngine;
 import de.comroid.cobalton.engine.starboard.Starboard;
+import de.comroid.eval.EvalCommand;
 import de.comroid.util.ExceptionLogger;
 import de.comroid.util.files.FileProvider;
 import de.comroid.javacord.util.commands.CommandHandler;
@@ -77,6 +78,7 @@ public final class Cobalton {
             CMD.useDefaultHelp(null);
             CMD.registerCommands(JamesCommands.INSTANCE);
             CMD.registerCommands(AdminCommands.INSTANCE);
+            CMD.registerCommands(EvalCommand.INSTANCE);
 
             logger.info("Initialzing server properties");
             PROP = new ServerPropertiesManager(FileProvider.getFile("data/serverProps.json"));
