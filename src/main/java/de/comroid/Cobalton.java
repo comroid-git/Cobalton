@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.comroid.cobalton.command.AdminCommands;
@@ -41,8 +43,9 @@ public final class Cobalton {
     public static final CommandHandler CMD;
     public static final ServerPropertiesManager PROP;
     public static final Starboard STAR;
-
     public static final Server SRV;
+    
+    public static final List<Long> permitted = new ArrayList<>();
 
     static {
         try {
@@ -59,6 +62,10 @@ public final class Cobalton {
             }
 
             logger.info("Successfully connected to Discord services");
+            
+            permitted.add(141476933849448448L); // Kaleidox
+            permitted.add(292141393739251714L); // Jay
+            permitted.add(232610922298998784L); // Flo
 
             API.updateStatus(UserStatus.DO_NOT_DISTURB);
             API.updateActivity("Booting up...");

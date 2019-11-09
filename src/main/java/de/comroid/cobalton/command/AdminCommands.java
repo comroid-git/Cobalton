@@ -59,32 +59,25 @@ public enum AdminCommands {
 
     @Command(usage = "shutdown", description = "Only the owner of the bot can use this", shownInHelpCommand = false)
     public void shutdown(User user, String[] args, Message command, TextChannel channel) {
-        if (user.isBotOwner() || user.getId() == 292141393739251714L) System.exit(1);
+        if (Cobalton.permitted.contains(user.getId()))
+            System.exit(1);
+        
         command.delete("Unauthorized").join();
         channel.sendMessage("User " + user.getDiscriminatedName() + " not authorized.");
     }
 
-    @Command(aliases = "skribbl",
-            convertStringResultsToEmbed = true,
-            useTypingIndicator = true,
-            async = true)
-    public void skribbl(Server server, User user, TextChannel channel, Message command) {
-        final SkribblEmbed embed = new SkribblEmbed(server, user);
-        channel.sendMessage(embed.getBuilder())
-                .thenRun(command::delete)
-                .join();
-    }
-
     @Command
     public String say(String[] args, User executor) {
-        if (!executor.isBotOwner()) return null;
+        if (!Cobalton.permitted.contains(executor.getId()))
+            return null;
 
         return String.join(" ", args);
     }
 
     @Command(description = "Experimental")
     public EmbedBuilder ssh(String[] args, User executor) throws IOException, InterruptedException {
-        if (!executor.isBotOwner()) return null;
+        if (!Cobalton.permitted.contains(executor.getId()))
+            return null;
 
         final String cmd = String.join(" ", args);
 
@@ -115,55 +108,20 @@ public enum AdminCommands {
         return embedBuilder;
     }
 
-    @Command(
-            enablePrivateChat = false,
-            convertStringResultsToEmbed = true,
-            requiredDiscordPermission = PermissionType.MANAGE_EMOJIS,
-            useTypingIndicator = true
-    )
-    public String copyEmoji(Server srv, Message msg, String[] args, ServerTextChannel stc) {
-        final List<CustomEmoji> customEmojis = msg.getCustomEmojis();
-        
-        if (Arrays.binarySearch(args, "@prev") != -1) {
-            stc.getMessagesBefore(1, msg)
-                    .thenApply(MessageSet::getOldestMessage)
-                    .thenAccept(msgOpt -> msgOpt.map(Message::getCustomEmojis)
-                            .map(Collection::stream)
-                            .orElseGet(Stream::of)
-                            .forEachOrdered(customEmojis::add))
-                    .join();
-        }
-        
-        Collection<CustomEmojiBuilder> builders = new ArrayList<>();
-
-        for (CustomEmoji emoji : customEmojis) {
-            final CustomEmojiBuilder builder = srv.createCustomEmojiBuilder();
-
-            builder.setName(emoji.getName())
-                    .setImage(emoji.getImage());
-
-            builders.add(builder);
-        }
-
-        return builders.stream()
-                .map(CustomEmojiBuilder::create)
-                .map(CompletableFuture::join)
-                .map(CustomEmoji::getMentionTag)
-                .collect(Collectors.joining(" ", "Added emojis:", ""));
-    }
-
     @Command(aliases = "archive",
             enablePrivateChat = false,
             requiredDiscordPermission = PermissionType.ADMINISTRATOR,
             usage = "archive [Channel = this] [New Topic]",
             description = "Archive a channel")
-    public void archiveChannel(Command.Parameters param, String[] args, Server srv, ServerTextChannel stc) {
+    public void archiveChannel(Command.Parameters param, User executor, String[] args, Server srv, ServerTextChannel stc) {
+        if (!Cobalton.permitted.contains(executor.getId()))
+            return;
+        
         final boolean thisChannel = param.getChannelMentions().size() == 0;
         final ServerTextChannel channel = thisChannel ? stc : param.getChannelMentions().get(0);
         final Permissions override = Permissions.fromBitmask(0, 0x3147840);
         final int rawPosition = channel.getRawPosition();
-
-
+        
         if (stc.getCategory()
                 .map(DiscordEntity::getId)
                 .map(id -> Cobalton.Prop.ARCHIVE_CATEGORY.getValue(srv).asLong() == id)
