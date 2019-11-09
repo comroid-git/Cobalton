@@ -131,7 +131,7 @@ public final class Cobalton {
 
         SRV.addServerMemberJoinListener(event -> {
             SRV.getSystemChannel()
-                    .ifPresent(stc -> stc.sendMessage(DefaultEmbedFactory.create().addField("Willkommen zum Abriss, " + event.getUser().getDiscriminatedName() + "!",
+                    .ifPresent(stc -> stc.sendMessage(DefaultEmbedFactory.create().addField("Willkommen zum Abriss, " + event.getUser().getName() + "!",
                             "Bitte stell dich doch kurz in <#625640036096016404> mit ein paar Zeilen vor, dann kannst du alle Channel benutzen!")));
         });
 
