@@ -5,11 +5,13 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.script.ScriptEngineManager;
 
 import de.comroid.Cobalton;
@@ -29,6 +31,7 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.emoji.CustomEmoji;
 import org.javacord.api.entity.emoji.CustomEmojiBuilder;
 import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.server.Server;
@@ -108,8 +111,19 @@ public enum AdminCommands {
             requiredDiscordPermission = PermissionType.MANAGE_EMOJIS,
             useTypingIndicator = true
     )
-    public String copyEmoji(Server srv, Message msg) {
+    public String copyEmoji(Server srv, Message msg, String[] args, ServerTextChannel stc) {
         final List<CustomEmoji> customEmojis = msg.getCustomEmojis();
+        
+        if (Arrays.binarySearch(args, "@prev") != -1) {
+            stc.getMessagesBefore(1, msg)
+                    .thenApply(MessageSet::getOldestMessage)
+                    .thenAccept(msgOpt -> msgOpt.map(Message::getCustomEmojis)
+                            .map(Collection::stream)
+                            .orElseGet(Stream::of)
+                            .forEachOrdered(customEmojis::add))
+                    .join();
+        }
+        
         Collection<CustomEmojiBuilder> builders = new ArrayList<>();
 
         for (CustomEmoji emoji : customEmojis) {
