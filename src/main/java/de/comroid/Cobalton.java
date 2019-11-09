@@ -14,10 +14,10 @@ import de.comroid.cobalton.engine.StartsWithCommandsEngine;
 import de.comroid.cobalton.engine.starboard.Starboard;
 import de.comroid.util.ExceptionLogger;
 import de.comroid.util.files.FileProvider;
-import de.kaleidox.javacord.util.commands.CommandHandler;
-import de.kaleidox.javacord.util.server.properties.PropertyGroup;
-import de.kaleidox.javacord.util.server.properties.ServerPropertiesManager;
-import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
+import de.comroid.javacord.util.commands.CommandHandler;
+import de.comroid.javacord.util.server.properties.PropertyGroup;
+import de.comroid.javacord.util.server.properties.ServerPropertiesManager;
+import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

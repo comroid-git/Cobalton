@@ -1,7 +1,7 @@
 package de.comroid.cobalton.model;
 
 import de.comroid.Cobalton;
-import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
+import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;

@@ -18,8 +18,8 @@ import de.comroid.cobalton.command.eval.EvalFactory;
 import de.comroid.cobalton.command.eval.EvalViewer;
 import de.comroid.cobalton.command.skribbl.SkribblEmbed;
 import de.comroid.util.ExceptionLogger;
-import de.kaleidox.javacord.util.commands.Command;
-import de.kaleidox.javacord.util.commands.CommandGroup;
+import de.comroid.javacord.util.commands.Command;
+import de.comroid.javacord.util.commands.CommandGroup;
 
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;

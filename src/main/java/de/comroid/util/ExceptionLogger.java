@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import de.comroid.Cobalton;
-import de.kaleidox.javacord.util.ui.embed.DefaultEmbedFactory;
+import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
