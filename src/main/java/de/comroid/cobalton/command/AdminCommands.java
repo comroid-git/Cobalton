@@ -1,5 +1,7 @@
 package de.comroid.cobalton.command;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,6 +20,7 @@ import de.comroid.Cobalton;
 import de.comroid.cobalton.command.skribbl.SkribblEmbed;
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
+import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import de.comroid.util.ExceptionLogger;
 
 import org.javacord.api.entity.DiscordEntity;
@@ -29,6 +32,7 @@ import org.javacord.api.entity.emoji.CustomEmoji;
 import org.javacord.api.entity.emoji.CustomEmojiBuilder;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageSet;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.server.Server;
@@ -76,6 +80,39 @@ public enum AdminCommands {
         if (!executor.isBotOwner()) return null;
 
         return String.join(" ", args);
+    }
+
+    @Command(description = "Experimental")
+    public EmbedBuilder ssh(String[] args, User executor) throws IOException, InterruptedException {
+        if (!executor.isBotOwner()) return null;
+
+        final String cmd = String.join(" ", args);
+
+        final Process exec = Runtime.getRuntime().exec(cmd);
+
+        while (exec.isAlive()) {
+            // sleep shortly
+            Thread.sleep(200);
+        }
+
+        final InputStream out = exec.getInputStream();
+        final InputStream err = exec.getErrorStream();
+        StringBuilder str = new StringBuilder();
+        StringBuilder serr = new StringBuilder();
+
+        int r;
+        while ((r = out.read()) != -1)
+            str.append((char) r);
+        while ((r = err.read()) != -1)
+            serr.append((char) r);
+
+        final EmbedBuilder embedBuilder = DefaultEmbedFactory.create()
+                .addField(String.format("Program finished with exit code %d", exec.exitValue()), "```\n" + str.toString() + "\n```");
+        
+        if (serr.length() > 1)
+            embedBuilder.addField("`stderr`:", serr.toString());
+        
+        return embedBuilder;
     }
 
     @Command(
