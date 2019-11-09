@@ -110,7 +110,7 @@ public enum AdminCommands {
                 .addField(String.format("Program finished with exit code %d", exec.exitValue()), "```\n" + str.toString() + "\n```");
         
         if (serr.length() > 1)
-            embedBuilder.addField("`stderr`:", serr.toString());
+            embedBuilder.addField("`stderr`:", "```\n" + serr.toString() + "\n```");
         
         return embedBuilder;
     }
