@@ -26,8 +26,8 @@ import org.javacord.api.entity.user.User;
 public enum JamesCommands {
     INSTANCE;
 
-    @Command
-    public String wtf() {
+    @Command(convertStringResultsToEmbed = true)
+    public String codebrackets() {
         return "```";
     }
     
