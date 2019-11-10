@@ -30,6 +30,11 @@ public enum JamesCommands {
     public String wtf() {
         return "```";
     }
+    
+    @Command(convertStringResultsToEmbed = true)
+    public String lenny() {
+        return "( ͡° ͜ʖ ͡°)";
+    }
 
     @Command(aliases = "skribbl",
             convertStringResultsToEmbed = true,
