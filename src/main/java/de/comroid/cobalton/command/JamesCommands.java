@@ -26,16 +26,6 @@ import org.javacord.api.entity.user.User;
 public enum JamesCommands {
     INSTANCE;
 
-    @Command(convertStringResultsToEmbed = true)
-    public String codebrackets() {
-        return "```";
-    }
-    
-    @Command(convertStringResultsToEmbed = true)
-    public String lenny() {
-        return "( ͡° ͜ʖ ͡°)";
-    }
-
     @Command(aliases = "skribbl",
             convertStringResultsToEmbed = true,
             useTypingIndicator = true,

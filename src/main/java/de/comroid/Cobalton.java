@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.comroid.cobalton.command.AdminCommands;
 import de.comroid.cobalton.command.JamesCommands;
+import de.comroid.cobalton.command.TextCommands;
 import de.comroid.cobalton.engine.GamescomEngine;
 import de.comroid.cobalton.engine.RoleMessageEngine;
 import de.comroid.cobalton.engine.starboard.Starboard;
@@ -84,6 +85,7 @@ public final class Cobalton {
             logger.info(String.format("Setting command prefixes: '%s'", String.join("', '", CMD.prefixes)));
             CMD.useDefaultHelp(null);
             CMD.registerCommands(JamesCommands.INSTANCE);
+            CMD.registerCommands(TextCommands.INSTANCE);
             CMD.registerCommands(AdminCommands.INSTANCE);
             CMD.registerCommands(EvalCommand.INSTANCE);
 
