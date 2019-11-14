@@ -1,0 +1,30 @@
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+task assembleDockerContext(type: Sync) {
+    from distTar
+    from 'Dockerfile'
+    into "$buildDir/docker"
+}
+
+task buildDockerImage(type: DockerBuildImage, dependsOn: assembleDockerContext) {
+    inputDir = file("$buildDir/docker")
+    tag = project.name
+}
+
+task updateDockerService(type: DockerClient, dependsOn: buildDockerImage) {
+    onNext {
+        inspectSwarmCmd().exec()
+
+        // update the service
+        def services = listServicesCmd().withNameFilter([project.name]).exec()
+        if (services) {
+            def service = services[0]
+            def taskTemplate = service.spec.taskTemplate
+            taskTemplate = taskTemplate.withForceUpdate(taskTemplate.forceUpdate + 1)
+            updateServiceCmd(project.name, service.spec.withTaskTemplate(taskTemplate))
+                    .withVersion(service.version.index).exec()
+        } else {
+            throw new RuntimeException("Service with name '$project.name' was not found, please create it first")
+        }
+    }
+}
