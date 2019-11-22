@@ -149,7 +149,7 @@ public final class Cobalton {
                             .ifPresent(event.getMessageAuthor().asUser().get()::removeRole);
                 }));
 
-        API.getServerTextChannelById(639051738036568064L)
+        API.getServerTextChannelById(644220645814566912L)
                 .ifPresent(itcrowd -> itcrowd.sendMessage(DefaultEmbedFactory.create()
                         .setDescription("Bot restarted!")).join());
     }
