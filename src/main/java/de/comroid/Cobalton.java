@@ -14,6 +14,7 @@ import de.comroid.cobalton.command.TextCommands;
 import de.comroid.cobalton.command.ToolCommands;
 import de.comroid.cobalton.engine.GamescomEngine;
 import de.comroid.cobalton.engine.RoleMessageEngine;
+import de.comroid.cobalton.engine.TicketEngine;
 import de.comroid.cobalton.engine.starboard.Starboard;
 import de.comroid.eval.EvalCommand;
 import de.comroid.javacord.util.commands.CommandHandler;
@@ -88,6 +89,7 @@ public final class Cobalton {
             CMD.registerCommands(TextCommands.INSTANCE);
             CMD.registerCommands(AdminCommands.INSTANCE);
             CMD.registerCommands(EvalCommand.INSTANCE);
+            CMD.registerCommands(TicketEngine.INSTANCE);
 
             logger.info("Initialzing server properties");
             PROP = new ServerPropertiesManager(FileProvider.getFile("serverProps.json"));
@@ -182,6 +184,8 @@ public final class Cobalton {
 
         public static PropertyGroup ACCEPT_EMOJI;
         public static PropertyGroup DENY_EMOJI;
+        
+        public static PropertyGroup TICKET_CATEGORY;
 
         public static PropertyGroup MAINTENANCE_CHANNEL;
 
@@ -192,6 +196,10 @@ public final class Cobalton {
             ROLE_MESSAGE = PROP.register("role.message.id", 625645142543564822L);
             ARCHIVE_CATEGORY = PROP.register("bot.archive.id", 625498805634203648L);
             GAMESCOM_ROLE = PROP.register("role.gamescom.id", 626822066280071213L);
+            
+            TICKET_CATEGORY = PROP.register("ticket.category.id", 648260543106252826L)
+                    .withDisplayName("Ticket Category")
+                    .withDescription("Set up Tickets with c!setup-tickets! [ c!help setup-tickets ]");
 
             ACCEPT_EMOJI = PROP.register("emoji.accept", "✅");
             DENY_EMOJI = PROP.register("emoji.deny", "❌");
