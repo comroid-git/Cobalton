@@ -28,7 +28,7 @@ wrapper {
 }
 
 dockerCompose {
-    upAdditionalArgs = ['-d', '--build', '--force-recreate']
+    upAdditionalArgs = ['--build', '--force-recreate']
     stopContainers = false // doesn't call `docker-compose down` if set to false - see below the paragraph about reconnecting; default is true
     removeContainers = false // default is true
     environment.put 'COBALTON_VERSION', project.version.toString() // Pass environment variable to 'docker-compose' for substitution in compose file
