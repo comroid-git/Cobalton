@@ -28,10 +28,13 @@ wrapper {
 }
 
 dockerCompose {
+    useComposeFiles = ['docker-compose.yml'] // like 'docker-compose -f <file>'; default is empty
     forceRecreate = true // pass '--force-recreate' and '--renew-anon-volumes' when calling 'docker-compose up' when set to 'true`
     stopContainers = false // doesn't call `docker-compose down` if set to false - see below the paragraph about reconnecting; default is true
     removeContainers = false // default is true
+    captureContainersOutput = true // if true, prints output of all containers to Gradle output - very useful for debugging; default is false
     environment.put 'COBALTON_VERSION', project.version.toString() // Pass environment variable to 'docker-compose' for substitution in compose file
+    upAdditionalArgs = ['--build']
 }
 
 tasks.withType(JavaCompile) {
