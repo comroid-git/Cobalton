@@ -27,7 +27,7 @@ tasks.withType(JavaCompile) {
 task compose(type: Exec) {
     environment 'COBALTON_VERSION', project.version.toString()
     executable "docker-compose"
-    args "up", "--build", "--force-recreate"
+    args "up", "-d", "--build", "--force-recreate"
 }
 
 repositories {
