@@ -17,6 +17,9 @@ apply plugin: 'docker-compose'
 
 dockerCompose.isRequiredBy(test) // hooks 'dependsOn composeUp' and 'finalizedBy composeDown', and exposes environment variables and system properties (if possible)
 
+// hooks 'dependsOn composeUp' and 'finalizedBy composeDown',
+// and exposes environment variables and system properties (if possible) 
+dockerCompose.isRequiredBy(test)
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
