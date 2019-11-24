@@ -46,7 +46,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
 
         final Collection<User> current = currentUsers();
 
-        if (current.size() > 3 && (event.getChannel().getConnectedUserIds().size() / 2) >= current.size())
+        if (current.size() >= 2 && (event.getChannel().getConnectedUserIds().size() / 2) >= current.size())
             active = true;
     }
 
