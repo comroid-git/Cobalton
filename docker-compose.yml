@@ -4,6 +4,7 @@ services:
   cobalton:
     # container_name: cobalton
     # image: cobalton
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
