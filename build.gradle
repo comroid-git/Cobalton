@@ -1,12 +1,22 @@
 buildscript {
     repositories.jcenter()
+
+    dependencies {
+        // docker build plugin
+        classpath "com.avast.gradle:gradle-docker-compose-plugin:0.10.4"
+    }
 }
+
     
 group 'de.comroid'
 version '1.00'
 
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'docker-compose'
+
+dockerCompose.isRequiredBy(test) // hooks 'dependsOn composeUp' and 'finalizedBy composeDown', and exposes environment variables and system properties (if possible)
+
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -15,6 +25,13 @@ mainClassName = 'de.comroid.Cobalton'
 wrapper {
     gradleVersion = '5.6'
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+dockerCompose {
+    upAdditionalArgs = ['-d', '--build', '--force-recreate']
+    stopContainers = false // doesn't call `docker-compose down` if set to false - see below the paragraph about reconnecting; default is true
+    removeContainers = false // default is true
+    environment.put 'COBALTON_VERSION', project.version.toString() // Pass environment variable to 'docker-compose' for substitution in compose file
 }
 
 tasks.withType(JavaCompile) {
