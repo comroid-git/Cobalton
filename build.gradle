@@ -15,7 +15,6 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'docker-compose'
 
-dockerCompose.isRequiredBy(test) // hooks 'dependsOn composeUp' and 'finalizedBy composeDown', and exposes environment variables and system properties (if possible)
 
 // hooks 'dependsOn composeUp' and 'finalizedBy composeDown',
 // and exposes environment variables and system properties (if possible) 
