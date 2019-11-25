@@ -3,7 +3,7 @@ version: "2.0"
 services:
   cobalton:
     # container_name: cobalton
-    # image: cobalton
+    image: cobalton:latest
     restart: unless-stopped
     build:
       context: .
