@@ -31,19 +31,27 @@ task precomposeKill(type: Exec) {
 }
 
 task precomposeDelete(type: Exec) {
+    dependsOn precomposeKill
+    
     environment 'COBALTON_VERSION', project.version.toString()
     executable "docker-compose"
     args "rm", "-f"
 }
 
+task precomposeDeleteCobalton(type: Exec) {
+    environment 'COBALTON_VERSION', project.version.toString()
+    executable "docker container"
+    args "rm", "-f", "cobalton"
+}
+
 task compose(type: Exec) {
+    dependsOn precomposeDelete
+    dependsOn precomposeDeleteCobalton
+
     environment 'COBALTON_VERSION', project.version.toString()
     executable "docker-compose"
     args "up", "-d", "--build", "--force-recreate"
 }
-
-precomposeDelete.dependsOn precomposeKill
-compose.dependsOn precomposeDelete
 
 repositories {
     jcenter()
