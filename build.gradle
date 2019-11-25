@@ -24,7 +24,13 @@ tasks.withType(JavaCompile) {
     options.incremental = true
 }
 
-task precompose(type: Exec) {
+task precomposeKill(type: Exec) {
+    environment 'COBALTON_VERSION', project.version.toString()
+    executable "docker-compose"
+    args "down"
+}
+
+task precomposeDelete(type: Exec) {
     environment 'COBALTON_VERSION', project.version.toString()
     executable "docker-compose"
     args "rm", "-f"
@@ -36,7 +42,8 @@ task compose(type: Exec) {
     args "up", "-d", "--build", "--force-recreate"
 }
 
-compose.dependsOn precompose
+precomposeDelete.dependsOn precomposeKill
+compose.dependsOn precomposeDelete
 
 repositories {
     jcenter()
