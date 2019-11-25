@@ -40,8 +40,8 @@ task precomposeDelete(type: Exec) {
 
 task precomposeDeleteCobalton(type: Exec) {
     environment 'COBALTON_VERSION', project.version.toString()
-    executable "docker container"
-    args "rm", "-f", "cobalton"
+    executable "docker"
+    args "container", "rm", "-f", "cobalton"
 }
 
 task compose(type: Exec) {
