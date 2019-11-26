@@ -45,7 +45,7 @@ public final class Cobalton {
     public static final ServerPropertiesManager PROP;
     public static final Starboard STAR;
     public static final Server SRV;
-    
+
     public static final List<Long> permitted = new ArrayList<>();
 
     static {
@@ -63,7 +63,7 @@ public final class Cobalton {
             }
 
             logger.info("Successfully connected to Discord services");
-            
+
             permitted.add(141476933849448448L); // Kaleidox
             permitted.add(292141393739251714L); // Jay
             permitted.add(232610922298998784L); // Flo
@@ -73,7 +73,7 @@ public final class Cobalton {
 
             API.addMessageCreateListener(event -> {
                 final Message message = event.getMessage();
-                if (message.getAuthor().getId() != 534697181383491607L 
+                if (message.getAuthor().getId() != 534697181383491607L
                         && message.getReadableContent().toLowerCase().matches(".*t\\s*[o0]|(\\[])|(\\(\\))|(\\{})|(<>)\\s*[8b]\\s*[e3]\\s*r\\s*[s5].*"))
                     message.delete("Unauthorized");
             });
@@ -120,6 +120,12 @@ public final class Cobalton {
     }
 
     public static void main(String[] args) {
+        API.addMessageCreateListener(event -> {
+            if (event.getReadableMessageContent().matches(".*[gG]+\\s*[uU]+\\s*[nN]+\\s*[aA4].*"))
+                event.addReactionsToMessage("\uD83C\uDDEC", "\uD83C\uDDFA", "\uD83C\uDDF3", "\uD83C\uDDE6")
+                        .exceptionally(ExceptionLogger.get());
+        });
+
         API.getOwner()
                 .thenAccept(ExceptionLogger::addReportTarget)
                 .join();
