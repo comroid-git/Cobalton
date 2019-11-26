@@ -78,7 +78,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
 
                         stc.sendMessage(embed).join();
 
-                        ChannelUtils.archive(stc, "gamescom-" + users.stream()
+                        ChannelUtils.archive(true, stc, "gamescom-" + users.stream()
                                 .map(usr -> usr.getDisplayName(event.getServer()))
                                 .map(str -> str.charAt(0))
                                 .map(String::valueOf)

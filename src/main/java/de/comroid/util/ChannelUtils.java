@@ -8,11 +8,25 @@ import de.comroid.Cobalton;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.Permissionable;
 import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.channel.ServerTextChannelUpdater;
 
 public class ChannelUtils {
     @SuppressWarnings("unchecked") // fuck javacord
-    public static <T extends Permissionable & DiscordEntity> void archive(ServerTextChannel stc, String newName) {
+    public static <T extends Permissionable & DiscordEntity> void archive(boolean recreate, ServerTextChannel stc, String newName) {
+        if (recreate) {
+            final ServerTextChannelBuilder renewalBuilder = stc.getServer().createTextChannelBuilder()
+                    .setName(stc.getName())
+                    .setAuditLogReason("Archived Channel Renewal")
+                    .setSlowmodeDelayInSeconds(stc.getSlowmodeDelayInSeconds());
+            
+            stc.getCategory().ifPresent(renewalBuilder::setCategory);
+            
+            renewalBuilder.create()
+                    .thenCompose(chl -> chl.updateRawPosition(stc.getRawPosition()))
+                    .join();
+        }
+        
         Cobalton.API.getChannelCategoryById(Cobalton.Prop.ARCHIVE_CATEGORY.getValue(stc.getServer()).asLong())
                 .ifPresent(cat -> {
                     final ServerTextChannelUpdater updater = stc.createUpdater()
