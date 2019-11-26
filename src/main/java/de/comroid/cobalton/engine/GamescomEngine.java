@@ -82,7 +82,8 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
                                 .map(usr -> usr.getDisplayName(event.getServer()))
                                 .map(str -> str.charAt(0))
                                 .map(String::valueOf)
-                                .collect(Collectors.joining()));
+                                .collect(Collectors.joining())
+                                .toUpperCase());
 
                         users.stream()
                                 .map(member -> (Runnable) () -> member.removeRole(gamescom).join())
