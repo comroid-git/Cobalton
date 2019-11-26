@@ -44,6 +44,8 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
     public void onServerVoiceChannelMemberJoin(ServerVoiceChannelMemberJoinEvent event) {
         System.out.println("event = " + event);
 
+        if (event.getUser().isBot()) return;
+
         API.getRoleById(GAMESCOM_ROLE)
                 .ifPresent(event.getUser()::addRole);
 
@@ -66,6 +68,8 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
     @Override
     public void onServerVoiceChannelMemberLeave(ServerVoiceChannelMemberLeaveEvent event) {
         System.out.println("event = " + event);
+
+        if (event.getUser().isBot()) return;
         
         final ServerVoiceChannel svc = event.getChannel();
 
