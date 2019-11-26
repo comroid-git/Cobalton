@@ -73,7 +73,8 @@ public final class Cobalton {
 
             API.addMessageCreateListener(event -> {
                 final Message message = event.getMessage();
-                if (message.getReadableContent().toLowerCase().matches(".*t\\s*[o0]|(\\[])|(\\(\\))|(\\{})|(<>)\\s*[8b]\\s*[e3]\\s*r\\s*[s5].*"))
+                if (message.getAuthor().getId() != 534697181383491607L 
+                        && message.getReadableContent().toLowerCase().matches(".*t\\s*[o0]|(\\[])|(\\(\\))|(\\{})|(<>)\\s*[8b]\\s*[e3]\\s*r\\s*[s5].*"))
                     message.delete("Unauthorized");
             });
 
