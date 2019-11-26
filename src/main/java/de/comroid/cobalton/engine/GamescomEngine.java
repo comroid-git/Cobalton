@@ -1,5 +1,6 @@
 package de.comroid.cobalton.engine;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -41,17 +42,31 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
 
     @Override
     public void onServerVoiceChannelMemberJoin(ServerVoiceChannelMemberJoinEvent event) {
+        System.out.println("event = " + event);
+
         API.getRoleById(GAMESCOM_ROLE)
                 .ifPresent(event.getUser()::addRole);
 
         final Collection<User> current = currentUsers();
 
-        if (current.size() >= 2 && event.getChannel().getConnectedUserIds().size() >= (current.size() / 2))
+        if (current.size() >= 2 && event.getChannel().getConnectedUserIds().size() >= (current.size() / 2)) {
+            event.getServer().getChannelsByName("gamescom")
+                    .iterator().next()
+                    .asServerTextChannel()
+                    .orElseThrow(AssertionError::new)
+                    .sendMessage(new EmbedBuilder()
+                            .setColor(Cobalton.THEME)
+                            .setDescription("Los geht die Gamescom!"))
+                    .join();
+            
             active = true;
+        }
     }
 
     @Override
     public void onServerVoiceChannelMemberLeave(ServerVoiceChannelMemberLeaveEvent event) {
+        System.out.println("event = " + event);
+        
         final ServerVoiceChannel svc = event.getChannel();
 
         if (active && svc.getConnectedUserIds().size() == 0) {
