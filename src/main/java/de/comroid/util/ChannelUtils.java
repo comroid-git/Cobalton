@@ -1,6 +1,6 @@
 package de.comroid.util;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import de.comroid.Cobalton;
@@ -32,7 +32,7 @@ public class ChannelUtils {
                     final ServerTextChannelUpdater updater = stc.createUpdater()
                             .setCategory(cat)
                             .setAuditLogReason("Archived")
-                            .setTopic(String.format("Archived at %s", DateTimeFormatter.ISO_DATE_TIME.format(Instant.now())));
+                            .setTopic(String.format("Archived at %s", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now())));
 
                     if (newName != null)
                         updater.setName(newName);
