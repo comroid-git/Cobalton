@@ -20,7 +20,6 @@ import de.comroid.javacord.util.commands.CommandHandler;
 import de.comroid.javacord.util.server.properties.PropertyGroup;
 import de.comroid.javacord.util.server.properties.ServerPropertiesManager;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
-import de.comroid.util.ExceptionLogger;
 import de.comroid.util.files.FileProvider;
 
 import org.apache.logging.log4j.LogManager;
@@ -33,6 +32,7 @@ import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.UserStatus;
+import org.javacord.api.util.logging.ExceptionLogger;
 
 public final class Cobalton {
     public final static Logger logger = LogManager.getLogger();
@@ -126,13 +126,6 @@ public final class Cobalton {
                         .exceptionally(ExceptionLogger.get());
         });
 
-        API.getOwner()
-                .thenAccept(ExceptionLogger::addReportTarget)
-                .join();
-        API.getChannelById(639051738036568064L)
-                .flatMap(Channel::asTextChannel)
-                .ifPresent(ExceptionLogger::addReportTarget);
-
         API.getServerTextChannelById(Prop.INFO_CHANNEL.getValue(SRV).asLong())
                 .ifPresent(infoChannel -> infoChannel.getMessageById(Prop.ROLE_MESSAGE.getValue(SRV).asLong())
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage)))
@@ -158,7 +151,7 @@ public final class Cobalton {
 
         API.getServerTextChannelById(644220645814566912L)
                 .ifPresent(itcrowd -> itcrowd.sendMessage(DefaultEmbedFactory.create()
-                        .setDescription("Bot restarted!")).join());
+                        .setDescription("Bot restarted!")).exceptionally(ExceptionLogger.get()));
     }
 
     private static void terminateAll() {

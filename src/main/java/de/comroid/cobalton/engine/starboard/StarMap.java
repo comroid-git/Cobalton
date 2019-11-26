@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.Message;
+import org.javacord.api.util.logging.ExceptionLogger;
 
 import java.io.Closeable;
 import java.io.File;
@@ -77,7 +78,7 @@ public class StarMap implements Initializable, Closeable {
                                     .getMessageById(star.getDestination().id).get()
                                     .delete().thenAccept((Void v) ->
                                     this.stars.remove(star.getOrigin().id))
-                                    .join();
+                                    .exceptionally(ExceptionLogger.get());
                         } catch (ExecutionException | InterruptedException e) {
                             this.logger.error("error unstarring message", e);
                         }
@@ -94,7 +95,7 @@ public class StarMap implements Initializable, Closeable {
 
     public void put(int score, Message origin, Message destination) {
         if (score <= 0) {
-            destination.delete().thenAccept((Void v) -> this.stars.remove(origin.getId())).join();
+            destination.delete().thenAccept((Void v) -> this.stars.remove(origin.getId())).exceptionally(ExceptionLogger.get());
         } else {
             this.stars.put(origin.getId(), new Star(score, origin, destination));
         }

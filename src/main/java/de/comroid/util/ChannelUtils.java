@@ -9,6 +9,7 @@ import org.javacord.api.entity.Permissionable;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.channel.ServerTextChannelUpdater;
+import org.javacord.api.util.logging.ExceptionLogger;
 
 public class ChannelUtils {
     @SuppressWarnings("unchecked") // fuck javacord
@@ -23,7 +24,7 @@ public class ChannelUtils {
             
             renewalBuilder.create()
                     .thenCompose(chl -> chl.updateRawPosition(stc.getRawPosition()))
-                    .join();
+                    .exceptionally(ExceptionLogger.get());
         }
         
         Cobalton.API.getChannelCategoryById(Cobalton.Prop.ARCHIVE_CATEGORY.getValue(stc.getServer()).asLong())
@@ -39,7 +40,7 @@ public class ChannelUtils {
                     stc.getOverwrittenPermissions().keySet().forEach(permissionable -> updater.removePermissionOverwrite((T) permissionable));
                     cat.getOverwrittenPermissions().forEach((key, value) -> updater.addPermissionOverwrite((T) key, value));
 
-                    updater.update().join();
+                    updater.update().exceptionally(ExceptionLogger.get());
                 });
     }
 }

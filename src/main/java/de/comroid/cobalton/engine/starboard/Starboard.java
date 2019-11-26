@@ -12,6 +12,7 @@ import org.javacord.api.event.message.reaction.ReactionEvent;
 import org.javacord.api.event.message.reaction.ReactionRemoveEvent;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.javacord.api.listener.message.reaction.ReactionRemoveListener;
+import org.javacord.api.util.logging.ExceptionLogger;
 
 public class Starboard implements ReactionAddListener, ReactionRemoveListener {
     private final StarMap stars;
@@ -54,7 +55,7 @@ public class Starboard implements ReactionAddListener, ReactionRemoveListener {
                         )
                 )
                 .thenAccept((Void v) -> this.stars.put(star))
-                .join();
+                .exceptionally(ExceptionLogger.get());
     }
 
     private <T extends ReactionEvent> boolean isStarboardChannel(T event) {
@@ -87,7 +88,7 @@ public class Starboard implements ReactionAddListener, ReactionRemoveListener {
                     event.getChannel()
                             .sendMessage(this.getBuilder(event))
                             .thenAccept(destination -> this.stars.put(event.getMessage().get(), destination))
-                            .join();
+                            .exceptionally(ExceptionLogger.get());
                 }
             }
         }

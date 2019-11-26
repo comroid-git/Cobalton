@@ -21,6 +21,7 @@ import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
+import org.javacord.api.util.logging.ExceptionLogger;
 
 @CommandGroup(name = "Cobalton Tools", description = "Basic tools provided by Cobalton")
 public enum JamesCommands {
@@ -35,7 +36,7 @@ public enum JamesCommands {
 
         channel.sendMessage(embed.getBuilder())
                 .thenRun(command::delete)
-                .join();
+                .exceptionally(ExceptionLogger.get());
     }
 
     @Command(
@@ -54,7 +55,7 @@ public enum JamesCommands {
                             .map(Collection::stream)
                             .orElseGet(Stream::of)
                             .forEachOrdered(customEmojis::add))
-                    .join();
+                    .exceptionally(ExceptionLogger.get());
         }
 
         Collection<CustomEmojiBuilder> builders = new ArrayList<>();

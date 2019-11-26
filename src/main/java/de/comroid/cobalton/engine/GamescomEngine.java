@@ -1,6 +1,5 @@
 package de.comroid.cobalton.engine;
 
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -18,6 +17,7 @@ import org.javacord.api.event.channel.server.voice.ServerVoiceChannelMemberJoinE
 import org.javacord.api.event.channel.server.voice.ServerVoiceChannelMemberLeaveEvent;
 import org.javacord.api.listener.channel.server.voice.ServerVoiceChannelMemberJoinListener;
 import org.javacord.api.listener.channel.server.voice.ServerVoiceChannelMemberLeaveListener;
+import org.javacord.api.util.logging.ExceptionLogger;
 
 import static de.comroid.Cobalton.API;
 
@@ -57,7 +57,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
                     .sendMessage(new EmbedBuilder()
                             .setColor(Cobalton.THEME)
                             .setDescription("Los geht die Gamescom!"))
-                    .join();
+                    .exceptionally(ExceptionLogger.get());
             
             active = true;
         }
@@ -91,7 +91,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
                                 .asServerTextChannel()
                                 .orElseThrow(NullPointerException::new);
 
-                        stc.sendMessage(embed).join();
+                        stc.sendMessage(embed).exceptionally(ExceptionLogger.get());
 
                         ChannelUtils.archive(true, stc, "gamescom-" + users.stream()
                                 .map(usr -> usr.getDisplayName(event.getServer()))
@@ -100,7 +100,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
                                 .collect(Collectors.joining()));
 
                         users.stream()
-                                .map(member -> (Runnable) () -> member.removeRole(gamescom).join())
+                                .map(member -> (Runnable) () -> member.removeRole(gamescom).exceptionally(ExceptionLogger.get()))
                                 .forEachOrdered(API.getThreadPool().getExecutorService()::submit);
                     });
 

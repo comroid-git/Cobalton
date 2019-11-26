@@ -14,6 +14,7 @@ import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.event.message.reaction.ReactionRemoveEvent;
 import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.javacord.api.listener.message.reaction.ReactionRemoveListener;
+import org.javacord.api.util.logging.ExceptionLogger;
 
 public class RoleMessageEngine implements ReactionAddListener, ReactionRemoveListener {
     private final static Map<String, Long> roles = new ConcurrentHashMap<>();
@@ -32,8 +33,8 @@ public class RoleMessageEngine implements ReactionAddListener, ReactionRemoveLis
 
         roleMessage.addMessageDeleteListener(event -> event.getApi()
                 .getOwner()
-                .join()
-                .sendMessage("RoleMessage was deleted!"));
+                .exceptionally(ExceptionLogger.get())
+                .thenAccept(usr -> usr.sendMessage("RoleMessage was deleted!")));
 
         List<Reaction> reactions = roleMessage.getReactions();
         for (Reaction reaction : reactions) {
@@ -46,7 +47,7 @@ public class RoleMessageEngine implements ReactionAddListener, ReactionRemoveLis
 
             Long roleId = roles.get(emoji);
             if (roleId == null) {
-                reaction.remove().join();
+                reaction.remove().exceptionally(ExceptionLogger.get());
                 continue;
             }
 
@@ -75,7 +76,7 @@ public class RoleMessageEngine implements ReactionAddListener, ReactionRemoveLis
 
         Long roleId = roles.get(emoji);
         if (roleId == null) {
-            event.removeReaction().join();
+            event.removeReaction().exceptionally(ExceptionLogger.get());
             return;
         }
 

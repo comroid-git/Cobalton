@@ -6,37 +6,26 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.script.ScriptEngineManager;
 
 import de.comroid.Cobalton;
-import de.comroid.cobalton.command.skribbl.SkribblEmbed;
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
-import de.comroid.util.ExceptionLogger;
 
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.channel.ServerTextChannelUpdater;
 import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.emoji.CustomEmoji;
-import org.javacord.api.entity.emoji.CustomEmojiBuilder;
 import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
+import org.javacord.api.util.logging.ExceptionLogger;
 
 import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
@@ -62,7 +51,7 @@ public enum AdminCommands {
         if (Cobalton.permitted.contains(user.getId()))
             System.exit(1);
         
-        command.delete("Unauthorized").join();
+        command.delete("Unauthorized").exceptionally(ExceptionLogger.get());
         channel.sendMessage("User " + user.getDiscriminatedName() + " not authorized.");
     }
 
@@ -164,7 +153,7 @@ public enum AdminCommands {
                             .thenCompose(nil -> replacementChannelBuilder.create())
                             .thenCompose(newChannel -> {
                                 newChannel.updateRawPosition(rawPosition)
-                                        .join();
+                                        .exceptionally(ExceptionLogger.get());
                                 return newChannel.sendMessage("Replaced channel " + channel.getMentionTag() + " with this channel!");
                             })
                             .exceptionally(ExceptionLogger.get());
