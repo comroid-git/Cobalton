@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" monitorInterval="60" packages="de.comroid.util">
+<Configuration status="trace" monitorInterval="60" packages="de.comroid.util">
     <Properties>
         <Property name="LS">${sys:file.separator}</Property>
         <Property name="LOG_FILE_PUBLIC">${LS}var${LS}bots${LS}james${LS}latest.log</Property>
