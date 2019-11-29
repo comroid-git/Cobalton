@@ -38,6 +38,18 @@ public enum ToolCommands {
                 .thenRun(command::delete)
                 .exceptionally(ExceptionLogger.get());
     }
+    
+    @Command(
+            description = "Emojify Text!",
+            usage = "emojify <any string>",
+            minimumArguments = 1,
+            convertStringResultsToEmbed = true
+    )
+    public String emojify(String[] args) {
+        final String str = String.join(" ", args);
+        
+        return null;
+    }
 
     @Command(
             enablePrivateChat = false,
