@@ -9,4 +9,4 @@ WORKDIR /app
 RUN ls -AlhX
 
 # GO
-ENTRYPOINT exec ./bin/Cobalton
+ENTRYPOINT /app/bin/Cobalton
