@@ -9,8 +9,7 @@ services:
             context: .
             dockerfile: Dockerfile
         volumes:
-            - ./docker:/app:rw
-            - /var/bots/Cobalton/data:/app/data:rw
-            - /var/bots/Cobalton/login:/app/login:rw
+            - ./build/install/Cobalton:/app/binaries:rw
+            - /var/bots/Cobalton:/app/data:rw
         working_dir: /app
-        entrypoint: /app/bin/Cobalton
+        entrypoint: /app/binaries/bin/Cobalton

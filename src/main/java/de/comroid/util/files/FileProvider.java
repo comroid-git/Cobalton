@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class FileProvider {
-    private final static String PREFIX = "/app/";
+    private final static String PREFIX = "/app/data/";
 
     public static File getFile(String subPath) {
         final String path = PREFIX + subPath;

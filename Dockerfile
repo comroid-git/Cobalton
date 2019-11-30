@@ -2,11 +2,17 @@
 FROM adoptopenjdk/openjdk11:alpine
 RUN adduser -h /app -D exec
 
+VOLUME /app/binaries
+VOLUME /app/data
+
 # Permission Management
+RUN chown -R exec:exec /app/*
+RUN chmod -R 777 /app/*
 USER exec
 WORKDIR /app
 
 RUN ls -AlhX
+RUN ls -AlhX ..
 
 # GO
-ENTRYPOINT /app/bin/Cobalton
+ENTRYPOINT /app/binaries/bin/Cobalton
