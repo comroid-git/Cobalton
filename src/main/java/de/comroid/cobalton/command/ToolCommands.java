@@ -1,5 +1,6 @@
 package de.comroid.cobalton.command;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,8 +54,7 @@ public enum ToolCommands {
             if (!Character.isAlphabetic(c))
                 continue;
 
-            yield.append((char) 0xD83C)
-                    .append((char) (0xDDE6 + (((int) c) - 97)));
+            yield.append(new String(new byte[]{(byte) 0xD83C, (byte) (0xDDE6 + (((int) c) - 97))}, StandardCharsets.UTF_8));
         }
 
         System.out.println("yield = " + yield);
