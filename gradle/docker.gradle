@@ -1,39 +1,5 @@
-import org.gradle.process.internal.ExecAction
-import org.gradle.process.internal.ExecException
-
-class DockerExec extends Exec {
-    { // initializer
-        environment 'APP_VERSION', this.getProject().version
-        //environment 'CONTAINER_NAME', this.getExtensions().extraProperties.dockerContainerName // todo
-    }
-}
-
-task dockerCompose(type: DockerExec, dependsOn: 'installDist') {
+task dockerCompose(type: Exec, dependsOn: 'installDist') {
+    environment 'APP_VERSION', project.version
     executable "docker-compose"
     args "up", "-d", "--build", "--force-recreate"
 }
-
-task dockerDelete(type: DockerExec, dependsOn: 'dockerKill') {
-    executable "docker"
-    args "container", "rm", dockerContainerName
-}
-
-task dockerKill(type: DockerExec) {
-    executable "docker"
-    args "stop", dockerContainerName
-}
-
-/*
-might be useful later, but right now it is not
-
-task assembleDockerContext(type: Sync) {
-    from installDist
-    from 'Dockerfile'
-    into "$buildDir/docker"
-}
-
-task buildDockerImage(type: Zip, dependsOn: 'assembleDockerContext') {
-    inputDir = file("$buildDir/docker")
-    tag = project.name
-}
-*/
