@@ -57,7 +57,7 @@ public enum ToolCommands {
                     .append((char) (0xDDE6 + (((int) c) - 97)));
         }
         
-        return null;
+        return yield.toString();
     }
 
     @Command(
