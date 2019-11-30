@@ -5,11 +5,11 @@ services:
         image: cobalton:latest
         container_name: cobalton
         restart: on-failure
+        working_dir: /
         build:
             context: .
             dockerfile: Dockerfile
-            args:
-                - COBALTON_OPTS=${COBALTON_OPTS}
-                - JAVA_OPTS=${JAVA_OPTS}
         volumes:
+            - ./build/install/Cobalton:/exec:ro
             - /var/bots/Cobalton:/data
+        entrypoint: /exec/bin/Cobalton
