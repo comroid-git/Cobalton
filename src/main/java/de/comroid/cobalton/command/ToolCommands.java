@@ -39,28 +39,6 @@ public enum ToolCommands {
                 .thenRun(command::delete)
                 .exceptionally(ExceptionLogger.get());
     }
-    
-    @Command(
-            description = "Emojify Text!",
-            usage = "emojify <any string>",
-            minimumArguments = 1,
-            convertStringResultsToEmbed = true
-    )
-    public String emojify(String[] args) {
-        final String str = String.join(" ", args).toLowerCase();
-        StringBuilder yield = new StringBuilder();
-
-        for (char c : str.toCharArray()) {
-            if (!Character.isAlphabetic(c))
-                continue;
-
-            yield.append(new String(new byte[]{(byte) 0xD83C, (byte) (0xDDE6 + (((int) c) - 97))}, StandardCharsets.UTF_8));
-        }
-
-        System.out.println("yield = " + yield);
-
-        return yield.toString();
-    }
 
     @Command(
             enablePrivateChat = false,
