@@ -1,5 +1,34 @@
 apply plugin: 'com.bmuschko.docker-remote-api'
 
+task precomposeKill(type: Exec) {
+    environment 'COBALTON_VERSION', project.version.toString()
+    executable "docker-compose"
+    args "down"
+}
+
+task precomposeDelete(type: Exec) {
+    dependsOn precomposeKill
+
+    environment 'COBALTON_VERSION', project.version.toString()
+    executable "docker-compose"
+    args "rm", "-f"
+}
+
+task precomposeDeleteCobalton(type: Exec) {
+    environment 'COBALTON_VERSION', project.version.toString()
+    executable "docker"
+    args "container", "rm", "-f", "cobalton"
+}
+
+task compose(type: Exec) {
+    dependsOn precomposeDelete
+    dependsOn precomposeDeleteCobalton
+
+    environment 'COBALTON_VERSION', project.version.toString()
+    executable "docker-compose"
+    args "up", "-d", "--build", "--force-recreate"
+}
+
 task assembleDockerContext(type: Sync) {
     from distTar
     from 'Dockerfile'

@@ -24,35 +24,6 @@ tasks.withType(JavaCompile) {
     options.incremental = true
 }
 
-task precomposeKill(type: Exec) {
-    environment 'COBALTON_VERSION', project.version.toString()
-    executable "docker-compose"
-    args "down"
-}
-
-task precomposeDelete(type: Exec) {
-    dependsOn precomposeKill
-    
-    environment 'COBALTON_VERSION', project.version.toString()
-    executable "docker-compose"
-    args "rm", "-f"
-}
-
-task precomposeDeleteCobalton(type: Exec) {
-    environment 'COBALTON_VERSION', project.version.toString()
-    executable "docker"
-    args "container", "rm", "-f", "cobalton"
-}
-
-task compose(type: Exec) {
-    dependsOn precomposeDelete
-    dependsOn precomposeDeleteCobalton
-
-    environment 'COBALTON_VERSION', project.version.toString()
-    executable "docker-compose"
-    args "up", "-d", "--build", "--force-recreate"
-}
-
 repositories {
     jcenter()
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
@@ -65,7 +36,7 @@ dependencies {
             { exclude group: 'org.fasterxml.jackson.core' }
 
     // Javacord Utilities
-    implementation('de.comroid:javacord-utilities:1.1.0') {
+    implementation('de.comroid:javacord-utilities:1.2.0') {
         exclude group: 'org.javacord'
         exclude group: 'org.fasterxml.jackson.core'
     }
