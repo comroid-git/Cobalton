@@ -13,4 +13,4 @@ services:
         - COBALTON_OPTS=${COBALTON_OPTS}
         - JAVA_OPTS=${JAVA_OPTS}
     volumes:
-      - /var/bots/james:/var/bots/james
+      - data:/var/bots/james
