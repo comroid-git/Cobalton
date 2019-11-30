@@ -35,6 +35,8 @@ import static java.time.temporal.ChronoField.YEAR;
 public enum AdminCommands {
     INSTANCE;
 
+    private final ScriptEngineManager mgr = new ScriptEngineManager();
+    private final Pattern ext = Pattern.compile("`{3}(java)?\\n(.*)\\n`{3}");
     final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
             .parseCaseInsensitive()
             .appendValue(DAY_OF_MONTH, 2)
@@ -43,14 +45,12 @@ public enum AdminCommands {
             .appendLiteral('-')
             .appendValue(YEAR, 4)
             .toFormatter();
-    private final ScriptEngineManager mgr = new ScriptEngineManager();
-    private final Pattern ext = Pattern.compile("`{3}(java)?\\n(.*)\\n`{3}");
 
     @Command(usage = "shutdown", description = "Only the owner of the bot can use this", shownInHelpCommand = false)
     public void shutdown(User user, String[] args, Message command, TextChannel channel) {
         if (Cobalton.permitted.contains(user.getId()))
             System.exit(1);
-        
+
         command.delete("Unauthorized").exceptionally(ExceptionLogger.get());
         channel.sendMessage("User " + user.getDiscriminatedName() + " not authorized.");
     }
@@ -90,10 +90,10 @@ public enum AdminCommands {
 
         final EmbedBuilder embedBuilder = DefaultEmbedFactory.create()
                 .addField(String.format("Program finished with exit code %d", exec.exitValue()), "```\n" + str.toString() + "\n```");
-        
+
         if (serr.length() > 1)
             embedBuilder.addField("`stderr`:", "```\n" + serr.toString() + "\n```");
-        
+
         return embedBuilder;
     }
 
@@ -105,12 +105,12 @@ public enum AdminCommands {
     public void archiveChannel(Command.Parameters param, User executor, String[] args, Server srv, ServerTextChannel stc) {
         if (!Cobalton.permitted.contains(executor.getId()))
             return;
-        
+
         final boolean thisChannel = param.getChannelMentions().size() == 0;
         final ServerTextChannel channel = thisChannel ? stc : param.getChannelMentions().get(0);
         final Permissions override = Permissions.fromBitmask(0, 0x3147840);
         final int rawPosition = channel.getRawPosition();
-        
+
         if (stc.getCategory()
                 .map(DiscordEntity::getId)
                 .map(id -> Cobalton.Prop.ARCHIVE_CATEGORY.getValue(srv).asLong() == id)

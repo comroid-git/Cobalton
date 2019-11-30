@@ -12,7 +12,6 @@
 **/*.dbmdl
 **/*.jfm
 **/azds.yaml
-**/bin
 **/charts
 **/docker-compose*
 **/Dockerfile*
@@ -21,5 +20,9 @@
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
+.gradle/**
 LICENSE
 README.md
+build/**
+!build/install/**
+run/**

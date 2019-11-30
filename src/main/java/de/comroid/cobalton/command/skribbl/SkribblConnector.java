@@ -21,6 +21,10 @@ public class SkribblConnector extends SocketConnector {
                 .on("lobbyPlayerConnected", this::onLobbyPlayerConnected);
     }
 
+    public Object getRoom() throws ExecutionException, InterruptedException {
+        return this.result.get();
+    }
+
     @Override
     protected void onConnect(Object... args) {
         final HashMap userData = new HashMap<String, Object>() {
@@ -46,9 +50,5 @@ public class SkribblConnector extends SocketConnector {
 
     private void onLobbyPlayerConnected(Object... objects) {
         this.socket.disconnect();
-    }
-
-    public Object getRoom() throws ExecutionException, InterruptedException {
-        return this.result.get();
     }
 }

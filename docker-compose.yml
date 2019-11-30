@@ -1,16 +1,15 @@
 version: "2.0"
 
 services:
-  cobalton:
-    container_name: cobalton
-    image: cobalton:latest
-    restart: unless-stopped
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - COBALTON_VERSION=${COBALTON_VERSION}
-        - COBALTON_OPTS=${COBALTON_OPTS}
-        - JAVA_OPTS=${JAVA_OPTS}
-    volumes:
-      - /var/bots/james:/var/bots/james
+    cobalton:
+        image: cobalton:latest
+        container_name: cobalton
+        restart: on-failure
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - ./build/install/Cobalton:/app/binaries:rw
+            - /var/bots/Cobalton:/app/data:rw
+        working_dir: /app
+        entrypoint: /app/binaries/bin/Cobalton

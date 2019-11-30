@@ -4,18 +4,29 @@ import java.io.File;
 import java.io.IOException;
 
 public class FileProvider {
-    private final static String UNIX_PREPATH = "/var/bots/james/";
+    private final static String PREFIX = "/app/data/";
 
     public static File getFile(String subPath) {
-        File file = new File((OSValidator.isUnix() ? UNIX_PREPATH : "") + subPath);
+        final String path = PREFIX + subPath;
+        final File file = new File(path);
 
         if (!file.exists()) {
+            System.out.printf("File [ %s ] does not exist. Trying to create it...\n", path);
+
             try {
-                file.createNewFile();
+                if (!file.createNewFile()) {
+                    System.out.printf("Could not create File [ %s ]. Exiting.\n", path);
+                    System.exit(1);
+                    return null; // lol
+                } else System.out.printf("Created missing File: [ %s ]", path);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.out.printf(String.format("An [ %s ] occurred creating File [ %s ]. Exiting.\n", e.getClass().getSimpleName(), path), path);
+                e.printStackTrace(System.out);
+                System.exit(1);
+                return null; // lol
             }
         }
+
         return file;
     }
 }

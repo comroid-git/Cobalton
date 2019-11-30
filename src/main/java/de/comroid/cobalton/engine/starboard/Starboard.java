@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import de.comroid.cobalton.model.Embed;
+
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -27,44 +28,6 @@ public class Starboard implements ReactionAddListener, ReactionRemoveListener {
         this.starChannel = api.getServerTextChannelById(starChannel).get();
         this.api = api;
         api.addListener(this);
-    }
-
-    private EmbedBuilder getBuilder(ReactionAddEvent event) {
-        return new Embed(event.getServer().get(),
-                event.getMessage().get().getUserAuthor().get()
-        )
-                .addField("Score", String.format("```1 %s```", this.favReaction))
-                .getBuilder()
-                .setDescription(event.getMessage().get().getContent());
-    }
-
-
-    private void updateEmbed(Star star) {
-        this.starChannel
-                .getMessageById(star.getDestination().id)
-                .thenAccept(destination ->
-                        destination.edit(
-                                destination.getEmbeds()
-                                        .get(0)
-                                        .toBuilder()
-                                        .updateFields((embedField) -> embedField.getName().equals("Score"),
-                                                editableEmbedField -> editableEmbedField.setValue(
-                                                        String.format("```%d %s```", star.getScore(), this.favReaction)
-                                                )
-                                        )
-                        )
-                )
-                .thenAccept((Void v) -> this.stars.put(star))
-                .exceptionally(ExceptionLogger.get());
-    }
-
-    private <T extends ReactionEvent> boolean isStarboardChannel(T event) {
-        if (event instanceof ReactionAddEvent) {
-            return ((ReactionAddEvent) event).getEmoji().asUnicodeEmoji().map(Starboard.this.favReaction::equals).orElse(false);
-        } else if (event instanceof ReactionRemoveEvent) {
-            return ((ReactionRemoveEvent) event).getEmoji().asUnicodeEmoji().map(Starboard.this.favReaction::equals).orElse(false);
-        }
-        return false;
     }
 
     @Override
@@ -114,5 +77,42 @@ public class Starboard implements ReactionAddListener, ReactionRemoveListener {
                 }
             }
         }
+    }
+
+    private EmbedBuilder getBuilder(ReactionAddEvent event) {
+        return new Embed(event.getServer().get(),
+                event.getMessage().get().getUserAuthor().get()
+        )
+                .addField("Score", String.format("```1 %s```", this.favReaction))
+                .getBuilder()
+                .setDescription(event.getMessage().get().getContent());
+    }
+
+    private void updateEmbed(Star star) {
+        this.starChannel
+                .getMessageById(star.getDestination().id)
+                .thenAccept(destination ->
+                        destination.edit(
+                                destination.getEmbeds()
+                                        .get(0)
+                                        .toBuilder()
+                                        .updateFields((embedField) -> embedField.getName().equals("Score"),
+                                                editableEmbedField -> editableEmbedField.setValue(
+                                                        String.format("```%d %s```", star.getScore(), this.favReaction)
+                                                )
+                                        )
+                        )
+                )
+                .thenAccept((Void v) -> this.stars.put(star))
+                .exceptionally(ExceptionLogger.get());
+    }
+
+    private <T extends ReactionEvent> boolean isStarboardChannel(T event) {
+        if (event instanceof ReactionAddEvent) {
+            return ((ReactionAddEvent) event).getEmoji().asUnicodeEmoji().map(Starboard.this.favReaction::equals).orElse(false);
+        } else if (event instanceof ReactionRemoveEvent) {
+            return ((ReactionRemoveEvent) event).getEmoji().asUnicodeEmoji().map(Starboard.this.favReaction::equals).orElse(false);
+        }
+        return false;
     }
 }

@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.comroid.cobalton.command.AdminCommands;
-import de.comroid.cobalton.command.JamesCommands;
 import de.comroid.cobalton.command.TextCommands;
+import de.comroid.cobalton.command.ToolCommands;
 import de.comroid.cobalton.engine.GamescomEngine;
 import de.comroid.cobalton.engine.RoleMessageEngine;
 import de.comroid.cobalton.engine.starboard.Starboard;
@@ -27,7 +27,6 @@ import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.activity.ActivityType;
-import org.javacord.api.entity.channel.Channel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
@@ -85,7 +84,7 @@ public final class Cobalton {
             CMD.prefixes = new String[]{"cobalton!", "c!"};
             logger.info(String.format("Setting command prefixes: '%s'", String.join("', '", CMD.prefixes)));
             CMD.useDefaultHelp(null);
-            CMD.registerCommands(JamesCommands.INSTANCE);
+            CMD.registerCommands(ToolCommands.INSTANCE);
             CMD.registerCommands(TextCommands.INSTANCE);
             CMD.registerCommands(AdminCommands.INSTANCE);
             CMD.registerCommands(EvalCommand.INSTANCE);

@@ -24,7 +24,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.util.logging.ExceptionLogger;
 
 @CommandGroup(name = "Cobalton Tools", description = "Basic tools provided by Cobalton")
-public enum JamesCommands {
+public enum ToolCommands {
     INSTANCE;
 
     @Command(aliases = "skribbl",

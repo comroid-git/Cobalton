@@ -9,11 +9,13 @@ import org.javacord.api.entity.user.User;
 
 public class Embed {
     protected EmbedBuilder embed;
+
     public Embed(Server server, User user) {
         this.embed = DefaultEmbedFactory.create()
                 .setAuthor(user)
                 .setColor(user.getRoleColor(server).orElse(Cobalton.THEME));
     }
+
     public Embed addField(String name, String value) {
         this.embed.addField(name, value);
         return this;

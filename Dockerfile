@@ -1,11 +1,18 @@
-
+# Using OpenJDK11
 FROM adoptopenjdk/openjdk11:alpine
-ARG JAVA_OPTS
-ENV JAVA_OPTS=$JAVA_OPTS
-ARG COBALTON_OPTS
-ENV COBALTON_OPTS=$COBALTON_OPTS
-ARG COBALTON_VERSION
-ENV COBALTON_VERSION=$COBALTON_VERSION
-ADD build/distributions/Cobalton-${COBALTON_VERSION}.tar /opt/bots/
+RUN adduser -h /app -D exec
 
-ENTRYPOINT exec /opt/bots/Cobalton-${COBALTON_VERSION}/bin/Cobalton JAVA_OPTS=$JAVA_OPTS COBALTON_OPTS=$COBALTON_OPTS
+VOLUME /app/binaries
+VOLUME /app/data
+
+# Permission Management
+RUN chown -R exec:exec /app/*
+RUN chmod -R 777 /app/*
+USER exec
+WORKDIR /app
+
+RUN ls -AlhX
+RUN ls -AlhX ..
+
+# GO
+ENTRYPOINT /app/binaries/bin/Cobalton

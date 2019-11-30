@@ -1,12 +1,5 @@
 package de.comroid.cobalton.engine.starboard;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.message.Message;
-import org.javacord.api.util.logging.ExceptionLogger;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +7,13 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import de.comroid.util.interfaces.Initializable;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.util.logging.ExceptionLogger;
 
 public class StarMap implements Initializable, Closeable {
     public final Logger logger = LogManager.getLogger();
@@ -25,12 +25,6 @@ public class StarMap implements Initializable, Closeable {
     public StarMap(DiscordApi api, File file) {
         this.api = api;
         this.starboardFile = file;
-    }
-
-    private void _init() throws IOException {
-        if (!this.starboardFile.exists())
-            this.starboardFile.createNewFile();
-        this.mapper.writeValue(this.starboardFile, this.stars.values());
     }
 
     @Override
@@ -99,5 +93,11 @@ public class StarMap implements Initializable, Closeable {
         } else {
             this.stars.put(origin.getId(), new Star(score, origin, destination));
         }
+    }
+
+    private void _init() throws IOException {
+        if (!this.starboardFile.exists())
+            this.starboardFile.createNewFile();
+        this.mapper.writeValue(this.starboardFile, this.stars.values());
     }
 }

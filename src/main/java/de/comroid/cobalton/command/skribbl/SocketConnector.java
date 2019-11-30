@@ -13,10 +13,10 @@ abstract class SocketConnector {
         this.socket.on("connect", this::onConnect);
     }
 
-    protected abstract void onConnect(Object... args);
-
     public SocketConnector on(String event, Runnable callback) {
         this.socket.on(event, (Object... args) -> callback.run());
         return this;
     }
+
+    protected abstract void onConnect(Object... args);
 }
