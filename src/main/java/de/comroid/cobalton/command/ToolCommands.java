@@ -46,7 +46,16 @@ public enum ToolCommands {
             convertStringResultsToEmbed = true
     )
     public String emojify(String[] args) {
-        final String str = String.join(" ", args);
+        final String str = String.join(" ", args).toLowerCase();
+        StringBuilder yield = new StringBuilder();
+
+        for (char c : str.toCharArray()) {
+            if (!Character.isAlphabetic(c))
+                continue;
+
+            yield.append((char) 0xD83C)
+                    .append((char) (0xDDE6 + (((int) c) - 97)));
+        }
         
         return null;
     }
