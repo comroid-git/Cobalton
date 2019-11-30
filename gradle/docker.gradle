@@ -1,5 +1,0 @@
-task dockerCompose(type: Exec, dependsOn: 'installDist') {
-    environment 'APP_VERSION', project.version
-    executable "docker-compose"
-    args "up", "-d", "--build", "--force-recreate"
-}
