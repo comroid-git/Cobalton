@@ -3,15 +3,13 @@ package de.comroid.cobalton.engine.starboard;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.javacord.api.entity.message.Message;
 
 class StarMessage {
     public long id;
     public long channel;
 
-    @JsonCreator
-    StarMessage(@JsonProperty long id, @JsonProperty long channel) {
+    @JsonCreator StarMessage(@JsonProperty long id, @JsonProperty long channel) {
         this.id = id;
         this.channel = channel;
     }
@@ -40,24 +38,24 @@ public class Star {
         return this.score;
     }
 
-    @JsonGetter("origin")
-    public StarMessage getOrigin() {
-        return this.origin;
-    }
-
-    @JsonGetter("destination")
-    public StarMessage getDestination() {
-        return this.destination;
-    }
-
     @JsonProperty
     public void setScore(int score) {
         this.score = score;
     }
 
+    @JsonGetter("origin")
+    public StarMessage getOrigin() {
+        return this.origin;
+    }
+
     @JsonProperty
     public void setOrigin(Message origin) {
         this.origin = new StarMessage(origin.getId(), origin.getChannel().getId());
+    }
+
+    @JsonGetter("destination")
+    public StarMessage getDestination() {
+        return this.destination;
     }
 
     @JsonProperty

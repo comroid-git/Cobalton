@@ -19,7 +19,6 @@ task dockerCompose(type: Exec, dependsOn: 'dockerComposePre') {
 
 task dockerComposePre(type: Sync, dependsOn: installDist) {
     from "$buildDir/install/$rootProject.name"
-    from "$rootDir/Dockerfile"
     from "/var/bots/$rootProject.name"
 
     into "$rootDir/docker/"
@@ -52,7 +51,7 @@ dependencies {
         exclude group: 'org.javacord'
         exclude group: 'org.fasterxml.jackson.core'
     }
-    
+
     // JSON Serialization Solution
     implementation('com.github.burdoto:Jimson:e96712f2ef')
 

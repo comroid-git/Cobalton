@@ -1,7 +1,5 @@
 package de.comroid.cobalton.command;
 
-import java.nio.charset.StandardCharsets;
-
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
 

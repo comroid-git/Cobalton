@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.comroid.cobalton.command.AdminCommands;
-import de.comroid.cobalton.command.ToolCommands;
 import de.comroid.cobalton.command.TextCommands;
+import de.comroid.cobalton.command.ToolCommands;
 import de.comroid.cobalton.engine.GamescomEngine;
 import de.comroid.cobalton.engine.RoleMessageEngine;
 import de.comroid.cobalton.engine.starboard.Starboard;

@@ -19,14 +19,14 @@ public class ChannelUtils {
                     .setName(stc.getName())
                     .setAuditLogReason("Archived Channel Renewal")
                     .setSlowmodeDelayInSeconds(stc.getSlowmodeDelayInSeconds());
-            
+
             stc.getCategory().ifPresent(renewalBuilder::setCategory);
-            
+
             renewalBuilder.create()
                     .thenCompose(chl -> chl.updateRawPosition(stc.getRawPosition()))
                     .exceptionally(ExceptionLogger.get());
         }
-        
+
         Cobalton.API.getChannelCategoryById(Cobalton.Prop.ARCHIVE_CATEGORY.getValue(stc.getServer()).asLong())
                 .ifPresent(cat -> {
                     final ServerTextChannelUpdater updater = stc.createUpdater()

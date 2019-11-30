@@ -22,11 +22,9 @@ import org.javacord.api.util.logging.ExceptionLogger;
 import static de.comroid.Cobalton.API;
 
 public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, ServerVoiceChannelMemberLeaveListener {
-    private final DiscordApi api;
-
     public static final long GAMESCOM_VOICE = 625508431272345600L;
     public static final long GAMESCOM_ROLE = 626822066280071213L;
-
+    private final DiscordApi api;
     private boolean active;
 
     public GamescomEngine(DiscordApi api) {
@@ -60,7 +58,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
                             .setColor(Cobalton.THEME)
                             .setDescription("Los geht die Gamescom!"))
                     .exceptionally(ExceptionLogger.get());
-            
+
             active = true;
         }
     }
@@ -70,12 +68,12 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
         System.out.println("event = " + event);
 
         if (event.getUser().isBot()) return;
-        
+
         final ServerVoiceChannel svc = event.getChannel();
 
         if (active && svc.getConnectedUserIds().size() == 0) {
             // trigger guna
-            
+
             API.getRoleById(Cobalton.Prop.GAMESCOM_ROLE.getValue(event.getServer()).asLong())
                     .ifPresent(gamescom -> {
                         final Collection<User> users = gamescom.getUsers();
@@ -109,7 +107,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
                     });
 
             active = false;
-        } 
+        }
     }
 
     private Collection<User> currentUsers() {
