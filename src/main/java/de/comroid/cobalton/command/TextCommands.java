@@ -65,7 +65,8 @@ public enum TextCommands {
             if (!Character.isAlphabetic(c))
                 continue;
 
-            yield.append(EMOJI_TABLE[c - 97]);
+            yield.append(EMOJI_TABLE[c - 97])
+                    .append(' ');
         }
 
         return yield.toString();
