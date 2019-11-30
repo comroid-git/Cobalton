@@ -7,6 +7,7 @@ ENV COBALTON_OPTS=$COBALTON_OPTS
 ARG COBALTON_VERSION
 ENV COBALTON_VERSION=$COBALTON_VERSION
 
-COPY build/install/Cobalton /opt/bots/Cobalton
+COPY build/install/Cobalton/bin /bin
+COPY build/install/Cobalton/lib /lib
 
-ENTRYPOINT exec /opt/bots/Cobalton/bin/Cobalton JAVA_OPTS=$JAVA_OPTS COBALTON_OPTS=$COBALTON_OPTS
+ENTRYPOINT exec /bin/Cobalton JAVA_OPTS=$JAVA_OPTS COBALTON_OPTS=$COBALTON_OPTS
