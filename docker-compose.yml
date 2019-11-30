@@ -5,11 +5,10 @@ services:
         image: cobalton:latest
         container_name: cobalton
         restart: on-failure
-        working_dir: /
         build:
             context: .
             dockerfile: Dockerfile
         volumes:
-            - ./build/install/Cobalton:/exec:ro
-            - /var/bots/Cobalton:/data
-        entrypoint: /exec/bin/Cobalton
+            - .\docker:/app
+        working_dir: /app
+        entrypoint: /app/bin/Cobalton

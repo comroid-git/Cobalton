@@ -21,7 +21,7 @@
     </Appenders>
     <Loggers>
         <Root level="trace">
-            <AppenderRef ref="Console" level="debug"/>
+            <AppenderRef ref="Console" level="info"/>
             <AppenderRef ref="logfile_public" level="info"/>
             <AppenderRef ref="logfile" level="debug"/>
             <AppenderRef ref="CobaltonLog4J2Appender" level="error"/>

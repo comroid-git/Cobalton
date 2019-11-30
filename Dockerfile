@@ -1,8 +1,7 @@
 FROM adoptopenjdk/openjdk11:alpine
 
-VOLUME ./build/install/Cobalton /exec
-VOLUME /var/bots/Cobalton /data
+VOLUME ./docker /app
 
-WORKDIR /
+WORKDIR /app
 
-ENTRYPOINT exec /bin/Cobalton
+ENTRYPOINT exec ./bin/Cobalton

@@ -108,3 +108,6 @@ run/
 .idea/
 data/
 login/
+
+# Docker Compose Directory
+docker/

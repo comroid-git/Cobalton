@@ -17,6 +17,20 @@ tasks.withType(JavaCompile) {
     options.incremental = true
 }
 
+task dockerComposePre(type: Sync) {
+    from "$buildDir/install/$rootProject.name"
+    from "$rootDir/Dockerfile"
+    from "/var/bots/$rootProject.name"
+
+
+
+    into "$rootDir/docker/"
+}
+
+tasks.getByName("installDist").configure {
+    dependsOn 'dockerComposePre'
+}
+
 repositories {
     jcenter()
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
