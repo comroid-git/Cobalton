@@ -56,7 +56,9 @@ public enum ToolCommands {
             yield.append((char) 0xD83C)
                     .append((char) (0xDDE6 + (((int) c) - 97)));
         }
-        
+
+        System.out.println("yield = " + yield);
+
         return yield.toString();
     }
 
