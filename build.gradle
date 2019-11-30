@@ -12,23 +12,22 @@ wrapper {
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
 }
 
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-    options.incremental = true
+task dockerCompose(type: Exec, dependsOn: 'dockerComposePre') {
+    executable = 'docker-compose'
+    args = ['up', '-d', '--build', '--force-recreate']
 }
 
-task dockerComposePre(type: Sync) {
+task dockerComposePre(type: Sync, dependsOn: installDist) {
     from "$buildDir/install/$rootProject.name"
     from "$rootDir/Dockerfile"
     from "/var/bots/$rootProject.name"
 
-
-
     into "$rootDir/docker/"
 }
 
-tasks.getByName("installDist").configure {
-    dependsOn 'dockerComposePre'
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.incremental = true
 }
 
 repositories {

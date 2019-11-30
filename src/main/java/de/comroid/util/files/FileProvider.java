@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class FileProvider {
-    private final static String PREFIX = "./";
+    private final static String PREFIX = "/app/";
 
     public static File getFile(String subPath) {
         final String path = PREFIX + subPath;
@@ -14,11 +14,11 @@ public class FileProvider {
             System.out.printf("File [ %s ] does not exist. Trying to create it...\n", path);
 
             try {
-                if (file.createNewFile()) {
+                if (!file.createNewFile()) {
                     System.out.printf("Could not create File [ %s ]. Exiting.\n", path);
                     System.exit(1);
                     return null; // lol
-                }
+                } else System.out.printf("Created missing File: [ %s ]", path);
             } catch (IOException e) {
                 System.out.printf(String.format("An [ %s ] occurred creating File [ %s ]. Exiting.\n", e.getClass().getSimpleName(), path), path);
                 e.printStackTrace(System.out);
