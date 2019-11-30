@@ -9,7 +9,7 @@ services:
             context: .
             dockerfile: Dockerfile
         volumes:
-            - ./docker:/app:ro
+            - ./docker:/app:rw
             - /var/bots/Cobalton/data:/app/data:rw
             - /var/bots/Cobalton/login:/app/login:rw
         working_dir: /app
