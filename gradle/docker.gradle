@@ -1,59 +1,39 @@
-apply plugin: 'com.bmuschko.docker-remote-api'
+import org.gradle.process.internal.ExecAction
+import org.gradle.process.internal.ExecException
 
-task precomposeKill(type: Exec) {
-    environment 'COBALTON_VERSION', project.version.toString()
-    executable "docker-compose"
-    args "down"
+class DockerExec extends Exec {
+    { // initializer
+        environment 'APP_VERSION', this.getProject().version
+        //environment 'CONTAINER_NAME', this.getExtensions().extraProperties.dockerContainerName // todo
+    }
 }
 
-task precomposeDelete(type: Exec) {
-    dependsOn precomposeKill
-
-    environment 'COBALTON_VERSION', project.version.toString()
-    executable "docker-compose"
-    args "rm", "-f"
-}
-
-task precomposeDeleteCobalton(type: Exec) {
-    environment 'COBALTON_VERSION', project.version.toString()
-    executable "docker"
-    args "container", "rm", "-f", "cobalton"
-}
-
-task compose(type: Exec) {
-    dependsOn precomposeDelete
-    dependsOn precomposeDeleteCobalton
-
-    environment 'COBALTON_VERSION', project.version.toString()
+task dockerCompose(type: DockerExec, dependsOn: 'installDist') {
     executable "docker-compose"
     args "up", "-d", "--build", "--force-recreate"
 }
 
+task dockerDelete(type: DockerExec, dependsOn: 'dockerKill') {
+    executable "docker"
+    args "container", "rm", dockerContainerName
+}
+
+task dockerKill(type: DockerExec) {
+    executable "docker"
+    args "stop", dockerContainerName
+}
+
+/*
+might be useful later, but right now it is not
+
 task assembleDockerContext(type: Sync) {
-    from distTar
+    from installDist
     from 'Dockerfile'
     into "$buildDir/docker"
 }
 
-task buildDockerImage(type: DockerBuildImage, dependsOn: assembleDockerContext) {
+task buildDockerImage(type: Zip, dependsOn: 'assembleDockerContext') {
     inputDir = file("$buildDir/docker")
     tag = project.name
 }
-
-task updateDockerService(type: DockerClient, dependsOn: buildDockerImage) {
-    onNext {
-        inspectSwarmCmd().exec()
-
-        // update the service
-        def services = listServicesCmd().withNameFilter([project.name]).exec()
-        if (services) {
-            def service = services[0]
-            def taskTemplate = service.spec.taskTemplate
-            taskTemplate = taskTemplate.withForceUpdate(taskTemplate.forceUpdate + 1)
-            updateServiceCmd(project.name, service.spec.withTaskTemplate(taskTemplate))
-                    .withVersion(service.version.index).exec()
-        } else {
-            throw new RuntimeException("Service with name '$project.name' was not found, please create it first")
-        }
-    }
-}
+*/
