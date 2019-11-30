@@ -2,8 +2,8 @@ version: "2.0"
 
 services:
     cobalton:
-        image: Cobalton:latest
-        container_name: Cobalton
+        image: cobalton:latest
+        container_name: cobalton
         restart: on-failure
         build:
             context: .
