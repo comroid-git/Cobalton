@@ -10,6 +10,7 @@ services:
             dockerfile: Dockerfile
         volumes:
             - ./docker:/app:ro
-            - /var/bots/Cobalton:/app:rw
+            - /var/bots/Cobalton/data:/app/data:rw
+            - /var/bots/Cobalton/login:/app/login:rw
         working_dir: /app
         entrypoint: /app/bin/Cobalton
