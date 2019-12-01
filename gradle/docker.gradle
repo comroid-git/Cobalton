@@ -1,4 +1,9 @@
 task dockerCompose(type: Exec, dependsOn: 'installDist') {
     executable = 'docker-compose'
-    args = ['up', "-f $rootDir/docker-compose.yml", "-p $project.name", '-d', '--build', '--force-recreate']
+    args = ['up',
+            "-f $rootDir/docker-compose.yml",
+            "-p ${project.name.toLowerCase()}",
+            '-d',
+            '--build',
+            '--force-recreate']
 }
