@@ -157,6 +157,7 @@ public final class Cobalton {
         logger.info("Trying to shutdown gracefully");
         try {
             PROP.close();
+            API.disconnect();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
