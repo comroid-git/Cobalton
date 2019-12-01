@@ -1,5 +1,8 @@
 package de.comroid.cobalton.command;
 
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
 
@@ -70,5 +73,29 @@ public enum TextCommands {
         }
 
         return yield.toString();
+    }
+
+    @Command(
+            description = "Mock People!",
+            usage = "mockify <any string>",
+            minimumArguments = 1,
+            convertStringResultsToEmbed = true
+    )
+    public String mockify(String[] args) {
+        final String str = String.join(" ", args).toLowerCase();
+
+        return IntStream.range(0, str.length())
+                .mapToObj(val -> {
+                    final char charAt = str.charAt(val);
+
+                    if (Character.isWhitespace(charAt))
+                        return ' ';
+
+                    return (val % 2) != 1
+                            ? Character.toUpperCase(charAt)
+                            : Character.toLowerCase(charAt);
+                })
+                .map(String::valueOf)
+                .collect(Collectors.joining());
     }
 }
