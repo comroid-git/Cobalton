@@ -2,7 +2,7 @@
 FROM adoptopenjdk/openjdk11:alpine
 RUN adduser -h /app -D exec
 
-VOLUME /app/binaries
+ADD ./build/install/Cobalton /app/binaries
 VOLUME /app/data
 
 # Permission Management
