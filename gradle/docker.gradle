@@ -1,4 +1,9 @@
-task dockerCompose(type: Exec, dependsOn: 'installDist') {
+task dockerCompose(type: Exec, dependsOn: ['installDist', 'dockerDestroy']) {
     executable = 'docker-compose'
     args = ['up', '-d', '--build', '--force-recreate']
+}
+
+task dockerDestroy(type: Exec) {
+    executable = 'docker'
+    args = ['stop', dockerContainerName]
 }
