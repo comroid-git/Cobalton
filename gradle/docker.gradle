@@ -3,7 +3,14 @@ task dockerCompose(type: Exec, dependsOn: ['installDist', 'dockerDestroy']) {
     args = ['up', '-d', '--build', '--force-recreate']
 }
 
-task dockerDestroy(type: Exec) {
+task dockerDestroy(dependsOn: ['dockerStop', 'dockerRemove'])
+
+task dockerStop(type: Exec) {
     executable = 'docker'
     args = ['stop', dockerContainerName]
+}
+
+task dockerRemove(type: Exec) {
+    executable = 'docker'
+    args = ['rm', dockerContainerName]
 }
