@@ -12,7 +12,6 @@ USER exec
 WORKDIR /app
 
 RUN ls -AlhX
-RUN ls -AlhX ..
 
 # GO
 ENTRYPOINT /app/binaries/bin/Cobalton
