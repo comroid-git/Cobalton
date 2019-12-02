@@ -57,7 +57,7 @@ public class FileProvider {
                     return myPath;
                 })
                 .map(strs -> String.join(separator, strs))
-                .filter(str -> !str.isBlank())
+                .filter(str -> !str.isEmpty())
                 .forEachOrdered(path -> {
                     final File file = new File(path);
 
