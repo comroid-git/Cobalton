@@ -90,7 +90,7 @@ public final class Cobalton {
             CMD.registerCommands(EvalCommand.INSTANCE);
 
             logger.info("Initialzing server properties");
-            PROP = new ServerPropertiesManager(FileProvider.getFile("data/serverProps.json"));
+            PROP = new ServerPropertiesManager(FileProvider.getFile("serverProps.json"));
             PROP.usePropertyCommand(null, CMD);
             Prop.init();
 
@@ -106,7 +106,7 @@ public final class Cobalton {
             SRV = API.getServerById(625494140427173889L).orElseThrow(IllegalStateException::new);
 
             logger.info("Initializing Starboard");
-            STAR = new Starboard(API, FileProvider.getFile("data/starboard.json"), "✅", 639051738036568064L);
+            STAR = new Starboard(API, FileProvider.getFile("starboard.json"), "✅", 639051738036568064L);
 
             API.updateActivity(ActivityType.LISTENING, CMD.prefixes[0] + "help");
             API.updateStatus(UserStatus.ONLINE);
