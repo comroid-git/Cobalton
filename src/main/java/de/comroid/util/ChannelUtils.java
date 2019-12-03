@@ -48,7 +48,7 @@ public class ChannelUtils {
     }
 
     public static Optional<Message> previous(Message before) {
-        return before.getChannel()
+        return before.getMessagesBefore(1);
                 .getMessagesBeforeAsStream(before)
                 .sorted(Comparator.<Message>comparingLong(DiscordEntity::getId) // simple ID comparison will sort by age
                         .thenComparing(Comparator.reverseOrder())) // then reverse
