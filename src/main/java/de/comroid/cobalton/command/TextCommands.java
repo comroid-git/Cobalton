@@ -1,10 +1,14 @@
 package de.comroid.cobalton.command;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
+import de.comroid.util.ChannelUtils;
+
+import org.javacord.api.entity.message.Message;
 
 @CommandGroup(name = "TextCommands", description = "Textual fun!")
 public enum TextCommands {
@@ -52,11 +56,12 @@ public enum TextCommands {
     @Command(
             description = "Emojify Text!",
             usage = "emojify <any string>",
-            minimumArguments = 1,
             convertStringResultsToEmbed = true
     )
-    public String emojify(String[] args) {
-        final String str = String.join(" ", args).toLowerCase();
+    public String emojify(Message message, String[] args) {
+        final String str = (args.length == 0 ? ChannelUtils.previous(message)
+                .map(Message::getReadableContent) : Optional.<String>empty())
+                .orElseGet(() -> String.join(" ", args).toLowerCase());
         StringBuilder yield = new StringBuilder();
 
         for (char c : str.toCharArray()) {
@@ -78,11 +83,12 @@ public enum TextCommands {
     @Command(
             description = "Mock People!",
             usage = "mockify <any string>",
-            minimumArguments = 1,
             convertStringResultsToEmbed = true
     )
-    public String mockify(String[] args) {
-        final String str = String.join(" ", args).toLowerCase();
+    public String mockify(Message message, String[] args) {
+        final String str = (args.length == 0 ? ChannelUtils.previous(message)
+                .map(Message::getReadableContent) : Optional.<String>empty())
+                .orElseGet(() -> String.join(" ", args).toLowerCase());
 
         return IntStream.range(0, str.length())
                 .mapToObj(val -> {
