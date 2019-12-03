@@ -65,7 +65,7 @@ public class FileProvider {
                         return;
 
                     printed[0]++;
-                    System.out.printf(" FAIL\nDirectory [ %s ] does not exist, trying to create it...", path);
+                    System.out.printf(" FAIL\nDirectory [ %s ] does not exist, trying to create it...\n", path);
 
                     if (file.mkdir()) {
                         printed[0]++;
