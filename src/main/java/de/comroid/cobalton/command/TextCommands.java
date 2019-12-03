@@ -6,10 +6,10 @@ import java.util.stream.IntStream;
 
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
-import de.comroid.util.ChannelUtils;
 import de.comroid.util.CommonUtil;
 
 import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageSet;
 
 @CommandGroup(name = "TextCommands", description = "Textual fun!")
 public enum TextCommands {
@@ -60,7 +60,9 @@ public enum TextCommands {
             convertStringResultsToEmbed = true
     )
     public String emojify(Message message, String[] args) {
-        final String str = (args.length == 0 ? ChannelUtils.previous(message)
+        final String str = (args.length == 0 ? message.getMessagesBefore(1)
+                .thenApply(MessageSet::getNewestMessage)
+                .join() // we don't want this to become asynchrounous
                 .map(Message::getReadableContent) : Optional.<String>empty())
                 .orElseGet(() -> String.join(" ", args).toLowerCase());
         StringBuilder yield = new StringBuilder();
@@ -88,7 +90,9 @@ public enum TextCommands {
             convertStringResultsToEmbed = true
     )
     public String mockify(Message message, String[] args) {
-        final String str = (args.length == 0 ? ChannelUtils.previous(message)
+        final String str = (args.length == 0 ? message.getMessagesBefore(1)
+                .thenApply(MessageSet::getNewestMessage)
+                .join() // we don't want this to become asynchrounous
                 .map(Message::getReadableContent) : Optional.<String>empty())
                 .orElseGet(() -> String.join(" ", args).toLowerCase());
 

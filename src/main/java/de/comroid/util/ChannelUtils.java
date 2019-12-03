@@ -1,8 +1,6 @@
 package de.comroid.util;
 
 import java.time.Instant;
-import java.util.Comparator;
-import java.util.Optional;
 
 import de.comroid.Cobalton;
 
@@ -11,7 +9,6 @@ import org.javacord.api.entity.Permissionable;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.channel.ServerTextChannelUpdater;
-import org.javacord.api.entity.message.Message;
 import org.javacord.api.util.logging.ExceptionLogger;
 
 public class ChannelUtils {
@@ -45,14 +42,5 @@ public class ChannelUtils {
 
                     updater.update().exceptionally(ExceptionLogger.get());
                 });
-    }
-
-    public static Optional<Message> previous(Message before) {
-        return before.getMessagesBefore(1);
-                .getMessagesBeforeAsStream(before)
-                .sorted(Comparator.<Message>comparingLong(DiscordEntity::getId) // simple ID comparison will sort by age
-                        .thenComparing(Comparator.reverseOrder())) // then reverse
-                .limit(1)
-                .findFirst();
     }
 }
