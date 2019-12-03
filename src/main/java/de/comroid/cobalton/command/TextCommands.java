@@ -7,6 +7,7 @@ import java.util.stream.IntStream;
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
 import de.comroid.util.ChannelUtils;
+import de.comroid.util.CommonUtil;
 
 import org.javacord.api.entity.message.Message;
 
@@ -73,8 +74,9 @@ public enum TextCommands {
             if (!Character.isAlphabetic(c))
                 continue;
 
-            yield.append(EMOJI_TABLE[c - 'a' /* 97 */])
-                    .append(' ');
+            if (CommonUtil.range(0, c - 'a', 26))
+                yield.append(EMOJI_TABLE[c - 'a' /* 97 */])
+                        .append(' ');
         }
 
         return yield.toString();
