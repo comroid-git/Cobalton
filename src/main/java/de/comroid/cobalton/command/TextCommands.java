@@ -1,6 +1,7 @@
 package de.comroid.cobalton.command;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -16,7 +17,8 @@ import org.javacord.api.entity.message.MessageSet;
 public enum TextCommands {
     INSTANCE;
 
-    private final static String[] EMOJI_TABLE = new String[]{
+    public final static Pattern CONVERSION_PATTERN = Pattern.compile(".*?[a-zA-Z0-9\\s]+.*?");
+    public final static String[] EMOJI_TABLE = new String[]{
             "\uD83C\uDDE6", // a
             "\uD83C\uDDE7", // b
             "\uD83C\uDDE8", // c
@@ -63,11 +65,11 @@ public enum TextCommands {
     public Object emojify(Message message, String[] args) {
         final String str = getReferencedContent(message, args);
 
-        if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
+        if (!CONVERSION_PATTERN.matcher(str).matches())
             return DefaultEmbedFactory.create()
                     .addField("Error", "Input Input String must match Regular Expression: \n" +
                             "```regexp\n" +
-                            ".*?[a-zA-Z0-9\\s]+.*?\n" +
+                            CONVERSION_PATTERN.pattern() + "\n" +
                             "```")
                     .addField("Input String", "```\n" +
                             str + "\n" +
@@ -100,11 +102,11 @@ public enum TextCommands {
     public Object mockify(Message message, String[] args) {
         final String str = getReferencedContent(message, args);
 
-        if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
+        if (!CONVERSION_PATTERN.matcher(str).matches())
             return DefaultEmbedFactory.create()
                     .addField("Error", "Input Input String must match Regular Expression: \n" +
                             "```regexp\n" +
-                            ".*?[a-zA-Z0-9\\s]+.*?\n" +
+                            CONVERSION_PATTERN.pattern() + "\n" +
                             "```")
                     .addField("Input String", "```\n" +
                             str + "\n" +
