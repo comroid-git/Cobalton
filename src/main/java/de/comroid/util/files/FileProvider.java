@@ -4,31 +4,36 @@ import java.io.File;
 import java.io.IOException;
 import java.util.stream.IntStream;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import static java.io.File.separator;
 import static java.io.File.separatorChar;
 
 public class FileProvider {
+    public final static Logger logger = LogManager.getLogger();
     private final static String PREFIX = "/app/data/";
 
     public static File getFile(String subPath) {
         final String path = (PREFIX + subPath).replace('/', separatorChar);
-        System.out.printf("Acquiring File [ %s ]\n", path);
+        logger.printf(Level.INFO, "Acquiring File [ %s ]\n", path);
 
         createDirs(path);
 
         final File file = new File(path);
 
         if (!file.exists()) {
-            System.out.printf("File [ %s ] does not exist. Trying to create it...\n", path);
+            logger.printf(Level.WARN, "File [ %s ] does not exist. Trying to create it...\n", path);
 
             try {
                 if (!file.createNewFile()) {
-                    System.out.printf(" FAIL: Could not create File [ %s ] for unknown reason. Exiting.\n", path);
+                    logger.printf(Level.ERROR, " FAIL: Could not create File [ %s ] for unknown reason. Exiting.\n", path);
                     System.exit(1);
                     return null; // lol
                 } else System.out.print(" OK!\n");
             } catch (IOException e) {
-                System.out.printf(" FAIL: An [ %s ] occurred creating File [ %s ]. Exiting.\n", e.getClass().getSimpleName(), path);
+                logger.printf(Level.ERROR, " FAIL: An [ %s ] occurred creating File [ %s ]. Exiting.\n", e.getClass().getSimpleName(), path);
                 e.printStackTrace(System.out);
                 System.exit(1);
                 return null; // lol
@@ -39,12 +44,12 @@ public class FileProvider {
     }
 
     private static void createDirs(final String forPath) {
-        System.out.printf("Checking directories for file [ %s ]...", forPath);
+        logger.printf(Level.INFO, "Checking directories for file [ %s ]...", forPath);
 
         final String[] paths = forPath.split(separator);
 
         if (paths.length <= 1) {
-            System.out.printf(" OK! [ %d ]\n", paths.length);
+            logger.printf(Level.INFO, " OK! [ %d ]\n", paths.length);
             return;
         }
 
@@ -65,20 +70,20 @@ public class FileProvider {
                         return;
 
                     printed[0]++;
-                    System.out.printf(" FAIL\nDirectory [ %s ] does not exist, trying to create it...\n", path);
+                    logger.printf(Level.ERROR, " FAIL\nDirectory [ %s ] does not exist, trying to create it...\n", path);
 
                     if (file.mkdir()) {
                         printed[0]++;
-                        System.out.printf(" OK!\nCreated directory [ %s ] for file [ %s ]\n", path, forPath);
+                        logger.printf(Level.INFO, " OK!\nCreated directory [ %s ] for file [ %s ]\n", path, forPath);
                     } else {
                         printed[0]++;
-                        System.out.printf(" FAIL\nCould not create directory [ %s ] for file [ %s ]! Exiting.\n", path, forPath);
+                        logger.printf(Level.ERROR, " FAIL\nCould not create directory [ %s ] for file [ %s ]! Exiting.\n", path, forPath);
                         System.exit(1);
                     }
                 });
 
         if (printed[0] == 0)
-            System.out.print(" OK!\n");
+            logger.printf(Level.INFO, " OK!\n");
         else System.out.println();
     }
 }
