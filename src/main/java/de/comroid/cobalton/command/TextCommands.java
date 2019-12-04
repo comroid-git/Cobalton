@@ -6,6 +6,7 @@ import java.util.stream.IntStream;
 
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
+import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import de.comroid.util.CommonUtil;
 
 import org.javacord.api.entity.message.Message;
@@ -59,12 +60,19 @@ public enum TextCommands {
             usage = "emojify <any string>",
             convertStringResultsToEmbed = true
     )
-    public String emojify(Message message, String[] args) {
-        final String str = (args.length == 0 ? message.getMessagesBefore(1)
-                .thenApply(MessageSet::getNewestMessage)
-                .join() // we don't want this to become asynchrounous
-                .map(Message::getReadableContent) : Optional.<String>empty())
-                .orElseGet(() -> String.join(" ", args).toLowerCase());
+    public Object emojify(Message message, String[] args) {
+        final String str = getReferencedContent(message, args);
+        
+        if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
+            return DefaultEmbedFactory.create()
+                    .addField("Error", "Input Input String must match Regular Expression: \n" +
+                            "```regexp\n" +
+                            ".*?[a-zA-Z0-9\\s]+.*?\n" +
+                            "```")
+                    .addField("Input String", "```\n" +
+                            str + "\n" +
+                            "```");
+
         StringBuilder yield = new StringBuilder();
 
         for (char c : str.toCharArray()) {
@@ -89,12 +97,18 @@ public enum TextCommands {
             usage = "mockify <any string>",
             convertStringResultsToEmbed = true
     )
-    public String mockify(Message message, String[] args) {
-        final String str = (args.length == 0 ? message.getMessagesBefore(1)
-                .thenApply(MessageSet::getNewestMessage)
-                .join() // we don't want this to become asynchrounous
-                .map(Message::getReadableContent) : Optional.<String>empty())
-                .orElseGet(() -> String.join(" ", args).toLowerCase());
+    public Object mockify(Message message, String[] args) {
+        final String str = getReferencedContent(message, args);
+
+        if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
+            return DefaultEmbedFactory.create()
+                    .addField("Error", "Input Input String must match Regular Expression: \n" +
+                            "```regexp\n" +
+                            ".*?[a-zA-Z0-9\\s]+.*?\n" +
+                            "```")
+                    .addField("Input String", "```\n" +
+                            str + "\n" +
+                            "```");
 
         return IntStream.range(0, str.length())
                 .mapToObj(val -> {
@@ -109,5 +123,13 @@ public enum TextCommands {
                 })
                 .map(String::valueOf)
                 .collect(Collectors.joining());
+    }
+
+    private static String getReferencedContent(Message message, String[] args) {
+        return (args.length == 0 ? message.getMessagesBefore(1)
+                .thenApply(MessageSet::getNewestMessage)
+                .join() // we don't want this to become asynchrounous
+                .map(Message::getReadableContent) : Optional.<String>empty())
+                .orElseGet(() -> String.join(" ", args).toLowerCase());
     }
 }
