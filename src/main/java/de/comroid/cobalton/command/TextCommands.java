@@ -13,7 +13,6 @@ import de.comroid.util.CommonUtil;
 
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageSet;
-import org.javacord.api.entity.message.embed.EmbedField;
 
 @CommandGroup(name = "TextCommands", description = "Textual fun!")
 public enum TextCommands {
@@ -139,7 +138,11 @@ public enum TextCommands {
                         return embed.getFields()
                                 .stream()
                                 .findFirst()
-                                .map(EmbedField::getValue)
+                                .map(embedField -> {
+                                    if (CONVERSION_PATTERN.matcher(embedField.getValue()).matches())
+                                        return embedField.getValue();
+                                    else return embedField.getName();
+                                })
                                 // lol pyramid
                                 .filter(str -> CONVERSION_PATTERN.matcher(str).matches())
                                 .orElseGet(() -> embed.getDescription()
