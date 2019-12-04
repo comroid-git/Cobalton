@@ -57,7 +57,7 @@ public enum TextCommands {
 
     @Command(
             description = "Emojify Text!",
-            usage = "emojify <any string>",
+            usage = "emojify [any string]",
             convertStringResultsToEmbed = true
     )
     public Object emojify(Message message, String[] args) {
@@ -94,7 +94,7 @@ public enum TextCommands {
 
     @Command(
             description = "Mock People!",
-            usage = "mockify <any string>",
+            usage = "mockify [any string]",
             convertStringResultsToEmbed = true
     )
     public Object mockify(Message message, String[] args) {
