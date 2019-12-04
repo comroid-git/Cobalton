@@ -1,10 +1,16 @@
 package de.comroid.cobalton.command;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
+import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import de.comroid.util.CommonUtil;
+
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageSet;
 
 @CommandGroup(name = "TextCommands", description = "Textual fun!")
 public enum TextCommands {
@@ -52,11 +58,21 @@ public enum TextCommands {
     @Command(
             description = "Emojify Text!",
             usage = "emojify <any string>",
-            minimumArguments = 1,
             convertStringResultsToEmbed = true
     )
-    public String emojify(String[] args) {
-        final String str = String.join(" ", args).toLowerCase();
+    public Object emojify(Message message, String[] args) {
+        final String str = getReferencedContent(message, args);
+        
+        if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
+            return DefaultEmbedFactory.create()
+                    .addField("Error", "Input Input String must match Regular Expression: \n" +
+                            "```regexp\n" +
+                            ".*?[a-zA-Z0-9\\s]+.*?\n" +
+                            "```")
+                    .addField("Input String", "```\n" +
+                            str + "\n" +
+                            "```");
+
         StringBuilder yield = new StringBuilder();
 
         for (char c : str.toCharArray()) {
@@ -68,8 +84,9 @@ public enum TextCommands {
             if (!Character.isAlphabetic(c))
                 continue;
 
-            yield.append(EMOJI_TABLE[c - 'a' /* 97 */])
-                    .append(' ');
+            if (CommonUtil.range(0, c - 'a', 26))
+                yield.append(EMOJI_TABLE[c - 'a' /* 97 */])
+                        .append(' ');
         }
 
         return yield.toString();
@@ -78,11 +95,20 @@ public enum TextCommands {
     @Command(
             description = "Mock People!",
             usage = "mockify <any string>",
-            minimumArguments = 1,
             convertStringResultsToEmbed = true
     )
-    public String mockify(String[] args) {
-        final String str = String.join(" ", args).toLowerCase();
+    public Object mockify(Message message, String[] args) {
+        final String str = getReferencedContent(message, args);
+
+        if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
+            return DefaultEmbedFactory.create()
+                    .addField("Error", "Input Input String must match Regular Expression: \n" +
+                            "```regexp\n" +
+                            ".*?[a-zA-Z0-9\\s]+.*?\n" +
+                            "```")
+                    .addField("Input String", "```\n" +
+                            str + "\n" +
+                            "```");
 
         return IntStream.range(0, str.length())
                 .mapToObj(val -> {
@@ -97,5 +123,13 @@ public enum TextCommands {
                 })
                 .map(String::valueOf)
                 .collect(Collectors.joining());
+    }
+
+    private static String getReferencedContent(Message message, String[] args) {
+        return (args.length == 0 ? message.getMessagesBefore(1)
+                .thenApply(MessageSet::getNewestMessage)
+                .join() // we don't want this to become asynchrounous
+                .map(Message::getReadableContent) : Optional.<String>empty())
+                .orElseGet(() -> String.join(" ", args).toLowerCase());
     }
 }
