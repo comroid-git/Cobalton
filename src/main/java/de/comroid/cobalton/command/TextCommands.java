@@ -62,7 +62,7 @@ public enum TextCommands {
     )
     public Object emojify(Message message, String[] args) {
         final String str = getReferencedContent(message, args);
-        
+
         if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
             return DefaultEmbedFactory.create()
                     .addField("Error", "Input Input String must match Regular Expression: \n" +
@@ -126,10 +126,28 @@ public enum TextCommands {
     }
 
     private static String getReferencedContent(Message message, String[] args) {
-        return (args.length == 0 ? message.getMessagesBefore(1)
-                .thenApply(MessageSet::getNewestMessage)
-                .join() // we don't want this to become asynchrounous
+        if (args.length >= 1 && args[0].startsWith(":embed")) {
+            return getPrevious(message)
+                    .map(msg -> msg.getEmbeds().get(0))
+                    .map(embed -> {
+                        // parse embed piece from args[0]
+
+                        // temporary implementation
+                        return embed.getFields()
+                                .get(0)
+                                .getValue();
+                    })
+                    .orElseGet(() -> String.join(" ", args).toLowerCase());
+        }
+
+        return (args.length == 0 ? getPrevious(message)
                 .map(Message::getReadableContent) : Optional.<String>empty())
                 .orElseGet(() -> String.join(" ", args).toLowerCase());
+    }
+
+    private static Optional<Message> getPrevious(Message message) {
+        return message.getMessagesBefore(1)
+                .thenApply(MessageSet::getNewestMessage)
+                .join(); // we don't want this to become asynchrounous
     }
 }
