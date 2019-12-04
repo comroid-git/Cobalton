@@ -1,5 +1,6 @@
 package de.comroid.cobalton.command;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ import de.comroid.util.CommonUtil;
 
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageSet;
+import org.javacord.api.entity.message.embed.EmbedField;
 
 @CommandGroup(name = "TextCommands", description = "Textual fun!")
 public enum TextCommands {
@@ -136,8 +138,16 @@ public enum TextCommands {
 
                         // temporary implementation
                         return embed.getFields()
-                                .get(0)
-                                .getValue();
+                                .stream()
+                                .findFirst()
+                                .map(EmbedField::getValue)
+                                // lol pyramid
+                                .filter(str -> CONVERSION_PATTERN.matcher(str).matches())
+                                .orElseGet(() -> embed.getDescription()
+                                        .filter(str -> CONVERSION_PATTERN.matcher(str).matches())
+                                        .orElseGet(() -> embed.getTitle()
+                                                .filter(str -> CONVERSION_PATTERN.matcher(str).matches())
+                                                .orElseThrow(NoSuchElementException::new)));
                     })
                     .orElseGet(() -> String.join(" ", args).toLowerCase());
         }
