@@ -18,7 +18,7 @@ import org.javacord.api.entity.message.MessageSet;
 public enum TextCommands {
     INSTANCE;
 
-    public final static Pattern CONVERSION_PATTERN = Pattern.compile(".*[a-zA-Z0-9\\s]+.*");
+    public final static Pattern CONVERSION_PATTERN = Pattern.compile(".*?([a-zA-Z0-9]+).*?/ig");
     public final static String[] EMOJI_TABLE = new String[]{
             "\uD83C\uDDE6", // a
             "\uD83C\uDDE7", // b
