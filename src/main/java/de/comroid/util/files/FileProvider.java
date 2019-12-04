@@ -17,23 +17,23 @@ public class FileProvider {
 
     public static File getFile(String subPath) {
         final String path = (PREFIX + subPath).replace('/', separatorChar);
-        logger.printf(Level.INFO, "Acquiring File [ %s ]\n", path);
+        logger.printf(Level.INFO, "Acquiring File [ %s ]", path);
 
         createDirs(path);
 
         final File file = new File(path);
 
         if (!file.exists()) {
-            logger.printf(Level.WARN, "File [ %s ] does not exist. Trying to create it...\n", path);
+            logger.printf(Level.WARN, "GET %s FAIL: File does not exist. Trying to create it...", path);
 
             try {
                 if (!file.createNewFile()) {
-                    logger.printf(Level.ERROR, " FAIL: Could not create File [ %s ] for unknown reason. Exiting.\n", path);
+                    logger.printf(Level.ERROR, "CREATE %s FAIL: Could not create File for unknown reason. Exiting.", path);
                     System.exit(1);
                     return null; // lol
-                } else System.out.print(" OK!\n");
+                } else logger.printf(Level.INFO, "CREATE %s OK!", path);
             } catch (IOException e) {
-                logger.printf(Level.ERROR, " FAIL: An [ %s ] occurred creating File [ %s ]. Exiting.\n", e.getClass().getSimpleName(), path);
+                logger.printf(Level.ERROR, "CREATE %s FAIL: An [ %s ] occurred creating File. Exiting.", path, e.getClass().getSimpleName());
                 e.printStackTrace(System.out);
                 System.exit(1);
                 return null; // lol
@@ -49,11 +49,9 @@ public class FileProvider {
         final String[] paths = forPath.split(separator);
 
         if (paths.length <= 1) {
-            logger.printf(Level.INFO, " OK! [ %d ]\n", paths.length);
+            logger.printf(Level.INFO, "CREATE PATHS %s OK! [ %d ]", forPath, paths.length - 1);
             return;
         }
-
-        int[] printed = new int[]{0};
 
         IntStream.range(0, paths.length)
                 .mapToObj(value -> {
@@ -69,21 +67,14 @@ public class FileProvider {
                     if (file.exists() && file.isDirectory())
                         return;
 
-                    printed[0]++;
-                    logger.printf(Level.ERROR, " FAIL\nDirectory [ %s ] does not exist, trying to create it...\n", path);
+                    logger.printf(Level.ERROR, "GET PATH %s FAIL: Directory does not exist, trying to create it...", path);
 
-                    if (file.mkdir()) {
-                        printed[0]++;
-                        logger.printf(Level.INFO, " OK!\nCreated directory [ %s ] for file [ %s ]\n", path, forPath);
-                    } else {
-                        printed[0]++;
-                        logger.printf(Level.ERROR, " FAIL\nCould not create directory [ %s ] for file [ %s ]! Exiting.\n", path, forPath);
+                    if (file.mkdir())
+                        logger.printf(Level.INFO, "CREATE PATH %s OK!", path);
+                    else {
+                        logger.printf(Level.ERROR, "CREATE PATH %s FAIL: Could not create directory for unknown reason.", path, forPath);
                         System.exit(1);
                     }
                 });
-
-        if (printed[0] == 0)
-            logger.printf(Level.INFO, " OK!\n");
-        else System.out.println();
     }
 }
