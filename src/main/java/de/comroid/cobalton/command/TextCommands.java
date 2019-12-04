@@ -135,7 +135,6 @@ public enum TextCommands {
                     .map(msg -> msg.getEmbeds().get(0))
                     .map(embed -> {
                         // parse embed piece from args[0]
-
                         // temporary implementation
                         return embed.getFields()
                                 .stream()
