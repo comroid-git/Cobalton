@@ -12,6 +12,7 @@ import de.comroid.javacord.util.commands.CommandGroup;
 
 import org.javacord.api.entity.channel.ChannelCategory;
 import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.PermissionType;
@@ -119,12 +120,30 @@ public enum TicketEngine {
         return "Setup Complete!";
     }
 
+    public CompletableFuture<ServerTextChannel> openTicketChannel(Message message) {
+        if (message.isPrivateMessage())
+            return CompletableFuture.failedFuture(new IllegalArgumentException("Message is private!"));
+        final Server server = message.getServer()
+                .orElseThrow(() -> new IllegalArgumentException("Message is private!"));
+        final ServerTextChannelBuilder builder = server.createTextChannelBuilder();
+        final ChannelCategory category = API.getChannelCategoryById(Cobalton.Prop.TICKET_CATEGORY.getValue(server).asLong())
+                .orElseThrow(() -> new IllegalArgumentException("Message is private!"));
+        final User user = message.getUserAuthor()
+                .orElseThrow(() -> new IllegalArgumentException("Message was not sent by user!"));
+
+        final int ticketId = Cobalton.Prop.TICKET_COUNTER.getValue(server).asInt();
+        Cobalton.Prop.TICKET_COUNTER.setValue(server).toInt(ticketId + 1);
+
+        return builder.setName("ticket-" + ticketId)
+                .setTopic("Please state your problem here. You can change the channel title with `:<title>`")
+                .setAuditLogReason("Ticket opened by "+message.getAuthor().toString())
+                .setCategory(category)
+                .addPermissionOverwrite(server.getEveryoneRole(), Permissions.fromBitmask(0, 1024))
+                .addPermissionOverwrite(user, Permissions.fromBitmask(1024))
+    }
+
     private void reaction(SingleReactionEvent reactionEvent) {
         // todo [Open Ticket]
-    }
-    
-    public CompletableFuture<Message> openTicket(Message message) {
-        return Cobalton.Prop.TICKET_CATEGORY.
     }
 
     private static class MainChannelListener implements MessageCreateListener {

@@ -23,6 +23,7 @@ import de.comroid.javacord.util.server.properties.ServerPropertiesManager;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import de.comroid.util.files.FileProvider;
 
+import jdk.internal.org.objectweb.asm.TypeReference;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
@@ -184,8 +185,10 @@ public final class Cobalton {
 
         public static PropertyGroup ACCEPT_EMOJI;
         public static PropertyGroup DENY_EMOJI;
-        
+
         public static PropertyGroup TICKET_CATEGORY;
+        public static PropertyGroup TICKET_COUNTER;
+        public static PropertyGroup TICKET_ROLE;
 
         public static PropertyGroup MAINTENANCE_CHANNEL;
 
@@ -200,6 +203,12 @@ public final class Cobalton {
             TICKET_CATEGORY = PROP.register("ticket.category.id", 648260543106252826L)
                     .withDisplayName("Ticket Category")
                     .withDescription("Set up Tickets with c!setup-tickets! [ c!help setup-tickets ]");
+            TICKET_COUNTER = PROP.register("ticket.counter", 0)
+                    .withDisplayName("Ticket Number Counter")
+                    .withDescription("Counting number of tickets. Used for naming.");
+            TICKET_ROLE = PROP.register("ticket.role.id", 643769710328152085L)
+                    .withDisplayName("Ticket Helper ID")
+                    .withDescription("The ID of the role to allow support from.");
 
             ACCEPT_EMOJI = PROP.register("emoji.accept", "✅");
             DENY_EMOJI = PROP.register("emoji.deny", "❌");
