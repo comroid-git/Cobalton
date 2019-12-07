@@ -189,6 +189,7 @@ public final class Cobalton {
         public static PropertyGroup DENY_EMOJI;
 
         public static PropertyGroup TICKET_CATEGORY;
+        public static PropertyGroup TICKET_CHANNEL;
         public static PropertyGroup TICKET_COUNTER;
         public static PropertyGroup TICKET_ROLE;
 
@@ -201,9 +202,12 @@ public final class Cobalton {
             ROLE_MESSAGE = PROP.register("role.message.id", 625645142543564822L);
             ARCHIVE_CATEGORY = PROP.register("bot.archive.id", 625498805634203648L);
             GAMESCOM_ROLE = PROP.register("role.gamescom.id", 626822066280071213L);
-            
+
             TICKET_CATEGORY = PROP.register("ticket.category.id", 648260543106252826L)
                     .withDisplayName("Ticket Category")
+                    .withDescription("Set up Tickets with c!setup-tickets! [ c!help setup-tickets ]");
+            TICKET_CHANNEL = PROP.register("ticket.channel.id", 0L)
+                    .withDisplayName("Ticket Main Channel")
                     .withDescription("Set up Tickets with c!setup-tickets! [ c!help setup-tickets ]");
             TICKET_COUNTER = PROP.register("ticket.counter", 0)
                     .withDisplayName("Ticket Number Counter")

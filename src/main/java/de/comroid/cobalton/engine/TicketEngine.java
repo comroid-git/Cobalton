@@ -5,19 +5,16 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.stream.Stream;
-
-import javax.annotation.processing.Completion;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.comroid.Cobalton;
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
-import de.comroid.util.markers.Value;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ChannelCategory;
-import org.javacord.api.entity.channel.PrivateChannel;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.message.Message;
@@ -28,20 +25,22 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.javacord.api.event.message.MessageDeleteEvent;
-import org.javacord.api.event.message.reaction.SingleReactionEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
-import org.javacord.api.listener.message.MessageDeleteListener;
+import org.javacord.api.util.logging.ExceptionLogger;
 
 import static de.comroid.Cobalton.API;
 
 public class TicketEngine {
-    private final DiscordApi api;
-
     public static final Permissions PERMISSIONS_NORMAL_USER = Permissions.fromBitmask(3263552);
     public static final Permissions PERMISSIONS_ASSIGNEE_ROLE = Permissions.fromBitmask(3263552);
     public static final Permissions PERMISSIONS_ASSIGNEE_RAISED = Permissions.fromBitmask(3271744);
     public static final Permissions PERMISSIONS_OWN = Permissions.fromBitmask(275901648);
+
+    public static final Pattern CHANNEL_NAME_PATTERN = Pattern.compile("([a-z]{3,12})");
+    public static final Pattern CHANGE_TITLE_PATTERN = Pattern.compile(":" + CHANNEL_NAME_PATTERN.pattern());
+    public static final Pattern TICKET_CHANNEL_PATTERN = Pattern.compile(CHANNEL_NAME_PATTERN.pattern() + "-(\\d+)");
+
+    private final DiscordApi api;
 
     public TicketEngine(final DiscordApi api) {
         this.api = api;
@@ -129,15 +128,18 @@ public class TicketEngine {
                     .addPermissionOverwrite(API.getYourself(), PERMISSIONS_OWN)
                     .addPermissionOverwrite(role, PERMISSIONS_ASSIGNEE_RAISED)
                     .create()
+                    .thenApply(chl -> {
+                        Cobalton.Prop.TICKET_CHANNEL.setValue(server).toLong(chl.getId());
+                        return chl;
+                    })
                     .join();
         } catch (CompletionException CEx) {
             return String.format("⚠️ Setup Stopped: Could not create Main Text Channel.\n\tReason: [ %s ] %s",
                     CEx.getCause().getClass().getSimpleName(), CEx.getCause().getMessage());
         }
 
-        Message infoMessage;
         try {
-            infoMessage = mainChannel.sendMessage(new EmbedBuilder()
+            mainChannel.sendMessage(new EmbedBuilder()
                     .addField("Ticket Channel!", "Just write your request in here. It will be moved to a new Channel.")
                     .setColor(new Color(0x12B32C))
                     .setAuthor(API.getYourself())
@@ -148,7 +150,7 @@ public class TicketEngine {
                     CEx.getCause().getClass().getSimpleName(), CEx.getCause().getMessage());
         }
 
-        mainChannel.addServerTextChannelAttachableListener(new MainChannelListener());
+        mainChannel.addServerTextChannelAttachableListener(new MainChannelListener(this));
 
         return "Setup Complete!";
     }
@@ -173,7 +175,7 @@ public class TicketEngine {
         final String name = "ticket-" + ticketId;
 
         return builder.setName(name)
-                .setTopic("Please state your problem here. You can change the issue title with `:<title>`")
+                .setTopic("Please explain your problem here \n- You can change the issue title with [ :<title> ] \n- Title must match [ " + CHANNEL_NAME_PATTERN.pattern() + " ]")
                 .setAuditLogReason("Ticket opened by " + message.getAuthor().toString())
                 .setCategory(category)
                 .addPermissionOverwrite(server.getEveryoneRole(), Permissions.fromBitmask(0, 1024)) // everyone: disallowed
@@ -195,30 +197,62 @@ public class TicketEngine {
                             .thenCompose(msg -> message.delete("Obsolete"))
                             .join();
 
-                    stc.addServerTextChannelAttachableListener(new TicketChannelListener(stc));
+                    stc.addServerTextChannelAttachableListener(new TicketChannelListener(this, stc));
 
                     return stc;
                 });
     }
 
     private void initializeTicketCategory(ChannelCategory category) {
+        long mainId;
 
+        API.getServerTextChannelById(mainId = Cobalton.Prop.TICKET_CHANNEL.getValue(category.getServer()).asLong())
+                .ifPresent(stc -> stc.addServerTextChannelAttachableListener(new MainChannelListener(this)));
+
+        category.getChannels()
+                .stream()
+                .filter(chl -> chl.getId() != mainId)
+                .forEach(sc -> sc.asServerTextChannel()
+                        .ifPresent(stc -> stc.addServerTextChannelAttachableListener(new TicketChannelListener(this, stc))));
     }
 
-    private static class MainChannelListener implements MessageCreateListener, MessageDeleteListener {
+    private static class MainChannelListener implements MessageCreateListener {
+        private final TicketEngine ticketEngine;
+
+        public MainChannelListener(TicketEngine ticketEngine) {
+            this.ticketEngine = ticketEngine;
+        }
+
         @Override
         public void onMessageCreate(MessageCreateEvent event) {
+            if (event.getMessageAuthor().isYourself()) {
+                return;
+            }
 
-        }
+            event.deleteMessage("No chat allowed"); // ignore result
 
-        @Override
-        public void onMessageDelete(MessageDeleteEvent event) {
-
+            ticketEngine.openTicketChannel(event.getMessage())
+                    .exceptionally(ExceptionLogger.get());
         }
     }
 
-    private class TicketChannelListener implements MessageCreateListener {
-        public TicketChannelListener(ServerTextChannel stc) {
+    private static class TicketChannelListener implements MessageCreateListener {
+        private final TicketEngine ticketEngine;
+        private final ServerTextChannel channel;
+
+        public TicketChannelListener(TicketEngine ticketEngine, ServerTextChannel serverTextChannel) {
+            this.ticketEngine = ticketEngine;
+            this.channel = serverTextChannel;
+        }
+
+        @Override
+        public void onMessageCreate(MessageCreateEvent event) {
+            final Matcher matcher = CHANGE_TITLE_PATTERN.matcher(event.getMessageContent().toLowerCase());
+
+            if (matcher.matches()) channel.createUpdater()
+                    .setName(matcher.group(0))
+                    .update()
+                    .thenAccept(nil -> event.addReactionsToMessage(Cobalton.Prop.ACCEPT_EMOJI.getValue(channel.getServer()).asString()));
         }
     }
 }
