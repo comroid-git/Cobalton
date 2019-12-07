@@ -191,7 +191,6 @@ public final class Cobalton {
         public static PropertyGroup TICKET_CATEGORY;
         public static PropertyGroup TICKET_COUNTER;
         public static PropertyGroup TICKET_ROLE;
-        public static PropertyGroup TICKET_EMOJI;
 
         public static PropertyGroup MAINTENANCE_CHANNEL;
 
@@ -212,9 +211,6 @@ public final class Cobalton {
             TICKET_ROLE = PROP.register("ticket.role.id", 643769710328152085L)
                     .withDisplayName("Ticket Helper ID")
                     .withDescription("The ID of the role to allow support from.");
-            TICKET_EMOJI = PROP.register("ticket.emoji", "")
-                    .withDisplayName("Ticket Emoji")
-                    .withDescription("The Emoji to use for Tickets");
 
             ACCEPT_EMOJI = PROP.register("emoji.accept", "✅");
             DENY_EMOJI = PROP.register("emoji.deny", "❌");
