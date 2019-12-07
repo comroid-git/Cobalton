@@ -29,6 +29,7 @@ import org.javacord.api.listener.message.MessageCreateListener;
 import org.javacord.api.util.logging.ExceptionLogger;
 
 import static de.comroid.Cobalton.API;
+import static de.comroid.Cobalton.logger;
 
 public class TicketEngine {
     public static final Permissions PERMISSIONS_NORMAL_USER = Permissions.fromBitmask(3263552);
@@ -175,7 +176,7 @@ public class TicketEngine {
         final String name = "ticket-" + ticketId;
 
         return builder.setName(name)
-                .setTopic("Please explain your problem here \n- You can change the issue title with [ :<title> ] \n- Title must match [ " + CHANNEL_NAME_PATTERN.pattern() + " ]")
+                .setTopic("Please explain your problem here")
                 .setAuditLogReason("Ticket opened by " + message.getAuthor().toString())
                 .setCategory(category)
                 .addPermissionOverwrite(server.getEveryoneRole(), Permissions.fromBitmask(0, 1024)) // everyone: disallowed
@@ -214,6 +215,8 @@ public class TicketEngine {
                 .filter(chl -> chl.getId() != mainId)
                 .forEach(sc -> sc.asServerTextChannel()
                         .ifPresent(stc -> stc.addServerTextChannelAttachableListener(new TicketChannelListener(this, stc))));
+
+        logger.info("Initialized category: " + category);
     }
 
     private static class MainChannelListener implements MessageCreateListener {

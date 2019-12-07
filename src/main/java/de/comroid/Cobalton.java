@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -81,23 +82,24 @@ public final class Cobalton {
 
             DefaultEmbedFactory.setEmbedSupplier(() -> new EmbedBuilder().setColor(THEME));
 
-            TICKET_ENGINE = new TicketEngine(API);
-
             logger.info("Initializing command handlers");
             CMD = new CommandHandler(API);
             CMD.prefixes = new String[]{"cobalton!", "c!"};
-            logger.info(String.format("Setting command prefixes: '%s'", String.join("', '", CMD.prefixes)));
+            logger.info(String.format("Setting command prefixes: '%s'", Arrays.toString(CMD.prefixes)));
             CMD.useDefaultHelp(null);
             CMD.registerCommands(ToolCommands.INSTANCE);
             CMD.registerCommands(TextCommands.INSTANCE);
             CMD.registerCommands(AdminCommands.INSTANCE);
             CMD.registerCommands(EvalCommand.INSTANCE);
-            CMD.registerCommands(TICKET_ENGINE);
 
             logger.info("Initialzing server properties");
             PROP = new ServerPropertiesManager(FileProvider.getFile("serverProps.json"));
             PROP.usePropertyCommand(null, CMD);
             Prop.init();
+
+            logger.info("Initializing Ticket Engine");
+            TICKET_ENGINE = new TicketEngine(API);
+            CMD.registerCommands(TICKET_ENGINE);
 
             logger.info("Registering prefix provider");
             CMD.withCustomPrefixProvider(Prop.PREFIX);
@@ -158,21 +160,21 @@ public final class Cobalton {
                         .setDescription("Bot restarted!")).exceptionally(ExceptionLogger.get()));
     }
 
+    public static void storeAllData() {
+        logger.info("Trying to save bot properties");
+        try {
+            PROP.storeData();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static void terminateAll() {
         logger.info("Trying to shutdown gracefully");
         try {
             PROP.close();
             API.disconnect();
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void storeAllData() {
-        logger.info("Trying to save bot properties");
-        try {
-            PROP.storeData();
-        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -198,28 +200,28 @@ public final class Cobalton {
         private static void init() {
             PREFIX = PROP.register("bot.customprefix", "t!");
 
-            INFO_CHANNEL = PROP.register("info.channel.id", 625502007150641172L);
-            ROLE_MESSAGE = PROP.register("role.message.id", 625645142543564822L);
-            ARCHIVE_CATEGORY = PROP.register("bot.archive.id", 625498805634203648L);
-            GAMESCOM_ROLE = PROP.register("role.gamescom.id", 626822066280071213L);
+            INFO_CHANNEL = PROP.register("info.channel.id", 0);
+            ROLE_MESSAGE = PROP.register("role.message.id", 0);
+            ARCHIVE_CATEGORY = PROP.register("bot.archive.id", 0);
+            GAMESCOM_ROLE = PROP.register("role.gamescom.id", 0);
 
-            TICKET_CATEGORY = PROP.register("ticket.category.id", 648260543106252826L)
+            TICKET_CATEGORY = PROP.register("ticket.category.id", 0)
                     .withDisplayName("Ticket Category")
                     .withDescription("Set up Tickets with c!setup-tickets! [ c!help setup-tickets ]");
-            TICKET_CHANNEL = PROP.register("ticket.channel.id", 0L)
+            TICKET_CHANNEL = PROP.register("ticket.channel.id", 0)
                     .withDisplayName("Ticket Main Channel")
                     .withDescription("Set up Tickets with c!setup-tickets! [ c!help setup-tickets ]");
             TICKET_COUNTER = PROP.register("ticket.counter", 0)
                     .withDisplayName("Ticket Number Counter")
                     .withDescription("Counting number of tickets. Used for naming.");
-            TICKET_ROLE = PROP.register("ticket.role.id", 643769710328152085L)
+            TICKET_ROLE = PROP.register("ticket.role.id", 0)
                     .withDisplayName("Ticket Helper ID")
                     .withDescription("The ID of the role to allow support from.");
 
             ACCEPT_EMOJI = PROP.register("emoji.accept", "✅");
             DENY_EMOJI = PROP.register("emoji.deny", "❌");
 
-            MAINTENANCE_CHANNEL = PROP.register("bot.maintenance.id", 625503716736237588L);
+            MAINTENANCE_CHANNEL = PROP.register("bot.maintenance.id", 0);
         }
     }
 }

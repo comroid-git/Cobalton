@@ -18,8 +18,6 @@ import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.channel.ServerTextChannelUpdater;
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
@@ -46,13 +44,16 @@ public enum AdminCommands {
             .appendValue(YEAR, 4)
             .toFormatter();
 
-    @Command(usage = "shutdown", description = "Only the owner of the bot can use this", shownInHelpCommand = false)
-    public void shutdown(User user, String[] args, Message command, TextChannel channel) {
+    @Command(usage = "shutdown [code]", description = "Only the owner of the bot can use this", shownInHelpCommand = false)
+    public void shutdown(User user, String[] args) {
         if (Cobalton.permitted.contains(user.getId()))
-            System.exit(1);
+            System.exit(args.length >= 1 ? Integer.parseInt(args[0]) : 1);
+    }
 
-        command.delete("Unauthorized").exceptionally(ExceptionLogger.get());
-        channel.sendMessage("User " + user.getDiscriminatedName() + " not authorized.");
+    @Command(usage = "store", description = "Stores all Data", shownInHelpCommand = true)
+    public void store(User user, String[] args) {
+        if (Cobalton.permitted.contains(user.getId()))
+            Cobalton.storeAllData();
     }
 
     @Command
