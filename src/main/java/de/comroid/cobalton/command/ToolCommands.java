@@ -42,7 +42,7 @@ public enum ToolCommands {
     @Command(
             enablePrivateChat = false,
             convertStringResultsToEmbed = true,
-            requiredDiscordPermission = PermissionType.MANAGE_EMOJIS,
+            requiredDiscordPermissions = PermissionType.MANAGE_EMOJIS,
             useTypingIndicator = true
     )
     public String copyEmoji(Server srv, Message msg, String[] args, ServerTextChannel stc) {

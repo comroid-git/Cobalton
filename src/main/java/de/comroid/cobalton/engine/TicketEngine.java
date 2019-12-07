@@ -1,6 +1,5 @@
 package de.comroid.cobalton.engine;
 
-import java.awt.Color;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
@@ -32,6 +31,7 @@ import static de.comroid.Cobalton.API;
 import static de.comroid.Cobalton.logger;
 
 public class TicketEngine {
+    public static final Permissions PERMISSIONS_NEGATIVE_USER = Permissions.fromBitmask(0, 68608);
     public static final Permissions PERMISSIONS_NORMAL_USER = Permissions.fromBitmask(3263552);
     public static final Permissions PERMISSIONS_ASSIGNEE_ROLE = Permissions.fromBitmask(3263552);
     public static final Permissions PERMISSIONS_ASSIGNEE_RAISED = Permissions.fromBitmask(3271744);
@@ -58,7 +58,7 @@ public class TicketEngine {
             description = "Sets up Tickets for your Guild",
             usage = "ticket [Category = new]",
             enablePrivateChat = false,
-            requiredDiscordPermission = PermissionType.ADMINISTRATOR,
+            requiredDiscordPermissions = PermissionType.ADMINISTRATOR,
             maximumArguments = 1,
             convertStringResultsToEmbed = true,
             useTypingIndicator = true,
@@ -140,9 +140,8 @@ public class TicketEngine {
         }
 
         try {
-            mainChannel.sendMessage(new EmbedBuilder()
+            mainChannel.sendMessage(DefaultEmbedFactory.create(server)
                     .addField("Ticket Channel!", "Just write your request in here. It will be moved to a new Channel.")
-                    .setColor(new Color(0x12B32C))
                     .setAuthor(API.getYourself())
                     .setTitle("Cobalton Ticket System"))
                     .join();
@@ -179,10 +178,10 @@ public class TicketEngine {
                 .setTopic("Please explain your problem here")
                 .setAuditLogReason("Ticket opened by " + message.getAuthor().toString())
                 .setCategory(category)
-                .addPermissionOverwrite(server.getEveryoneRole(), Permissions.fromBitmask(0, 1024)) // everyone: disallowed
-                .addPermissionOverwrite(user, Permissions.fromBitmask(1024)) // the asking user
-                .addPermissionOverwrite(role, Permissions.fromBitmask(126016)) // the supporter role
-                .addPermissionOverwrite(API.getYourself(), Permissions.fromBitmask(355392)) // the bot
+                .addPermissionOverwrite(server.getEveryoneRole(), PERMISSIONS_NEGATIVE_USER) // everyone: disallowed
+                .addPermissionOverwrite(user, PERMISSIONS_NORMAL_USER) // the asking user
+                .addPermissionOverwrite(role, PERMISSIONS_ASSIGNEE_RAISED) // the supporter role
+                .addPermissionOverwrite(API.getYourself(), PERMISSIONS_OWN) // the bot
                 .create()
                 .thenApply(stc -> {
                     final EmbedBuilder embedBuilder = DefaultEmbedFactory.create()

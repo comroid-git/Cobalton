@@ -100,7 +100,7 @@ public enum AdminCommands {
 
     @Command(aliases = "archive",
             enablePrivateChat = false,
-            requiredDiscordPermission = PermissionType.ADMINISTRATOR,
+            requiredDiscordPermissions = PermissionType.ADMINISTRATOR,
             usage = "archive [Channel = this] [New Topic]",
             description = "Archive a channel")
     public void archiveChannel(Command.Parameters param, User executor, String[] args, Server srv, ServerTextChannel stc) {
