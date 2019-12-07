@@ -48,7 +48,7 @@ dependencies {
     implementation('com.github.burdoto:Jimson:e96712f2ef')
 
     // Other dependencies
-    implementation 'com.fasterxml.jackson.core:jackson-databind:3.0.0-SNAPSHOT'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.0'
 
     // Runtime logger dependency
     implementation 'org.apache.logging.log4j:log4j-core:2.12.1'
