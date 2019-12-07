@@ -148,16 +148,6 @@ public class TicketEngine {
                     CEx.getCause().getClass().getSimpleName(), CEx.getCause().getMessage());
         }
 
-        try {
-            infoMessage.addReaction("\uD83D\uDCE7")
-                    .join();
-            infoMessage.addReactionAddListener(this::reaction);
-            infoMessage.addReactionRemoveListener(this::reaction);
-        } catch (CompletionException CEx) {
-            return String.format("Setup Failed: Error in Reaction.\n\tReason: [ %s ] %s",
-                    CEx.getCause().getClass().getSimpleName(), CEx.getCause().getMessage());
-        }
-
         mainChannel.addServerTextChannelAttachableListener(new MainChannelListener());
 
         return "Setup Complete!";
@@ -213,29 +203,6 @@ public class TicketEngine {
 
     private void initializeTicketCategory(ChannelCategory category) {
 
-    }
-
-    private void reaction(SingleReactionEvent reactionEvent) {
-        if (reactionEvent.getUser().isYourself())
-            return;
-
-        if (reactionEvent.getChannel() instanceof PrivateChannel)
-            return;
-
-        if (reactionEvent.getEmoji()
-                .asUnicodeEmoji()
-                .map(unicode -> reactionEvent.getServer()
-                        .map(Cobalton.Prop.TICKET_EMOJI::getValue)
-                        .map(Value::asString)
-                        .orElse("")
-                        .equals(unicode))
-                .orElse(false))
-            reactionEvent.getServer()
-                    .ifPresent(srv -> openTicket(srv, reactionEvent.getUser()));
-    }
-
-    private void openTicket(Server srv, User user) {
-        // todo
     }
 
     private static class MainChannelListener implements MessageCreateListener, MessageDeleteListener {
