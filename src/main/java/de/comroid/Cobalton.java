@@ -23,7 +23,6 @@ import de.comroid.javacord.util.server.properties.ServerPropertiesManager;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import de.comroid.util.files.FileProvider;
 
-import jdk.internal.org.objectweb.asm.TypeReference;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
