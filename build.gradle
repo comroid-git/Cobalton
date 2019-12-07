@@ -5,8 +5,8 @@ version '1.00'
 
 apply from: 'gradle/ext.gradle'
 
-sourceCompatibility = 9
-targetCompatibility = 9
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 mainClassName = 'de.comroid.Cobalton'
 
 wrapper {

@@ -77,13 +77,14 @@ public class TicketEngine {
                 else // is desired name
                     category = server.getChannelCategoriesByName(args[0])
                             .stream().findAny()
-                            .or(() -> server.getChannelCategoriesByName(args[0].substring(1) /* possible # delimiter */)
-                                    .stream().findAny())
-                            .orElseGet(() -> server.createChannelCategoryBuilder()
-                                    .setName(args[0])
-                                    .setAuditLogReason(REASON)
-                                    .create()
-                                    .join());
+                            .orElseGet(() -> server.getChannelCategoriesByName(args[0].substring(1) /* possible # delimiter */)
+                                    .stream()
+                                    .findAny()
+                                    .orElseGet(() -> server.createChannelCategoryBuilder()
+                                            .setName(args[0])
+                                            .setAuditLogReason(REASON)
+                                            .create()
+                                            .join()));
             } else category = server.createChannelCategoryBuilder()
                     .setName("\uD83D\uDCC4 Tickets")
                     .setAuditLogReason(REASON)
@@ -157,7 +158,7 @@ public class TicketEngine {
 
     public CompletableFuture<ServerTextChannel> openTicketChannel(final Message message) {
         if (message.isPrivateMessage())
-            return CompletableFuture.failedFuture(new IllegalArgumentException("Message is private!"));
+            throw new IllegalArgumentException("Message is private!");
         final Server server = message.getServer()
                 .orElseThrow(() -> new IllegalArgumentException("Message is private!"));
         final ServerTextChannelBuilder builder = server.createTextChannelBuilder();
