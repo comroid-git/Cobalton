@@ -44,6 +44,7 @@ public final class Cobalton {
     public static final CommandHandler CMD;
     public static final ServerPropertiesManager PROP;
     public static final Starboard STAR;
+    public static final TicketEngine TICKET_ENGINE;
     public static final Server SRV;
 
     public static final List<Long> permitted = new ArrayList<>();
@@ -80,6 +81,8 @@ public final class Cobalton {
 
             DefaultEmbedFactory.setEmbedSupplier(() -> new EmbedBuilder().setColor(THEME));
 
+            TICKET_ENGINE = new TicketEngine(API);
+
             logger.info("Initializing command handlers");
             CMD = new CommandHandler(API);
             CMD.prefixes = new String[]{"cobalton!", "c!"};
@@ -89,7 +92,7 @@ public final class Cobalton {
             CMD.registerCommands(TextCommands.INSTANCE);
             CMD.registerCommands(AdminCommands.INSTANCE);
             CMD.registerCommands(EvalCommand.INSTANCE);
-            CMD.registerCommands(TicketEngine.INSTANCE);
+            CMD.registerCommands(TICKET_ENGINE);
 
             logger.info("Initialzing server properties");
             PROP = new ServerPropertiesManager(FileProvider.getFile("serverProps.json"));
@@ -188,6 +191,7 @@ public final class Cobalton {
         public static PropertyGroup TICKET_CATEGORY;
         public static PropertyGroup TICKET_COUNTER;
         public static PropertyGroup TICKET_ROLE;
+        public static PropertyGroup TICKET_EMOJI;
 
         public static PropertyGroup MAINTENANCE_CHANNEL;
 
@@ -208,6 +212,9 @@ public final class Cobalton {
             TICKET_ROLE = PROP.register("ticket.role.id", 643769710328152085L)
                     .withDisplayName("Ticket Helper ID")
                     .withDescription("The ID of the role to allow support from.");
+            TICKET_EMOJI = PROP.register("ticket.emoji", "")
+                    .withDisplayName("Ticket Emoji")
+                    .withDescription("The Emoji to use for Tickets");
 
             ACCEPT_EMOJI = PROP.register("emoji.accept", "✅");
             DENY_EMOJI = PROP.register("emoji.deny", "❌");
