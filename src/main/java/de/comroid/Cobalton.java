@@ -66,7 +66,7 @@ public final class Cobalton {
             logger.info("Successfully connected to Discord services");
 
             permitted.add(141476933849448448L); // Kaleidox
-            permitted.add(292141393739251714L); // Jay
+            permitted.add(292141393739251714L); // Yuna
             permitted.add(232610922298998784L); // Flo
 
             API.updateStatus(UserStatus.DO_NOT_DISTURB);
