@@ -1,6 +1,7 @@
 package de.comroid.cobalton.engine;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import de.comroid.Cobalton;
@@ -8,6 +9,7 @@ import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import de.comroid.util.ChannelUtils;
 
 import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.channel.Channel;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -40,8 +42,6 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
 
     @Override
     public void onServerVoiceChannelMemberJoin(ServerVoiceChannelMemberJoinEvent event) {
-        System.out.println("event = " + event);
-
         if (event.getUser().isBot()) return;
 
         API.getRoleById(GAMESCOM_ROLE)
@@ -50,14 +50,16 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
         final Collection<User> current = currentUsers();
 
         if (current.size() >= 2 && event.getChannel().getConnectedUserIds().size() >= (current.size() / 2)) {
-            event.getServer().getChannelsByName("gamescom")
-                    .iterator().next()
-                    .asServerTextChannel()
-                    .orElseThrow(AssertionError::new)
-                    .sendMessage(new EmbedBuilder()
-                            .setColor(Cobalton.THEME)
-                            .setDescription("Los geht die Gamescom!"))
-                    .exceptionally(ExceptionLogger.get());
+            final ServerTextChannel gamescom = gamescomText().orElseThrow(AssertionError::new);
+
+            if (!gamescom.getTopic().startsWith("has started"))
+                gamescom.sendMessage(new EmbedBuilder()
+                        .setColor(Cobalton.THEME)
+                        .setDescription("Los geht die Gamescom!"))
+                        .thenApply(msg -> gamescom.createUpdater()
+                                .setTopic("has started" + (gamescom.getTopic().isBlank() ? "" : " - " + gamescom.getTopic()))
+                                .update())
+                        .exceptionally(ExceptionLogger.get());
 
             active = true;
         }
@@ -65,8 +67,6 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
 
     @Override
     public void onServerVoiceChannelMemberLeave(ServerVoiceChannelMemberLeaveEvent event) {
-        System.out.println("event = " + event);
-
         if (event.getUser().isBot()) return;
 
         final ServerVoiceChannel svc = event.getChannel();
@@ -114,5 +114,14 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
         return api.getRoleById(GAMESCOM_ROLE)
                 .map(Role::getUsers)
                 .orElseThrow(AssertionError::new);
+    }
+
+    private Optional<ServerTextChannel> gamescomText() {
+        return api.getServerById(625494140427173889L)
+                .flatMap(srv -> srv
+                        .getChannelsByName("gamescom")
+                        .stream()
+                        .findAny()
+                        .flatMap(Channel::asServerTextChannel));
     }
 }
