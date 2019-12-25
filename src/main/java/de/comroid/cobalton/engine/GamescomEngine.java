@@ -9,6 +9,7 @@ import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import de.comroid.util.ChannelUtils;
 
 import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.Channel;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
@@ -36,6 +37,24 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
                     svc.addServerVoiceChannelMemberJoinListener(this);
                     svc.addServerVoiceChannelMemberLeaveListener(this);
                 });
+        Cobalton.SRV.addUserChangeActivityListener(event -> {
+            if (event.getUser()
+                    .getRoles(Cobalton.SRV)
+                    .stream()
+                    .map(DiscordEntity::getId)
+                    .noneMatch(id -> id == GAMESCOM_ROLE)) return;
+            final EmbedBuilder embed = DefaultEmbedFactory.create()
+                    .setAuthor(event.getUser())
+                    .setFooter("Activity Changed");
+
+            event.getNewActivity()
+                    .ifPresentOrElse(activity -> {
+                        embed.addField(String.format("Now %s:", activity.getType().name().toLowerCase()), activity.getName());
+                        activity.getStreamingUrl().ifPresent(embed::setUrl);
+                    }, () -> embed.setDescription("Not doing anything."));
+
+            gamescomText().ifPresent(gc -> gc.sendMessage(embed));
+        });
 
         active = false;
     }
