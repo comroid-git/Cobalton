@@ -31,6 +31,7 @@ dependencies {
     // Javacord
     implementation('org.javacord:javacord:3.0.+')
             { exclude group: 'org.fasterxml.jackson.core' }
+    compileOnly 'org.javacord:javacord-core:3.0.+'
 
     // Javacord Utilities
     implementation('de.comroid:javacord-utilities:1.1.0') {
@@ -49,6 +50,7 @@ dependencies {
 
     // Other dependencies
     implementation 'com.fasterxml.jackson.core:jackson-databind:3.0.0-SNAPSHOT'
+    implementation 'com.vdurmont:emoji-java:5.1.1'
 
     // Runtime logger dependency
     implementation 'org.apache.logging.log4j:log4j-core:2.12.1'

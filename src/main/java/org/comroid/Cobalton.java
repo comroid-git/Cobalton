@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.comroid.cobalton.command.AdminCommands;
+import org.comroid.cobalton.command.AutomationCommands;
 import org.comroid.cobalton.command.TextCommands;
 import org.comroid.cobalton.command.ToolCommands;
+import org.comroid.cobalton.engine.AutomationCore;
 import org.comroid.cobalton.engine.GamescomEngine;
 import org.comroid.cobalton.engine.RoleMessageEngine;
 import org.comroid.cobalton.engine.starboard.Starboard;
@@ -46,6 +48,7 @@ public final class Cobalton {
     public static final Server SRV;
 
     public static final List<Long> permitted = new ArrayList<>();
+    public static final AutomationCore AUTOMATION_CORE;
 
     static {
         try {
@@ -107,6 +110,9 @@ public final class Cobalton {
 
             logger.info("Initializing Starboard");
             STAR = new Starboard(API, FileProvider.getFile("starboard.json"), "✅", 639051738036568064L);
+
+            logger.info("Initializin Automation Core");
+            AUTOMATION_CORE = new AutomationCore(API);
 
             API.updateActivity(ActivityType.LISTENING, CMD.prefixes[0] + "help");
             API.updateStatus(UserStatus.ONLINE);
