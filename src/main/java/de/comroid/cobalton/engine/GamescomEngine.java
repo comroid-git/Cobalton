@@ -10,6 +10,8 @@ import de.comroid.util.ChannelUtils;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.DiscordEntity;
+import org.javacord.api.entity.activity.Activity;
+import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.channel.Channel;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
@@ -38,6 +40,10 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
                     svc.addServerVoiceChannelMemberLeaveListener(this);
                 });
         Cobalton.SRV.addUserChangeActivityListener(event -> {
+            if (event.getNewActivity()
+                    .map(Activity::getType)
+                    .filter(type -> type == ActivityType.PLAYING)
+                    .isEmpty()) return;
             if (event.getUser()
                     .getRoles(Cobalton.SRV)
                     .stream()
