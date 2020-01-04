@@ -68,7 +68,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
 
         final Collection<User> current = currentUsers();
 
-        if (current.size() >= 2 && event.getChannel().getConnectedUserIds().size() >= (current.size() / 2)) {
+        if (current.size() >= 2) {
             final ServerTextChannel gamescom = gamescomText().orElseThrow(AssertionError::new);
 
             if (!gamescom.getTopic().startsWith("has started"))
