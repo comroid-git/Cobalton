@@ -1,4 +1,4 @@
-package de.comroid.util;
+package org.comroid.util;
 
 public class CommonUtil {
     public static boolean range(int fromInclusive, int actual, int toExclusive) {

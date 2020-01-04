@@ -1,6 +1,6 @@
-package de.comroid.cobalton.model;
+package org.comroid.cobalton.model;
 
-import de.comroid.Cobalton;
+import org.comroid.Cobalton;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
 import org.javacord.api.entity.message.embed.EmbedBuilder;

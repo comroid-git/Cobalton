@@ -1,13 +1,13 @@
-package de.comroid.cobalton.command;
+package org.comroid.cobalton.command;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.comroid.util.CommonUtil;
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
-import de.comroid.util.CommonUtil;
 
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageSet;
@@ -62,7 +62,7 @@ public enum TextCommands {
     )
     public Object emojify(Message message, String[] args) {
         final String str = getReferencedContent(message, args);
-        
+
         if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
             return DefaultEmbedFactory.create()
                     .addField("Error", "Input Input String must match Regular Expression: \n" +

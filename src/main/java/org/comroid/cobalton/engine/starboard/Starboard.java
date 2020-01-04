@@ -1,9 +1,9 @@
-package de.comroid.cobalton.engine.starboard;
+package org.comroid.cobalton.engine.starboard;
 
 import java.io.File;
 import java.io.IOException;
 
-import de.comroid.cobalton.model.Embed;
+import org.comroid.cobalton.model.Embed;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerTextChannel;

@@ -1,4 +1,4 @@
-package de.comroid.cobalton.command.skribbl;
+package org.comroid.cobalton.command.skribbl;
 
 import java.net.URISyntaxException;
 

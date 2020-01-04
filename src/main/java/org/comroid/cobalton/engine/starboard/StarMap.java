@@ -1,4 +1,4 @@
-package de.comroid.cobalton.engine.starboard;
+package org.comroid.cobalton.engine.starboard;
 
 import java.io.Closeable;
 import java.io.File;

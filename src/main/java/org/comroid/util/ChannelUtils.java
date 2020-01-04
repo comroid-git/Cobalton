@@ -1,8 +1,8 @@
-package de.comroid.util;
+package org.comroid.util;
 
 import java.time.Instant;
 
-import de.comroid.Cobalton;
+import org.comroid.Cobalton;
 
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.Permissionable;

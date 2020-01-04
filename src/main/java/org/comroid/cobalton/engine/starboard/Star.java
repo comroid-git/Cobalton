@@ -1,4 +1,4 @@
-package de.comroid.cobalton.engine.starboard;
+package org.comroid.cobalton.engine.starboard;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;

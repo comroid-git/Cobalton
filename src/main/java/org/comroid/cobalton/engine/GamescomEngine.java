@@ -1,12 +1,12 @@
-package de.comroid.cobalton.engine;
+package org.comroid.cobalton.engine;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import de.comroid.Cobalton;
+import org.comroid.Cobalton;
+import org.comroid.util.ChannelUtils;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
-import de.comroid.util.ChannelUtils;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.DiscordEntity;
@@ -23,8 +23,6 @@ import org.javacord.api.event.channel.server.voice.ServerVoiceChannelMemberLeave
 import org.javacord.api.listener.channel.server.voice.ServerVoiceChannelMemberJoinListener;
 import org.javacord.api.listener.channel.server.voice.ServerVoiceChannelMemberLeaveListener;
 import org.javacord.api.util.logging.ExceptionLogger;
-
-import static de.comroid.Cobalton.API;
 
 public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, ServerVoiceChannelMemberLeaveListener {
     public static final long GAMESCOM_VOICE = 625508431272345600L;
@@ -69,7 +67,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
     public void onServerVoiceChannelMemberJoin(ServerVoiceChannelMemberJoinEvent event) {
         if (event.getUser().isBot()) return;
 
-        API.getRoleById(GAMESCOM_ROLE)
+        Cobalton.API.getRoleById(GAMESCOM_ROLE)
                 .ifPresent(event.getUser()::addRole);
 
         final Collection<User> current = currentUsers();
@@ -99,7 +97,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
         if (active && svc.getConnectedUserIds().size() == 0) {
             // trigger guna
 
-            API.getRoleById(Cobalton.Prop.GAMESCOM_ROLE.getValue(event.getServer()).asLong())
+            Cobalton.API.getRoleById(Cobalton.Prop.GAMESCOM_ROLE.getValue(event.getServer()).asLong())
                     .ifPresent(gamescom -> {
                         final Collection<User> users = gamescom.getUsers();
 
@@ -128,7 +126,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
 
                         users.stream()
                                 .map(member -> (Runnable) () -> member.removeRole(gamescom).exceptionally(ExceptionLogger.get()))
-                                .forEachOrdered(API.getThreadPool().getExecutorService()::submit);
+                                .forEachOrdered(Cobalton.API.getThreadPool().getExecutorService()::submit);
                     });
 
             active = false;

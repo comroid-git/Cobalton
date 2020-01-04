@@ -1,13 +1,13 @@
 apply plugin: 'application'
 
-group 'de.comroid'
+group 'org.comroid'
 version '1.00'
 
 apply from: 'gradle/ext.gradle'
 
 sourceCompatibility = 11
 targetCompatibility = 11
-mainClassName = 'de.comroid.Cobalton'
+mainClassName = 'org.comroid.Cobalton'
 
 wrapper {
     gradleVersion = '5.6'

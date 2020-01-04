@@ -1,10 +1,10 @@
-package de.comroid.util.polyfill;
+package org.comroid.util.polyfill;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import de.comroid.Cobalton;
+import org.comroid.Cobalton;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 

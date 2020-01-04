@@ -1,4 +1,4 @@
-package de.comroid;
+package org.comroid;
 
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -9,18 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import de.comroid.cobalton.command.AdminCommands;
-import de.comroid.cobalton.command.TextCommands;
-import de.comroid.cobalton.command.ToolCommands;
-import de.comroid.cobalton.engine.GamescomEngine;
-import de.comroid.cobalton.engine.RoleMessageEngine;
-import de.comroid.cobalton.engine.starboard.Starboard;
+import org.comroid.cobalton.command.AdminCommands;
+import org.comroid.cobalton.command.TextCommands;
+import org.comroid.cobalton.command.ToolCommands;
+import org.comroid.cobalton.engine.GamescomEngine;
+import org.comroid.cobalton.engine.RoleMessageEngine;
+import org.comroid.cobalton.engine.starboard.Starboard;
+import org.comroid.util.files.FileProvider;
 import de.comroid.eval.EvalCommand;
 import de.comroid.javacord.util.commands.CommandHandler;
 import de.comroid.javacord.util.server.properties.PropertyGroup;
 import de.comroid.javacord.util.server.properties.ServerPropertiesManager;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
-import de.comroid.util.files.FileProvider;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

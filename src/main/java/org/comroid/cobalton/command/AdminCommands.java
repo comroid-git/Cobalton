@@ -1,4 +1,4 @@
-package de.comroid.cobalton.command;
+package org.comroid.cobalton.command;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.regex.Pattern;
 import javax.script.ScriptEngineManager;
 
-import de.comroid.Cobalton;
+import org.comroid.Cobalton;
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;

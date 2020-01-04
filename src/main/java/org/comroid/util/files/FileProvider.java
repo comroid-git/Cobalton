@@ -1,4 +1,4 @@
-package de.comroid.util.files;
+package org.comroid.util.files;
 
 import java.io.File;
 import java.io.IOException;

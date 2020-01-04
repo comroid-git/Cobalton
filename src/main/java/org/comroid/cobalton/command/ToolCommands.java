@@ -1,4 +1,4 @@
-package de.comroid.cobalton.command;
+package org.comroid.cobalton.command;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import de.comroid.cobalton.command.skribbl.SkribblEmbed;
+import org.comroid.cobalton.command.skribbl.SkribblEmbed;
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
 

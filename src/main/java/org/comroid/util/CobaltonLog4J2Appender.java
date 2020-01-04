@@ -1,4 +1,4 @@
-package de.comroid.util;
+package org.comroid.util;
 
 import java.io.Serializable;
 import java.util.function.Function;
