@@ -47,6 +47,12 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
                     .stream()
                     .map(DiscordEntity::getId)
                     .noneMatch(id -> id == GAMESCOM_ROLE)) return;
+            if (event.getNewActivity().isPresent() && event.getOldActivity().isPresent()) {
+                final Activity oldActivity = event.getOldActivity().get();
+                final Activity newActivity = event.getNewActivity().get();
+
+                if (oldActivity.getName().equalsIgnoreCase(newActivity.getName())) return;
+            }
             final EmbedBuilder embed = DefaultEmbedFactory.create()
                     .setAuthor(event.getUser())
                     .setFooter("Activity Changed");
