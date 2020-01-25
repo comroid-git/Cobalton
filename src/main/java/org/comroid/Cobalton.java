@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.comroid.cobalton.command.AdminCommands;
 import org.comroid.cobalton.command.TextCommands;
 import org.comroid.cobalton.command.ToolCommands;
+import org.comroid.cobalton.engine.AntiSpam;
 import org.comroid.cobalton.engine.GamescomEngine;
 import org.comroid.cobalton.engine.RoleMessageEngine;
 import org.comroid.cobalton.engine.starboard.Starboard;
@@ -138,6 +139,8 @@ public final class Cobalton {
 
         // init gamescom engine
         new GamescomEngine(API);
+
+        API.addMessageCreateListener(AntiSpam.ENGINE);
 
         API.addServerMemberJoinListener(event -> API.getRoleById(632196120902107137L)
                 .ifPresent(event.getUser()::addRole));
