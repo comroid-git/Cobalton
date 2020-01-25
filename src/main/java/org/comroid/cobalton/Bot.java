@@ -111,7 +111,7 @@ public final class Bot {
             logger.info("Initializing AntiSpam Engine");
             API.addMessageCreateListener(AntiSpam.ENGINE);
 
-            API.updateActivity(ActivityType.LISTENING, CMD.prefixes[0] + "help");
+            API.updateActivity(ActivityType.PLAYING, "Ping @Kaleidox#3902 for support");
             API.updateStatus(UserStatus.ONLINE);
             logger.info("Bot ready and listening");
         } catch (Exception e) {
