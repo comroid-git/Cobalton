@@ -70,6 +70,7 @@ public enum AntiSpam implements MessageCreateListener {
 
         public EmbedBuilder cleanup(Message message) {
             final EmbedBuilder embed = DefaultEmbedFactory.create()
+                    .setFooter("Cobalton AntiSpam", Bot.API.getYourself().getAvatar().getUrl().toExternalForm())
                     .setAuthor(message.getAuthor())
                     .setTimestamp(message.getCreationTimestamp());
 
