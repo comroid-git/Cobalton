@@ -4,6 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.comroid.Cobalton;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
 import org.javacord.api.entity.message.Message;
@@ -17,6 +18,9 @@ public enum AntiSpam implements MessageCreateListener {
 
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
+        if (event.isServerMessage() && !Cobalton.Prop.ENABLE_ANTISPAM.getValue(event.getServer().get()).asBoolean())
+            return;
+
         final Message message = event.getMessage();
 
         for (SingleMessageScanner scanner : SingleMessageScanner.values()) {

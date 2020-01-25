@@ -186,6 +186,8 @@ public final class Cobalton {
         public static PropertyGroup ACCEPT_EMOJI;
         public static PropertyGroup DENY_EMOJI;
 
+        public static PropertyGroup ENABLE_ANTISPAM;
+
         public static PropertyGroup MAINTENANCE_CHANNEL;
 
         private static void init() {
@@ -198,6 +200,10 @@ public final class Cobalton {
 
             ACCEPT_EMOJI = PROP.register("emoji.accept", "✅");
             DENY_EMOJI = PROP.register("emoji.deny", "❌");
+
+            ENABLE_ANTISPAM = PROP.register("bot.antispam.enable", false)
+                    .withDisplayName("Enable AntiSpam")
+                    .withDescription("Enables the AntiSpam system. Boolean values only.");
 
             MAINTENANCE_CHANNEL = PROP.register("bot.maintenance.id", 625503716736237588L);
         }
