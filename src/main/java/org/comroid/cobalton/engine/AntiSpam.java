@@ -1,7 +1,6 @@
 package org.comroid.cobalton.engine;
 
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.comroid.Cobalton;
@@ -24,16 +23,16 @@ public enum AntiSpam implements MessageCreateListener {
         final Message message = event.getMessage();
 
         for (SingleMessageScanner scanner : SingleMessageScanner.values()) {
-            if (!scanner.test(message)) {
+            if (scanner.isSpam(message)) {
                 // replace message
                 message.delete("Antispam")
-                        .thenCompose(nil -> event.getChannel().sendMessage(scanner.apply(message)))
+                        .thenCompose(nil -> event.getChannel().sendMessage(scanner.cleanup(message)))
                         .exceptionally(ExceptionLogger.get());
             }
         }
     }
 
-    private enum SingleMessageScanner implements Predicate<Message>, Function<Message, EmbedBuilder> {
+    private enum SingleMessageScanner {
         CAPSLOCK(message -> {
             // count upper- and lowercase characters
             final String content = message.getReadableContent();
@@ -45,7 +44,7 @@ public enum AntiSpam implements MessageCreateListener {
                     .filter(Character::isLowerCase)
                     .count();
 
-            return uppercaseCount < (lowercaseCount * 2);
+            return uppercaseCount >= (lowercaseCount * 2);
         }, (embed, message) -> embed.setDescription(message.getReadableContent().toLowerCase()));
 
         private final Predicate<Message> messagePredicate;
@@ -56,13 +55,11 @@ public enum AntiSpam implements MessageCreateListener {
             this.cleaner = cleaner;
         }
 
-        @Override
-        public boolean test(Message message) {
+        public boolean isSpam(Message message) {
             return messagePredicate.test(message);
         }
 
-        @Override
-        public EmbedBuilder apply(Message message) {
+        public EmbedBuilder cleanup(Message message) {
             final EmbedBuilder embed = DefaultEmbedFactory.create()
                     .setAuthor(message.getAuthor())
                     .setTimestamp(message.getCreationTimestamp());
