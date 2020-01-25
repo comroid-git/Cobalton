@@ -203,7 +203,7 @@ public final class Bot {
             ACCEPT_EMOJI = PROP.register("emoji.accept", "✅");
             DENY_EMOJI = PROP.register("emoji.deny", "❌");
 
-            ENABLE_ANTISPAM = PROP.register("bot.antispam.enable", false)
+            ENABLE_ANTISPAM = PROP.register("bot.antispam.enable", true)
                     .withDisplayName("Enable AntiSpam")
                     .withDescription("Enables the AntiSpam system. Boolean values only.");
 
