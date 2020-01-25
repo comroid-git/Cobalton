@@ -8,7 +8,6 @@ import java.util.concurrent.ExecutionException;
 
 import de.comroid.util.interfaces.Initializable;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
@@ -17,7 +16,7 @@ import org.javacord.api.util.logging.ExceptionLogger;
 
 public class StarMap implements Initializable, Closeable {
     public final Logger logger = LogManager.getLogger();
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final Object mapper = new ObjectMapper();
     private final HashMap<Long, Star> stars = new HashMap<>();
     private final DiscordApi api;
     private final File starboardFile;

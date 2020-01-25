@@ -1,7 +1,11 @@
 package org.comroid.util.files;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.stream.IntStream;
 
 import org.apache.logging.log4j.Level;
@@ -15,8 +19,25 @@ public class FileProvider {
     public final static Logger logger = LogManager.getLogger();
     private final static String PREFIX = "/app/data/";
 
+    public static String[] readContent(String subPath) throws NoSuchFileException {
+        final File file = getFile(subPath);
+
+        logger.info("Reading file [ " + fullPath(subPath) + " ]...");
+
+        if (!file.exists())
+            throw new NoSuchFileException(fullPath(subPath));
+
+        try {
+            return new BufferedReader(new FileReader(file))
+                    .lines()
+                    .toArray(String[]::new);
+        } catch (FileNotFoundException e) {
+            throw new AssertionError(e);
+        }
+    }
+
     public static File getFile(String subPath) {
-        final String path = (PREFIX + subPath).replace('/', separatorChar);
+        final String path = fullPath(subPath).replace('/', separatorChar);
         logger.printf(Level.INFO, "Acquiring File [ %s ]", path);
 
         createDirs(path);
@@ -41,6 +62,10 @@ public class FileProvider {
         }
 
         return file;
+    }
+
+    public static String fullPath(String subPath) {
+        return PREFIX + subPath;
     }
 
     private static void createDirs(final String forPath) {

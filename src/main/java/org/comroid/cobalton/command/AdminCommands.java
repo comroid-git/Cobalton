@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.regex.Pattern;
 import javax.script.ScriptEngineManager;
 
-import org.comroid.Cobalton;
+import org.comroid.cobalton.Bot;
 import de.comroid.javacord.util.commands.Command;
 import de.comroid.javacord.util.commands.CommandGroup;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
@@ -48,7 +48,7 @@ public enum AdminCommands {
 
     @Command(usage = "shutdown", description = "Only the owner of the bot can use this", shownInHelpCommand = false)
     public void shutdown(User user, String[] args, Message command, TextChannel channel) {
-        if (Cobalton.permitted.contains(user.getId()))
+        if (Bot.permitted.contains(user.getId()))
             System.exit(1);
 
         command.delete("Unauthorized").exceptionally(ExceptionLogger.get());
@@ -57,7 +57,7 @@ public enum AdminCommands {
 
     @Command
     public String say(String[] args, User executor) {
-        if (!Cobalton.permitted.contains(executor.getId()))
+        if (!Bot.permitted.contains(executor.getId()))
             return null;
 
         return String.join(" ", args);
@@ -65,7 +65,7 @@ public enum AdminCommands {
 
     @Command(description = "Experimental")
     public EmbedBuilder ssh(String[] args, User executor) throws IOException, InterruptedException {
-        if (!Cobalton.permitted.contains(executor.getId()))
+        if (!Bot.permitted.contains(executor.getId()))
             return null;
 
         final String cmd = String.join(" ", args);
@@ -103,7 +103,7 @@ public enum AdminCommands {
             usage = "archive [Channel = this] [New Topic]",
             description = "Archive a channel")
     public void archiveChannel(Command.Parameters param, User executor, String[] args, Server srv, ServerTextChannel stc) {
-        if (!Cobalton.permitted.contains(executor.getId()))
+        if (!Bot.permitted.contains(executor.getId()))
             return;
 
         final boolean thisChannel = param.getChannelMentions().size() == 0;
@@ -113,11 +113,11 @@ public enum AdminCommands {
 
         if (stc.getCategory()
                 .map(DiscordEntity::getId)
-                .map(id -> Cobalton.Prop.ARCHIVE_CATEGORY.getValue(srv).asLong() == id)
+                .map(id -> Bot.Prop.ARCHIVE_CATEGORY.getValue(srv).asLong() == id)
                 .orElse(false))
             throw new IllegalStateException("Channel is already archived!");
 
-        Cobalton.API.getChannelCategoryById(Cobalton.Prop.ARCHIVE_CATEGORY
+        Bot.API.getChannelCategoryById(Bot.Prop.ARCHIVE_CATEGORY
                 .getValue(srv)
                 .asLong())
                 .ifPresent(archive -> {

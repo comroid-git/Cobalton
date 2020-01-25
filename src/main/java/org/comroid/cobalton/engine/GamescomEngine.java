@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.comroid.Cobalton;
+import org.comroid.cobalton.Bot;
 import org.comroid.util.ChannelUtils;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
@@ -37,13 +37,13 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
                     svc.addServerVoiceChannelMemberJoinListener(this);
                     svc.addServerVoiceChannelMemberLeaveListener(this);
                 });
-        Cobalton.SRV.addUserChangeActivityListener(event -> {
+        Bot.SRV.addUserChangeActivityListener(event -> {
             if (event.getNewActivity()
                     .map(Activity::getType)
                     .filter(type -> type == ActivityType.PLAYING)
                     .isEmpty()) return;
             if (event.getUser()
-                    .getRoles(Cobalton.SRV)
+                    .getRoles(Bot.SRV)
                     .stream()
                     .map(DiscordEntity::getId)
                     .noneMatch(id -> id == GAMESCOM_ROLE)) return;
@@ -73,7 +73,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
     public void onServerVoiceChannelMemberJoin(ServerVoiceChannelMemberJoinEvent event) {
         if (event.getUser().isBot()) return;
 
-        Cobalton.API.getRoleById(GAMESCOM_ROLE)
+        Bot.API.getRoleById(GAMESCOM_ROLE)
                 .ifPresent(event.getUser()::addRole);
 
         final Collection<User> current = currentUsers();
@@ -83,7 +83,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
 
             if (!gamescom.getTopic().startsWith("has started"))
                 gamescom.sendMessage(new EmbedBuilder()
-                        .setColor(Cobalton.THEME)
+                        .setColor(Bot.THEME)
                         .setDescription("Los geht die Gamescom!"))
                         .thenApply(msg -> gamescom.createUpdater()
                                 .setTopic("has started" + (gamescom.getTopic().isBlank() ? "" : " - " + gamescom.getTopic()))
@@ -103,7 +103,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
         if (active && svc.getConnectedUserIds().size() == 0) {
             // trigger guna
 
-            Cobalton.API.getRoleById(Cobalton.Prop.GAMESCOM_ROLE.getValue(event.getServer()).asLong())
+            Bot.API.getRoleById(Bot.Prop.GAMESCOM_ROLE.getValue(event.getServer()).asLong())
                     .ifPresent(gamescom -> {
                         final Collection<User> users = gamescom.getUsers();
 
@@ -132,7 +132,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
 
                         users.stream()
                                 .map(member -> (Runnable) () -> member.removeRole(gamescom).exceptionally(ExceptionLogger.get()))
-                                .forEachOrdered(Cobalton.API.getThreadPool().getExecutorService()::submit);
+                                .forEachOrdered(Bot.API.getThreadPool().getExecutorService()::submit);
                     });
 
             active = false;

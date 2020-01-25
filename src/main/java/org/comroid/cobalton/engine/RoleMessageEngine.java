@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.comroid.Cobalton;
+import org.comroid.cobalton.Bot;
 
 import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.message.Message;
@@ -51,7 +51,7 @@ public class RoleMessageEngine implements ReactionAddListener, ReactionRemoveLis
                 continue;
             }
 
-            Cobalton.API.getRoleById(roleId).ifPresent(role ->
+            Bot.API.getRoleById(roleId).ifPresent(role ->
                     reaction.getUsers().thenAccept(users -> users.forEach(role::addUser)));
         }
 
@@ -80,7 +80,7 @@ public class RoleMessageEngine implements ReactionAddListener, ReactionRemoveLis
             return;
         }
 
-        Cobalton.API.getRoleById(roleId).ifPresent(role -> event.getUser().addRole(role));
+        Bot.API.getRoleById(roleId).ifPresent(role -> event.getUser().addRole(role));
     }
 
     @Override
@@ -93,6 +93,6 @@ public class RoleMessageEngine implements ReactionAddListener, ReactionRemoveLis
         Long roleId = roles.get(emoji);
         if (roleId == null) return;
 
-        Cobalton.API.getRoleById(roleId).ifPresent(role -> event.getUser().removeRole(role));
+        Bot.API.getRoleById(roleId).ifPresent(role -> event.getUser().removeRole(role));
     }
 }
