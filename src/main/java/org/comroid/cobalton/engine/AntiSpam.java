@@ -17,6 +17,8 @@ public enum AntiSpam implements MessageCreateListener {
 
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
+        if (event.getMessageAuthor().isBotUser())
+            return;
         if (event.isServerMessage() && !Cobalton.Prop.ENABLE_ANTISPAM.getValue(event.getServer().get()).asBoolean())
             return;
 
