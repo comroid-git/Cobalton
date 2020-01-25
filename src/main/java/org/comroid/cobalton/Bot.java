@@ -1,13 +1,17 @@
-package org.comroid;
+package org.comroid.cobalton;
 
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
+
+import javax.imageio.stream.FileImageInputStream;
 
 import org.comroid.cobalton.command.AdminCommands;
 import org.comroid.cobalton.command.TextCommands;
@@ -16,31 +20,35 @@ import org.comroid.cobalton.engine.AntiSpam;
 import org.comroid.cobalton.engine.GamescomEngine;
 import org.comroid.cobalton.engine.RoleMessageEngine;
 import org.comroid.cobalton.engine.starboard.Starboard;
+import org.comroid.util.DNSUtil;
 import org.comroid.util.files.FileProvider;
 import de.comroid.eval.EvalCommand;
 import de.comroid.javacord.util.commands.CommandHandler;
 import de.comroid.javacord.util.server.properties.PropertyGroup;
 import de.comroid.javacord.util.server.properties.ServerPropertiesManager;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import de.kaleidox.botstats.BotListSettings;
+import de.kaleidox.botstats.javacord.JavacordStatsClient;
+import de.kaleidox.botstats.model.StatsClient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.activity.ActivityType;
-import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.UserStatus;
 import org.javacord.api.util.logging.ExceptionLogger;
 
-public final class Cobalton {
+public final class Bot {
     public final static Logger logger = LogManager.getLogger();
     public final static Color THEME = new Color(0x0f7eb1);
 
-    public static final long BOT_ID = 625651396410343424L;
+    public static final long BOT_ID = 493055125766537236L;
 
     public static final DiscordApi API;
+    public static final StatsClient STATS;
     public static final CommandHandler CMD;
     public static final ServerPropertiesManager PROP;
     public static final Starboard STAR;
@@ -50,12 +58,9 @@ public final class Cobalton {
 
     static {
         try {
-            File token = FileProvider.getFile("login/token.cred");
-            logger.info("Looking for token file at " + token.getAbsolutePath());
-
             try {
                 API = new DiscordApiBuilder()
-                        .setToken(new BufferedReader(new FileReader(token)).readLine())
+                        .setToken(FileProvider.readContent("login/discord.cred")[0])
                         .login()
                         .get();
             } catch (Throwable t) {
@@ -64,19 +69,21 @@ public final class Cobalton {
 
             logger.info("Successfully connected to Discord services");
 
-            permitted.add(141476933849448448L); // Kaleidox
-            permitted.add(292141393739251714L); // Jay
-            permitted.add(232610922298998784L); // Flo
+            Stream.of(DNSUtil.getTxtContent("txdiad.comroid.org").split(";"))
+                    .map(Long::parseLong)
+                    .peek(id -> logger.info("Added " + id + " to permitted user IDs"))
+                    .forEach(permitted::add);
 
             API.updateStatus(UserStatus.DO_NOT_DISTURB);
             API.updateActivity("Booting up...");
 
-            API.addMessageCreateListener(event -> {
-                final Message message = event.getMessage();
-                if (message.getAuthor().getId() != 534697181383491607L
-                        && message.getReadableContent().toLowerCase().matches(".*t\\s*[o0]|(\\[])|(\\(\\))|(\\{})|(<>)\\s*[8b]\\s*[e3]\\s*r\\s*[s5].*"))
-                    message.delete("Unauthorized");
-            });
+            SRV = API.getServerById(625494140427173889L).orElseThrow(IllegalStateException::new);
+
+            logger.info("Initializting StatsClient...");
+            STATS = new JavacordStatsClient(BotListSettings.builder()
+                    .tokenFile(FileProvider.getFile("login/botlists.properties"))
+                    .postStatsTester(() -> API.getYourself().getId() == BOT_ID)
+                    .build(), API);
 
             DefaultEmbedFactory.setEmbedSupplier(() -> new EmbedBuilder().setColor(THEME));
 
@@ -85,13 +92,12 @@ public final class Cobalton {
             CMD.prefixes = new String[]{"cobalton!", "c!"};
             logger.info(String.format("Setting command prefixes: '%s'", String.join("', '", CMD.prefixes)));
             CMD.useDefaultHelp(null);
-            CMD.registerCommands(ToolCommands.INSTANCE);
-            CMD.registerCommands(TextCommands.INSTANCE);
+            CMD.registerCommands(TextCommands.INSTANCE, ToolCommands.INSTANCE);
             CMD.registerCommands(AdminCommands.INSTANCE);
             CMD.registerCommands(EvalCommand.INSTANCE);
 
             logger.info("Initialzing server properties");
-            PROP = new ServerPropertiesManager(FileProvider.getFile("serverProps.json"));
+            PROP = new ServerPropertiesManager(FileProvider.getFile("servers.json"));
             PROP.usePropertyCommand(null, CMD);
             Prop.init();
 
@@ -101,13 +107,16 @@ public final class Cobalton {
             logger.info("Registering runtime hooks");
             API.getThreadPool()
                     .getScheduler()
-                    .scheduleAtFixedRate(Cobalton::storeAllData, 5, 5, TimeUnit.MINUTES);
-            Runtime.getRuntime().addShutdownHook(new Thread(Cobalton::terminateAll));
+                    .scheduleAtFixedRate(Bot::storeAllData, 5, 5, TimeUnit.MINUTES);
+            Runtime.getRuntime().addShutdownHook(new Thread(Bot::terminateAll));
 
-            SRV = API.getServerById(625494140427173889L).orElseThrow(IllegalStateException::new);
+            logger.info("Initializing Automation Core");
 
             logger.info("Initializing Starboard");
             STAR = new Starboard(API, FileProvider.getFile("starboard.json"), "✅", 639051738036568064L);
+
+            logger.info("Initializing AntiSpam Engine");
+            API.addMessageCreateListener(AntiSpam.ENGINE);
 
             API.updateActivity(ActivityType.LISTENING, CMD.prefixes[0] + "help");
             API.updateStatus(UserStatus.ONLINE);
@@ -126,8 +135,8 @@ public final class Cobalton {
                         .exceptionally(ExceptionLogger.get());
         });
 
-        API.getServerTextChannelById(Prop.INFO_CHANNEL.getValue(SRV).asLong())
-                .ifPresent(infoChannel -> infoChannel.getMessageById(Prop.ROLE_MESSAGE.getValue(SRV).asLong())
+        API.getServerTextChannelById(Bot.Prop.INFO_CHANNEL.getValue(SRV).asLong())
+                .ifPresent(infoChannel -> infoChannel.getMessageById(Bot.Prop.ROLE_MESSAGE.getValue(SRV).asLong())
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage)))
                         .exceptionally(ExceptionLogger.get()));
 

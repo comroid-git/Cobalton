@@ -1,6 +1,6 @@
 package org.comroid.cobalton.model;
 
-import org.comroid.Cobalton;
+import org.comroid.cobalton.Bot;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -13,7 +13,7 @@ public class Embed {
     public Embed(Server server, User user) {
         this.embed = DefaultEmbedFactory.create()
                 .setAuthor(user)
-                .setColor(user.getRoleColor(server).orElse(Cobalton.THEME));
+                .setColor(user.getRoleColor(server).orElse(Bot.THEME));
     }
 
     public Embed addField(String name, String value) {

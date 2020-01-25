@@ -2,7 +2,7 @@ package org.comroid.util;
 
 import java.time.Instant;
 
-import org.comroid.Cobalton;
+import org.comroid.cobalton.Bot;
 
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.Permissionable;
@@ -27,7 +27,7 @@ public class ChannelUtils {
                     .exceptionally(ExceptionLogger.get());
         }
 
-        Cobalton.API.getChannelCategoryById(Cobalton.Prop.ARCHIVE_CATEGORY.getValue(stc.getServer()).asLong())
+        Bot.API.getChannelCategoryById(Bot.Prop.ARCHIVE_CATEGORY.getValue(stc.getServer()).asLong())
                 .ifPresent(cat -> {
                     final ServerTextChannelUpdater updater = stc.createUpdater()
                             .setCategory(cat)

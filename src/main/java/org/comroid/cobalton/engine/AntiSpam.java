@@ -3,9 +3,12 @@ package org.comroid.cobalton.engine;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-import org.comroid.Cobalton;
+import org.comroid.cobalton.Bot;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -15,17 +18,21 @@ import org.javacord.api.util.logging.ExceptionLogger;
 public enum AntiSpam implements MessageCreateListener {
     ENGINE;
 
+    public final static Logger logger = LogManager.getLogger();
+
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
         if (event.getMessageAuthor().isBotUser())
             return;
-        if (event.isServerMessage() && !Cobalton.Prop.ENABLE_ANTISPAM.getValue(event.getServer().get()).asBoolean())
+        if (event.isServerMessage() && !Bot.Prop.ENABLE_ANTISPAM.getValue(event.getServer().get()).asBoolean())
             return;
 
         final Message message = event.getMessage();
 
         for (SingleMessageScanner scanner : SingleMessageScanner.values()) {
             if (scanner.isSpam(message)) {
+                logger.info(String.format("%s triggered AntiSpam Scanner: %s", message, scanner));
+
                 // replace message
                 message.delete("Antispam")
                         .thenCompose(nil -> event.getChannel().sendMessage(scanner.cleanup(message)))
