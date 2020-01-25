@@ -24,7 +24,7 @@ public enum AntiSpam implements MessageCreateListener {
         final Message message = event.getMessage();
 
         for (SingleMessageScanner scanner : SingleMessageScanner.values()) {
-            if (scanner.test(message)) {
+            if (!scanner.test(message)) {
                 // replace message
                 message.delete("Antispam")
                         .thenCompose(nil -> event.getChannel().sendMessage(scanner.apply(message)))
