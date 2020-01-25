@@ -1,17 +1,11 @@
 package org.comroid.cobalton;
 
 import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
-
-import javax.imageio.stream.FileImageInputStream;
 
 import org.comroid.cobalton.command.AdminCommands;
 import org.comroid.cobalton.command.TextCommands;
@@ -19,7 +13,6 @@ import org.comroid.cobalton.command.ToolCommands;
 import org.comroid.cobalton.engine.AntiSpam;
 import org.comroid.cobalton.engine.GamescomEngine;
 import org.comroid.cobalton.engine.RoleMessageEngine;
-import org.comroid.cobalton.engine.starboard.Starboard;
 import org.comroid.util.DNSUtil;
 import org.comroid.util.files.FileProvider;
 import de.comroid.eval.EvalCommand;
@@ -51,7 +44,7 @@ public final class Bot {
     public static final StatsClient STATS;
     public static final CommandHandler CMD;
     public static final ServerPropertiesManager PROP;
-    public static final Starboard STAR;
+    // todo public static final Starboard STAR;
     public static final Server SRV;
 
     public static final List<Long> permitted = new ArrayList<>();
@@ -113,7 +106,7 @@ public final class Bot {
             logger.info("Initializing Automation Core");
 
             logger.info("Initializing Starboard");
-            STAR = new Starboard(API, FileProvider.getFile("starboard.json"), "✅", 639051738036568064L);
+            // todo STAR = new Starboard(API, FileProvider.getFile("starboard.json"), "✅", 639051738036568064L);
 
             logger.info("Initializing AntiSpam Engine");
             API.addMessageCreateListener(AntiSpam.ENGINE);
