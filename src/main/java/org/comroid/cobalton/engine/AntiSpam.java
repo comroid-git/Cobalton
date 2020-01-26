@@ -59,7 +59,7 @@ public enum AntiSpam implements MessageCreateListener {
 
     private EmbedBuilder generateEmbed(Message message, SpamRule[] spamRules) {
         return DefaultEmbedFactory.create()
-                .setFooter(String.format("Cobalton AntiSpam | %s violated Rule%s: %s",
+                .setFooter(String.format("Cobalton AntiSpam • %s violated Rule%s: %s",
                         message.getAuthor().getDiscriminatedName(),
                         spamRules.length == 1 ? 's' : "",
                         spamRules.length == 1 ? spamRules[0] : Arrays.toString(spamRules)),
