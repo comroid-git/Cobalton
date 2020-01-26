@@ -25,7 +25,9 @@ public enum AntiSpam implements MessageCreateListener {
     /**
      * Gruber v2 URL Regex as posted on https://mathiasbynens.be/demo/url-regex#gruber_v2
      */
-    public static final Pattern URL_PATTERN = Pattern.compile("(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))");
+    public static final Pattern URL_PATTERN = Pattern.compile("((?s).*)(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www" +
+            "\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^" +
+            "\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))((?s).*)");
 
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
@@ -70,7 +72,7 @@ public enum AntiSpam implements MessageCreateListener {
 
     private enum SpamRule {
         NoURLs(message -> URL_PATTERN.matcher(message.getContent()).matches(),
-                content -> content.replaceAll(URL_PATTERN.pattern(), "[redacted]")),
+                content -> content.replaceAll(URL_PATTERN.pattern(), "$1[redacted]$7")),
         NoCaps(message -> {
             // count upper- and lowercase characters
             final String content = message.getReadableContent();
