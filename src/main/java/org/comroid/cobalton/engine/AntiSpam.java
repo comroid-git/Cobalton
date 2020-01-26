@@ -71,7 +71,7 @@ public enum AntiSpam implements MessageCreateListener {
 
     private EmbedBuilder generateEmbed(Message message, String reportMessage, SpamRule[] spamRules) {
         return DefaultEmbedFactory.create()
-                .setFooter(String.format("Cobalton AntiSpam • %s", reportMessage), "https://comroid.org/img/comroid.png")
+                .setFooter("Cobalton AntiSpam • " + reportMessage, Bot.API.getYourself().getAvatar().getUrl().toExternalForm())
                 //.setAuthor(message.getAuthor()) do not set an author; makes the embed smaller. author is visible in footer
                 .setTimestamp(message.getCreationTimestamp());
     }
