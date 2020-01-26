@@ -42,6 +42,9 @@ public enum AntiSpam implements MessageCreateListener {
             if (spamRule.isSpam(message))
                 violated.add(spamRule);
 
+        if (violated.size() == 0)
+            return;
+
         final String[] content = {message.getContent()};
 
         violated.forEach(spamRule -> content[0] = spamRule.applyRule(content[0]));
@@ -65,10 +68,8 @@ public enum AntiSpam implements MessageCreateListener {
     }
 
     private enum SpamRule {
-        NoURLs(message -> {
-            // scan for any URL
-            return URL_PATTERN.matcher(message.getContent()).matches();
-        }, content -> content.replaceAll(URL_PATTERN.pattern(), "[redacted]")),
+        NoURLs(message -> URL_PATTERN.matcher(message.getContent()).matches(),
+                content -> content.replaceAll(URL_PATTERN.pattern(), "[redacted]")),
         NoCaps(message -> {
             // count upper- and lowercase characters
             final String content = message.getReadableContent();
