@@ -48,7 +48,8 @@ public enum AntiSpam implements MessageCreateListener {
         final String[] content = {message.getContent()};
 
         violated.forEach(spamRule -> content[0] = spamRule.applyRule(content[0]));
-        EmbedBuilder embed = generateEmbed(message, violated.toArray(SpamRule[]::new));
+        EmbedBuilder embed = generateEmbed(message, violated.toArray(SpamRule[]::new))
+                .setDescription(content[0]);
 
         // replace message
         message.delete("AntiSpam")
