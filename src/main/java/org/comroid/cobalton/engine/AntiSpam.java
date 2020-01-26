@@ -62,18 +62,14 @@ public enum AntiSpam implements MessageCreateListener {
                 rulesArray.length == 1 ? rulesArray[0] : Arrays.toString(rulesArray));
 
         logger.log(SpamRule.INCIDENT, reportMessage);
-        EmbedBuilder embed = generateEmbed(message, reportMessage, rulesArray)
+        EmbedBuilder embed = DefaultEmbedFactory.create()
+                .setFooter("Cobalton AntiSpam • " + reportMessage, Bot.API.getYourself().getAvatar().getUrl().toExternalForm())
+                //.setAuthor(message.getAuthor()) do not set an author; makes the embed smaller. author is visible in footer
+                .setTimestamp(message.getCreationTimestamp())
                 .setDescription(content[0]);
         message.delete("AntiSpam")
                 .thenCompose(nil -> event.getChannel().sendMessage(embed))
                 .exceptionally(ExceptionLogger.get());
-    }
-
-    private EmbedBuilder generateEmbed(Message message, String reportMessage, SpamRule[] spamRules) {
-        return DefaultEmbedFactory.create()
-                .setFooter("Cobalton AntiSpam • " + reportMessage, Bot.API.getYourself().getAvatar().getUrl().toExternalForm())
-                //.setAuthor(message.getAuthor()) do not set an author; makes the embed smaller. author is visible in footer
-                .setTimestamp(message.getCreationTimestamp());
     }
 
     public enum SpamRule {
