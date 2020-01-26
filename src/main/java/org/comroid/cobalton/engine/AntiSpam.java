@@ -6,7 +6,6 @@ import java.util.function.Predicate;
 import org.comroid.cobalton.Bot;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.entity.message.Message;
@@ -29,20 +28,21 @@ public enum AntiSpam implements MessageCreateListener {
 
         final Message message = event.getMessage();
 
-        for (SingleMessageScanner scanner : SingleMessageScanner.values()) {
-            if (scanner.isSpam(message)) {
-                logger.info(String.format("%s triggered AntiSpam Scanner: %s", message, scanner));
+        for (SpamRule spamRule : SpamRule.values()) {
+            if (spamRule.isSpam(message)) {
+                logger.info(String.format("%s triggered AntiSpam Scanner: %s", message, spamRule));
 
                 // replace message
-                message.delete("Antispam")
-                        .thenCompose(nil -> event.getChannel().sendMessage(scanner.cleanup(message)))
+                message.delete("AntiSpam")
+                        .thenCompose(nil -> event.getChannel().sendMessage(spamRule.cleanup(message, spamRule)))
                         .exceptionally(ExceptionLogger.get());
+                break;
             }
         }
     }
 
-    private enum SingleMessageScanner {
-        CAPSLOCK(message -> {
+    private enum SpamRule {
+        NoCaps(message -> {
             // count upper- and lowercase characters
             final String content = message.getReadableContent();
 
@@ -61,7 +61,7 @@ public enum AntiSpam implements MessageCreateListener {
         private final Predicate<Message> messagePredicate;
         private final BiFunction<EmbedBuilder, Message, EmbedBuilder> cleaner;
 
-        SingleMessageScanner(Predicate<Message> messagePredicate, BiFunction<EmbedBuilder, Message, EmbedBuilder> cleaner) {
+        SpamRule(Predicate<Message> messagePredicate, BiFunction<EmbedBuilder, Message, EmbedBuilder> cleaner) {
             this.messagePredicate = messagePredicate;
             this.cleaner = cleaner;
         }
@@ -70,9 +70,9 @@ public enum AntiSpam implements MessageCreateListener {
             return messagePredicate.test(message);
         }
 
-        public EmbedBuilder cleanup(Message message) {
+        public EmbedBuilder cleanup(Message message, SpamRule spamRule) {
             final EmbedBuilder embed = DefaultEmbedFactory.create()
-                    .setFooter("Cobalton AntiSpam", Bot.API.getYourself().getAvatar().getUrl().toExternalForm())
+                    .setFooter("Cobalton AntiSpam | Violated Rule: " + spamRule.name(), Bot.API.getYourself().getAvatar().getUrl().toExternalForm())
                     .setAuthor(message.getAuthor())
                     .setTimestamp(message.getCreationTimestamp());
 
