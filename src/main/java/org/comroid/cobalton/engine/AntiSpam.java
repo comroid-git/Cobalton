@@ -64,7 +64,7 @@ public enum AntiSpam implements MessageCreateListener {
                         spamRules.length == 1 ? 's' : "",
                         spamRules.length == 1 ? spamRules[0] : Arrays.toString(spamRules)),
                         Bot.API.getYourself().getAvatar().getUrl().toExternalForm())
-                .setAuthor(message.getAuthor())
+                //.setAuthor(message.getAuthor()) do not set an author; makes the embed smaller. author is visible in footer
                 .setTimestamp(message.getCreationTimestamp());
     }
 
