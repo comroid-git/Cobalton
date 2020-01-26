@@ -64,8 +64,8 @@ public enum AntiSpam implements MessageCreateListener {
         logger.log(SpamRule.INCIDENT, reportMessage);
         EmbedBuilder embed = DefaultEmbedFactory.create()
                 .setFooter("Cobalton AntiSpam • " + reportMessage, Bot.API.getYourself().getAvatar().getUrl().toExternalForm())
-                //.setAuthor(message.getAuthor()) do not set an author; makes the embed smaller. author is visible in footer
-                .setTimestamp(message.getCreationTimestamp())
+                //removal .setAuthor(message.getAuthor()) do not set an author; makes the embed smaller. author is visible in footer
+                //removal .setTimestamp(message.getCreationTimestamp()) do not add timestamp; it is repetitive information & makes the footer ugly
                 .setDescription(content[0]);
         message.delete("AntiSpam")
                 .thenCompose(nil -> event.getChannel().sendMessage(embed))
