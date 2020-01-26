@@ -42,7 +42,7 @@ public enum AntiSpam implements MessageCreateListener {
         final List<SpamRule> violated = new ArrayList<>(1);
 
         for (SpamRule spamRule : SpamRule.values())
-            if (spamRule.isSpam(message))
+            if (!spamRule.name().equals("noURLs") && spamRule.isSpam(message))
                 violated.add(spamRule);
 
         if (violated.size() == 0)
