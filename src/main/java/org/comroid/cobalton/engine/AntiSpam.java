@@ -47,11 +47,11 @@ public enum AntiSpam implements MessageCreateListener {
             final String content = message.getReadableContent();
 
             long uppercaseCount = content.chars()
-                    .filter(Character::isLetter)
+                    .filter(Character::isAlphabetic)
                     .filter(Character::isUpperCase)
                     .count();
             long lowercaseCount = content.chars()
-                    .filter(Character::isLetter)
+                    .filter(Character::isAlphabetic)
                     .filter(Character::isLowerCase)
                     .count();
 
