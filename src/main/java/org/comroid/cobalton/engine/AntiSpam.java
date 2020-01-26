@@ -1,6 +1,9 @@
 package org.comroid.cobalton.engine;
 
-import java.util.function.BiFunction;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -28,32 +31,44 @@ public enum AntiSpam implements MessageCreateListener {
     public void onMessageCreate(MessageCreateEvent event) {
         if (event.getMessageAuthor().isBotUser())
             return;
+        //noinspection OptionalGetWithoutIsPresent
         if (event.isServerMessage() && !Bot.Prop.ENABLE_ANTISPAM.getValue(event.getServer().get()).asBoolean())
             return;
 
         final Message message = event.getMessage();
+        final List<SpamRule> violated = new ArrayList<>(1);
 
-        for (SpamRule spamRule : SpamRule.values()) {
-            if (spamRule.isSpam(message)) {
-                logger.info(String.format("%s triggered AntiSpam Scanner: %s", message, spamRule));
+        for (SpamRule spamRule : SpamRule.values())
+            if (spamRule.isSpam(message))
+                violated.add(spamRule);
 
-                // replace message
-                message.delete("AntiSpam")
-                        .thenCompose(nil -> event.getChannel().sendMessage(spamRule.cleanup(message, spamRule)))
-                        .exceptionally(ExceptionLogger.get());
-                break;
-            }
-        }
+        final String[] content = {message.getContent()};
+
+        violated.forEach(spamRule -> content[0] = spamRule.applyRule(content[0]));
+        EmbedBuilder embed = generateEmbed(message, violated.toArray(SpamRule[]::new));
+
+        // replace message
+        message.delete("AntiSpam")
+                .thenCompose(nil -> event.getChannel().sendMessage(embed))
+                .exceptionally(ExceptionLogger.get());
+    }
+
+    private EmbedBuilder generateEmbed(Message message, SpamRule[] spamRules) {
+        return DefaultEmbedFactory.create()
+                .setFooter(String.format("Cobalton AntiSpam | %s violated Rule%s: %s",
+                        message.getAuthor().getDiscriminatedName(),
+                        spamRules.length == 1 ? 's' : "",
+                        spamRules.length == 1 ? spamRules[0] : Arrays.toString(spamRules)),
+                        Bot.API.getYourself().getAvatar().getUrl().toExternalForm())
+                .setAuthor(message.getAuthor())
+                .setTimestamp(message.getCreationTimestamp());
     }
 
     private enum SpamRule {
         NoURLs(message -> {
             // scan for any URL
             return URL_PATTERN.matcher(message.getContent()).matches();
-        }, (embed, message) -> {
-            // remove URL
-            return embed.setDescription(message.getContent().replaceAll(URL_PATTERN.pattern(), "[redacted]"));
-        }),
+        }, content -> content.replaceAll(URL_PATTERN.pattern(), "[redacted]")),
         NoCaps(message -> {
             // count upper- and lowercase characters
             final String content = message.getReadableContent();
@@ -68,12 +83,12 @@ public enum AntiSpam implements MessageCreateListener {
                     .count();
 
             return uppercaseCount >= (lowercaseCount * 2);
-        }, (embed, message) -> embed.setDescription(message.getReadableContent().toLowerCase()));
+        }, String::toLowerCase);
 
         private final Predicate<Message> messagePredicate;
-        private final BiFunction<EmbedBuilder, Message, EmbedBuilder> cleaner;
+        private final Function<String, String> cleaner;
 
-        SpamRule(Predicate<Message> messagePredicate, BiFunction<EmbedBuilder, Message, EmbedBuilder> cleaner) {
+        SpamRule(Predicate<Message> messagePredicate, Function<String, String> cleaner) {
             this.messagePredicate = messagePredicate;
             this.cleaner = cleaner;
         }
@@ -82,13 +97,8 @@ public enum AntiSpam implements MessageCreateListener {
             return messagePredicate.test(message);
         }
 
-        public EmbedBuilder cleanup(Message message, SpamRule spamRule) {
-            final EmbedBuilder embed = DefaultEmbedFactory.create()
-                    .setFooter("Cobalton AntiSpam | Violated Rule: " + spamRule.name(), Bot.API.getYourself().getAvatar().getUrl().toExternalForm())
-                    .setAuthor(message.getAuthor())
-                    .setTimestamp(message.getCreationTimestamp());
-
-            return cleaner.apply(embed, message);
+        public String applyRule(String content) {
+            return cleaner.apply(content);
         }
     }
 }
