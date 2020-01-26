@@ -2,6 +2,7 @@ package org.comroid.cobalton.engine;
 
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import org.comroid.cobalton.Bot;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
@@ -18,6 +19,10 @@ public enum AntiSpam implements MessageCreateListener {
     ENGINE;
 
     public final static Logger logger = LogManager.getLogger();
+    /**
+     * Gruber v2 URL Regex as posted on https://mathiasbynens.be/demo/url-regex#gruber_v2
+     */
+    public static final Pattern URL_PATTERN = Pattern.compile("#(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))#iS");
 
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
@@ -42,6 +47,13 @@ public enum AntiSpam implements MessageCreateListener {
     }
 
     private enum SpamRule {
+        NoURLs(message -> {
+            // scan for any URL
+            return URL_PATTERN.matcher(message.getContent()).matches();
+        }, (embed, message) -> {
+            // remove URL
+            return embed.setDescription(message.getContent().replaceAll(URL_PATTERN.pattern(), "[redacted]"));
+        }),
         NoCaps(message -> {
             // count upper- and lowercase characters
             final String content = message.getReadableContent();
