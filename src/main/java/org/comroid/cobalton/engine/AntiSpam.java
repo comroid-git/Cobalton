@@ -47,13 +47,15 @@ public enum AntiSpam implements MessageCreateListener {
         if (violated.size() == 0)
             return;
 
+        // replace message
         final String[] content = {message.getContent()};
 
-        violated.forEach(spamRule -> content[0] = spamRule.applyRule(content[0]));
+        if (content[0].length() > 2048 /* embed description length limit */)
+            content[0] = "```Content was too long, could not post cleaned up content```";
+        else violated.forEach(spamRule -> content[0] = spamRule.applyRule(content[0]));
+
         EmbedBuilder embed = generateEmbed(message, violated.toArray(SpamRule[]::new))
                 .setDescription(content[0]);
-
-        // replace message
         message.delete("AntiSpam")
                 .thenCompose(nil -> event.getChannel().sendMessage(embed))
                 .exceptionally(ExceptionLogger.get());
