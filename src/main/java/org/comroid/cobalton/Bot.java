@@ -109,6 +109,7 @@ public final class Bot {
             // todo STAR = new Starboard(API, FileProvider.getFile("starboard.json"), "✅", 639051738036568064L);
 
             logger.info("Initializing AntiSpam Engine");
+            logger.log(AntiSpam.SpamRule.INCIDENT, "AntiSpam incidents are logged at this level");
             API.addMessageCreateListener(AntiSpam.ENGINE);
 
             API.updateActivity(ActivityType.PLAYING, "Ping @Kaleidox#3902 for support");

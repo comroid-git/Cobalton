@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import org.comroid.cobalton.Bot;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.entity.message.Message;
@@ -54,25 +55,28 @@ public enum AntiSpam implements MessageCreateListener {
             content[0] = "```Content was too long, could not post cleaned up content```";
         else violated.forEach(spamRule -> content[0] = spamRule.applyRule(content[0]));
 
-        EmbedBuilder embed = generateEmbed(message, violated.toArray(SpamRule[]::new))
+        final SpamRule[] rulesArray = violated.toArray(SpamRule[]::new);
+        final String reportMessage = String.format("%s violated SpamRule%s: %s",
+                message.getAuthor().getDiscriminatedName(),
+                rulesArray.length == 1 ? "" : 's',
+                rulesArray.length == 1 ? rulesArray[0] : Arrays.toString(rulesArray));
+
+        logger.log(SpamRule.INCIDENT, reportMessage);
+        EmbedBuilder embed = generateEmbed(message, reportMessage, rulesArray)
                 .setDescription(content[0]);
         message.delete("AntiSpam")
                 .thenCompose(nil -> event.getChannel().sendMessage(embed))
                 .exceptionally(ExceptionLogger.get());
     }
 
-    private EmbedBuilder generateEmbed(Message message, SpamRule[] spamRules) {
+    private EmbedBuilder generateEmbed(Message message, String reportMessage, SpamRule[] spamRules) {
         return DefaultEmbedFactory.create()
-                .setFooter(String.format("Cobalton AntiSpam • %s violated Rule%s: %s",
-                        message.getAuthor().getDiscriminatedName(),
-                        spamRules.length == 1 ? "" : 's',
-                        spamRules.length == 1 ? spamRules[0] : Arrays.toString(spamRules)),
-                        Bot.API.getYourself().getAvatar().getUrl().toExternalForm())
+                .setFooter(String.format("Cobalton AntiSpam • %s", reportMessage), "https://comroid.org/img/comroid.png")
                 //.setAuthor(message.getAuthor()) do not set an author; makes the embed smaller. author is visible in footer
                 .setTimestamp(message.getCreationTimestamp());
     }
 
-    private enum SpamRule {
+    public enum SpamRule {
         NoURLs(message -> URL_PATTERN.matcher(message.getContent()).matches(),
                 content -> content.replaceAll(URL_PATTERN.pattern(), "$1[redacted]$7")),
         NoCaps(message -> {
@@ -91,6 +95,7 @@ public enum AntiSpam implements MessageCreateListener {
             return uppercaseCount >= (lowercaseCount * 2);
         }, String::toLowerCase);
 
+        public static Level INCIDENT = Level.forName("INCIDENT", Level.INFO.intLevel() - 50);
         private final Predicate<Message> messagePredicate;
         private final Function<String, String> cleaner;
 
