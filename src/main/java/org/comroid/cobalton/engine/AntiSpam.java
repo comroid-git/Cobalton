@@ -61,7 +61,7 @@ public enum AntiSpam implements MessageCreateListener {
         return DefaultEmbedFactory.create()
                 .setFooter(String.format("Cobalton AntiSpam • %s violated Rule%s: %s",
                         message.getAuthor().getDiscriminatedName(),
-                        spamRules.length == 1 ? 's' : "",
+                        spamRules.length == 1 ? "" : 's',
                         spamRules.length == 1 ? spamRules[0] : Arrays.toString(spamRules)),
                         Bot.API.getYourself().getAvatar().getUrl().toExternalForm())
                 //.setAuthor(message.getAuthor()) do not set an author; makes the embed smaller. author is visible in footer
