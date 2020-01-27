@@ -189,7 +189,11 @@ public final class Bot {
         public static PropertyGroup ACCEPT_EMOJI;
         public static PropertyGroup DENY_EMOJI;
 
+        //region AntiSpam
         public static PropertyGroup ENABLE_ANTISPAM;
+        public static PropertyGroup ANTISPAM_NOCAPS;
+        public static PropertyGroup ANTISPAM_NOURLS;
+        //endregion
 
         public static PropertyGroup MAINTENANCE_CHANNEL;
 
@@ -207,6 +211,10 @@ public final class Bot {
             ENABLE_ANTISPAM = PROP.register("bot.antispam.enable", true)
                     .withDisplayName("Enable AntiSpam")
                     .withDescription("Enables the AntiSpam system. Boolean values only.");
+            ANTISPAM_NOCAPS = PROP.register("bot.antispam.nocaps", false)
+                    .withDisplayName("Enables the NoCaps AntiSpam filter");
+            ANTISPAM_NOURLS = PROP.register("bot.antispam.nourls", false)
+                    .withDisplayName("Enables the NoURLs AntiSpam filter");
 
             MAINTENANCE_CHANNEL = PROP.register("bot.maintenance.id", 625503716736237588L);
         }

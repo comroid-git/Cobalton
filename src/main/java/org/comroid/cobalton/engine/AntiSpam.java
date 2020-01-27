@@ -2,6 +2,7 @@ package org.comroid.cobalton.engine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.server.Server;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 import org.javacord.api.util.logging.ExceptionLogger;
@@ -34,15 +36,19 @@ public enum AntiSpam implements MessageCreateListener {
     public void onMessageCreate(MessageCreateEvent event) {
         if (event.getMessageAuthor().isBotUser())
             return;
-        //noinspection OptionalGetWithoutIsPresent
-        if (event.isServerMessage() && !Bot.Prop.ENABLE_ANTISPAM.getValue(event.getServer().get()).asBoolean())
+        if (event.isPrivateMessage())
+            return;
+
+        final Server server = event.getServer().orElseThrow(AssertionError::new);
+
+        if (!Bot.Prop.ENABLE_ANTISPAM.getValue(server).asBoolean())
             return;
 
         final Message message = event.getMessage();
         final List<SpamRule> violated = new ArrayList<>(1);
 
-        for (SpamRule spamRule : SpamRule.values())
-            if (!spamRule.name().equals("noURLs") && spamRule.isSpam(message))
+        for (SpamRule spamRule : SpamRule.collect(server))
+            if (spamRule.isSpam(message))
                 violated.add(spamRule);
 
         if (violated.size() == 0)
@@ -106,6 +112,17 @@ public enum AntiSpam implements MessageCreateListener {
 
         public String applyRule(String content) {
             return cleaner.apply(content);
+        }
+
+        public static Collection<SpamRule> collect(Server server) {
+            final Collection<SpamRule> yields = new ArrayList<>();
+
+            if (Bot.Prop.ANTISPAM_NOCAPS.getValue(server).asBoolean())
+                yields.add(SpamRule.NoCaps);
+            if (Bot.Prop.ANTISPAM_NOURLS.getValue(server).asBoolean())
+                yields.add(SpamRule.NoURLs);
+
+            return yields;
         }
     }
 }
