@@ -154,7 +154,7 @@ public final class Bot {
                             .ifPresent(event.getMessageAuthor().asUser().get()::removeRole);
                 }));
 
-        API.getServerTextChannelById(644220645814566912L)
+        API.getServerTextChannelById(644211429599346708L)
                 .ifPresent(itcrowd -> itcrowd.sendMessage(DefaultEmbedFactory.create()
                         .setDescription("Bot restarted!")).exceptionally(ExceptionLogger.get()));
     }
