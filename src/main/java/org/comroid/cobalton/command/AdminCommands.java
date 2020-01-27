@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
 import javax.script.ScriptEngineManager;
 
 import org.comroid.cobalton.Bot;
-import de.comroid.javacord.util.commands.Command;
-import de.comroid.javacord.util.commands.CommandGroup;
-import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import org.comroid.javacord.util.commands.Command;
+import org.comroid.javacord.util.commands.CommandGroup;
+import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
@@ -99,7 +99,7 @@ public enum AdminCommands {
 
     @Command(aliases = "archive",
             enablePrivateChat = false,
-            requiredDiscordPermission = PermissionType.ADMINISTRATOR,
+            requiredDiscordPermissions = PermissionType.ADMINISTRATOR,
             usage = "archive [Channel = this] [New Topic]",
             description = "Archive a channel")
     public void archiveChannel(Command.Parameters param, User executor, String[] args, Server srv, ServerTextChannel stc) {

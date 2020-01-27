@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.comroid.cobalton.command.skribbl.SkribblEmbed;
-import de.comroid.javacord.util.commands.Command;
-import de.comroid.javacord.util.commands.CommandGroup;
+import org.comroid.javacord.util.commands.Command;
+import org.comroid.javacord.util.commands.CommandGroup;
 
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.TextChannel;
@@ -42,7 +42,7 @@ public enum ToolCommands {
     @Command(
             enablePrivateChat = false,
             convertStringResultsToEmbed = true,
-            requiredDiscordPermission = PermissionType.MANAGE_EMOJIS,
+            requiredDiscordPermissions = PermissionType.MANAGE_EMOJIS,
             useTypingIndicator = true
     )
     public String copyEmoji(Server srv, Message msg, String[] args, ServerTextChannel stc) {

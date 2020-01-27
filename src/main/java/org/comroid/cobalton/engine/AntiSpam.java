@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.comroid.cobalton.Bot;
-import de.comroid.javacord.util.server.properties.PropertyGroup;
-import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import org.comroid.javacord.util.server.properties.PropertyGroup;
+import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
