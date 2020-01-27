@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
 import javax.script.ScriptEngineManager;
 
 import org.comroid.cobalton.Bot;
-import de.comroid.javacord.util.commands.Command;
-import de.comroid.javacord.util.commands.CommandGroup;
-import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import org.comroid.util.javacord.commands.Command;
+import org.comroid.util.javacord.commands.CommandGroup;
+import org.comroid.util.javacord.ui.embed.DefaultEmbedFactory;
 
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;

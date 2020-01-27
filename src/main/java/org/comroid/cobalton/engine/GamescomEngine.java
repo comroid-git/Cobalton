@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.comroid.cobalton.Bot;
 import org.comroid.util.ChannelUtils;
-import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import org.comroid.util.javacord.ui.embed.DefaultEmbedFactory;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.DiscordEntity;

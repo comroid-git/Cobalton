@@ -5,9 +5,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.comroid.util.CommonUtil;
-import de.comroid.javacord.util.commands.Command;
-import de.comroid.javacord.util.commands.CommandGroup;
-import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import org.comroid.util.javacord.commands.Command;
+import org.comroid.util.javacord.commands.CommandGroup;
+import org.comroid.util.javacord.ui.embed.DefaultEmbedFactory;
 
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageSet;
