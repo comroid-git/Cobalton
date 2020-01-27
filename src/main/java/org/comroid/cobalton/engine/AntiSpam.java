@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.comroid.cobalton.Bot;
+import de.comroid.javacord.util.server.properties.PropertyGroup;
 import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
 import org.apache.logging.log4j.Level;
@@ -79,9 +82,9 @@ public enum AntiSpam implements MessageCreateListener {
     }
 
     public enum SpamRule {
-        NoURLs(message -> URL_PATTERN.matcher(message.getContent()).matches(),
+        NoURLs(Bot.Property.ANTISPAM_NOURLS, message -> URL_PATTERN.matcher(message.getContent()).matches(),
                 content -> content.replaceAll(URL_PATTERN.pattern(), "$1[redacted]$7")),
-        NoCaps(message -> {
+        NoCaps(Bot.Property.ANTISPAM_NOCAPS, message -> {
             // count upper- and lowercase characters
             final String content = message.getReadableContent();
 
@@ -98,12 +101,18 @@ public enum AntiSpam implements MessageCreateListener {
         }, String::toLowerCase);
 
         public static Level INCIDENT = Level.forName("INCIDENT", Level.INFO.intLevel() - 50);
+        private final PropertyGroup enabledCheck;
         private final Predicate<Message> messagePredicate;
         private final Function<String, String> cleaner;
 
-        SpamRule(Predicate<Message> messagePredicate, Function<String, String> cleaner) {
+        SpamRule(PropertyGroup enabledCheck, Predicate<Message> messagePredicate, Function<String, String> cleaner) {
+            this.enabledCheck = enabledCheck;
             this.messagePredicate = messagePredicate;
             this.cleaner = cleaner;
+        }
+
+        public boolean isEnabled(Server onServer) {
+            return enabledCheck.getValue(onServer).asBoolean();
         }
 
         public boolean isSpam(Message message) {
@@ -115,14 +124,9 @@ public enum AntiSpam implements MessageCreateListener {
         }
 
         public static Collection<SpamRule> collect(Server server) {
-            final Collection<SpamRule> yields = new ArrayList<>();
-
-            if (Bot.Property.ANTISPAM_NOCAPS.getValue(server).asBoolean())
-                yields.add(SpamRule.NoCaps);
-            if (Bot.Property.ANTISPAM_NOURLS.getValue(server).asBoolean())
-                yields.add(SpamRule.NoURLs);
-
-            return yields;
+            return Stream.of(SpamRule.values())
+                    .filter(rule -> rule.isEnabled(server))
+                    .collect(Collectors.toList());
         }
     }
 }
