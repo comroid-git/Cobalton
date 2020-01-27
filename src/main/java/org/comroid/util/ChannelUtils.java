@@ -27,7 +27,7 @@ public class ChannelUtils {
                     .exceptionally(ExceptionLogger.get());
         }
 
-        Bot.API.getChannelCategoryById(Bot.Prop.ARCHIVE_CATEGORY.getValue(stc.getServer()).asLong())
+        Bot.API.getChannelCategoryById(Bot.Property.ARCHIVE_CATEGORY.getValue(stc.getServer()).asLong())
                 .ifPresent(cat -> {
                     final ServerTextChannelUpdater updater = stc.createUpdater()
                             .setCategory(cat)

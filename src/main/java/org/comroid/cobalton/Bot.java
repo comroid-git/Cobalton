@@ -92,10 +92,10 @@ public final class Bot {
             logger.info("Initialzing server properties");
             PROP = new ServerPropertiesManager(FileProvider.getFile("servers.json"));
             PROP.usePropertyCommand(null, CMD);
-            Prop.init();
+            Property.init();
 
             logger.info("Registering prefix provider");
-            CMD.withCustomPrefixProvider(Prop.PREFIX);
+            CMD.withCustomPrefixProvider(Property.PREFIX);
 
             logger.info("Registering runtime hooks");
             API.getThreadPool()
@@ -129,8 +129,8 @@ public final class Bot {
                         .exceptionally(ExceptionLogger.get());
         });
 
-        API.getServerTextChannelById(Bot.Prop.INFO_CHANNEL.getValue(SRV).asLong())
-                .ifPresent(infoChannel -> infoChannel.getMessageById(Bot.Prop.ROLE_MESSAGE.getValue(SRV).asLong())
+        API.getServerTextChannelById(Property.INFO_CHANNEL.getValue(SRV).asLong())
+                .ifPresent(infoChannel -> infoChannel.getMessageById(Property.ROLE_MESSAGE.getValue(SRV).asLong())
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage)))
                         .exceptionally(ExceptionLogger.get()));
 
@@ -178,7 +178,7 @@ public final class Bot {
         }
     }
 
-    public static final class Prop {
+    public static final class Property {
         public static PropertyGroup PREFIX;
 
         public static PropertyGroup INFO_CHANNEL;

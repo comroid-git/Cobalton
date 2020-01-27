@@ -113,11 +113,11 @@ public enum AdminCommands {
 
         if (stc.getCategory()
                 .map(DiscordEntity::getId)
-                .map(id -> Bot.Prop.ARCHIVE_CATEGORY.getValue(srv).asLong() == id)
+                .map(id -> Bot.Property.ARCHIVE_CATEGORY.getValue(srv).asLong() == id)
                 .orElse(false))
             throw new IllegalStateException("Channel is already archived!");
 
-        Bot.API.getChannelCategoryById(Bot.Prop.ARCHIVE_CATEGORY
+        Bot.API.getChannelCategoryById(Bot.Property.ARCHIVE_CATEGORY
                 .getValue(srv)
                 .asLong())
                 .ifPresent(archive -> {

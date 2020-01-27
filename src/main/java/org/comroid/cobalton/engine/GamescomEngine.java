@@ -103,7 +103,7 @@ public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, Ser
         if (active && svc.getConnectedUserIds().size() == 0) {
             // trigger guna
 
-            Bot.API.getRoleById(Bot.Prop.GAMESCOM_ROLE.getValue(event.getServer()).asLong())
+            Bot.API.getRoleById(Bot.Property.GAMESCOM_ROLE.getValue(event.getServer()).asLong())
                     .ifPresent(gamescom -> {
                         final Collection<User> users = gamescom.getUsers();
 

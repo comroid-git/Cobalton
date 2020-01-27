@@ -41,7 +41,7 @@ public enum AntiSpam implements MessageCreateListener {
 
         final Server server = event.getServer().orElseThrow(AssertionError::new);
 
-        if (!Bot.Prop.ENABLE_ANTISPAM.getValue(server).asBoolean())
+        if (!Bot.Property.ENABLE_ANTISPAM.getValue(server).asBoolean())
             return;
 
         final Message message = event.getMessage();
@@ -117,9 +117,9 @@ public enum AntiSpam implements MessageCreateListener {
         public static Collection<SpamRule> collect(Server server) {
             final Collection<SpamRule> yields = new ArrayList<>();
 
-            if (Bot.Prop.ANTISPAM_NOCAPS.getValue(server).asBoolean())
+            if (Bot.Property.ANTISPAM_NOCAPS.getValue(server).asBoolean())
                 yields.add(SpamRule.NoCaps);
-            if (Bot.Prop.ANTISPAM_NOURLS.getValue(server).asBoolean())
+            if (Bot.Property.ANTISPAM_NOURLS.getValue(server).asBoolean())
                 yields.add(SpamRule.NoURLs);
 
             return yields;
