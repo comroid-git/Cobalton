@@ -90,7 +90,7 @@ public final class Bot {
             CMD.registerCommands(EvalCommand.INSTANCE);
 
             logger.info("Initialzing server properties");
-            PROP = new ServerPropertiesManager(FileProvider.getFile("servers.json"));
+            PROP = new ServerPropertiesManager(FileProvider.getFile("data/servers.json"));
             PROP.usePropertyCommand(null, CMD);
             Property.init();
 
