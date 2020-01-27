@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.comroid.cobalton.command.skribbl.SkribblEmbed;
-import org.comroid.util.javacord.commands.Command;
-import org.comroid.util.javacord.commands.CommandGroup;
+import de.comroid.javacord.util.commands.Command;
+import de.comroid.javacord.util.commands.CommandGroup;
 
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.TextChannel;

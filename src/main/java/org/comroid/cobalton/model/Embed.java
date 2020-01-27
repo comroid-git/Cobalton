@@ -1,7 +1,7 @@
 package org.comroid.cobalton.model;
 
 import org.comroid.cobalton.Bot;
-import org.comroid.util.javacord.ui.embed.DefaultEmbedFactory;
+import de.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
