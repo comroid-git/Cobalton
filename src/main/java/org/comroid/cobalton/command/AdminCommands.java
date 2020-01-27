@@ -88,7 +88,7 @@ public enum AdminCommands {
         while ((r = err.read()) != -1)
             serr.append((char) r);
 
-        final EmbedBuilder embedBuilder = DefaultEmbedFactory.create()
+        final EmbedBuilder embedBuilder = DefaultEmbedFactory.create(executor)
                 .addField(String.format("Program finished with exit code %d", exec.exitValue()), "```\n" + str.toString() + "\n```");
 
         if (serr.length() > 1)
