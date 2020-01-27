@@ -1,4 +1,4 @@
-task dockerCompose(type: Exec, dependsOn: ['installDist', 'copyLibs']) {
+task dockerCompose(type: Exec, dependsOn: 'installDist') {
     executable = 'docker-compose'
     args = ['up', '-d', '--build', '--force-recreate']
 }
@@ -13,11 +13,6 @@ task dockerStop(type: Exec) {
 task dockerRemove(type: Exec) {
     executable = 'docker'
     args = ['rm', dockerContainerName]
-}
-
-task copyLibs(type: Copy) {
-    from "$rootDir/libs"
-    into "$buildDir/install/$project.name/lib"
 }
 
 tasks.findByName('dockerRemove').mustRunAfter('dockerStop')

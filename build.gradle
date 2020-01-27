@@ -22,11 +22,6 @@ tasks.withType(JavaCompile) {
 }
 
 repositories {
-    maven {
-        url "https://maven.jetbrains.space/comroid/repo"
-        credentials.username spaceUsername
-        credentials.password spacePassword
-    }
     jcenter()
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     maven { url "https://jitpack.io" }
@@ -40,8 +35,7 @@ dependencies {
     implementation('org.javacord:javacord:3.0.+')
 
     // Javacord Utilities
-    //todo: cannot resolve without credentials. implementation "org.comroid:javacord-utilities:1.4.1"
-    implementation fileTree("libs/")
+    implementation('de.comroid:javacord-utilities:1.1.0')
 
     // stats client
     implementation 'de.kaleidox:discordbotlist-stats-javacord:0.1.3'
