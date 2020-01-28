@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static java.io.File.pathSeparator;
 import static java.io.File.separator;
 import static java.io.File.separatorChar;
 
@@ -71,7 +72,7 @@ public class FileProvider {
     private static void createDirs(final String forPath) {
         logger.printf(Level.INFO, "Checking directories for file [ %s ]...", forPath);
 
-        final String[] paths = forPath.split(separator);
+        final String[] paths = forPath.split(pathSeparator);
 
         if (paths.length <= 1) {
             logger.printf(Level.INFO, "CREATE PATHS %s OK! [ %d ]", forPath, paths.length - 1);
