@@ -1,7 +1,6 @@
 package org.comroid.cobalton;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -13,13 +12,13 @@ import org.comroid.cobalton.command.ToolCommands;
 import org.comroid.cobalton.engine.AntiSpam;
 import org.comroid.cobalton.engine.GamescomEngine;
 import org.comroid.cobalton.engine.RoleMessageEngine;
-import org.comroid.javacord.util.commands.eval.EvalCommand;
-import org.comroid.util.DNSUtil;
-import org.comroid.util.files.FileProvider;
 import org.comroid.javacord.util.commands.CommandHandler;
+import org.comroid.javacord.util.commands.eval.EvalCommand;
 import org.comroid.javacord.util.server.properties.PropertyGroup;
 import org.comroid.javacord.util.server.properties.ServerPropertiesManager;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import org.comroid.util.DNSUtil;
+import org.comroid.util.files.FileProvider;
 import de.kaleidox.botstats.BotListSettings;
 import de.kaleidox.botstats.javacord.JavacordStatsClient;
 import de.kaleidox.botstats.model.StatsClient;
@@ -137,7 +136,7 @@ public final class Bot {
         SRV.addServerMemberJoinListener(event -> SRV.getSystemChannel()
                 .ifPresent(stc -> stc.sendMessage(DefaultEmbedFactory.create(event.getUser())
                         .addField("Willkommen zum Abriss, " + event.getUser().getName() + "!",
-                        "Bitte stell dich doch kurz in <#625640036096016404> mit ein paar Zeilen vor, dann kannst du alle Channel benutzen!"))));
+                                "Bitte stell dich doch kurz in <#625640036096016404> mit ein paar Zeilen vor, dann kannst du alle Channel benutzen!"))));
 
         // init gamescom engine
         new GamescomEngine(API);
@@ -160,12 +159,16 @@ public final class Bot {
 
     private static void terminateAll() {
         logger.info("Trying to shutdown gracefully");
-        try {
-            PROP.close();
-            API.disconnect();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+        for (ThrowingRunnable exec : new ThrowingRunnable[]{PROP::close, API::disconnect}) {
+            try {
+                exec.run();
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
+
+        logger.info("Shutdown complete!");
     }
 
     private static void storeAllData() {
@@ -175,6 +178,10 @@ public final class Bot {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @FunctionalInterface interface ThrowingRunnable {
+        void run() throws Throwable;
     }
 
     public static final class Property {
