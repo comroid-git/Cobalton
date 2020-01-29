@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.comroid.cobalton.Bot;
-import org.comroid.javacord.util.server.properties.PropertyGroup;
+import org.comroid.javacord.util.server.properties.Property;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
 import org.apache.logging.log4j.Level;
@@ -44,7 +44,7 @@ public enum AntiSpam implements MessageCreateListener {
 
         final Server server = event.getServer().orElseThrow(AssertionError::new);
 
-        if (!Bot.Property.ENABLE_ANTISPAM.getValue(server).asBoolean())
+        if (!Bot.Properties.ENABLE_ANTISPAM.getValue(server).asBoolean())
             return;
 
         final Message message = event.getMessage();
@@ -82,9 +82,9 @@ public enum AntiSpam implements MessageCreateListener {
     }
 
     public enum SpamRule {
-        NoURLs(Bot.Property.ANTISPAM_NOURLS, message -> URL_PATTERN.matcher(message.getContent()).matches(),
+        NoURLs(Bot.Properties.ANTISPAM_NOURLS, message -> URL_PATTERN.matcher(message.getContent()).matches(),
                 content -> content.replaceAll(URL_PATTERN.pattern(), "$1[redacted]$7")),
-        NoCaps(Bot.Property.ANTISPAM_NOCAPS, message -> {
+        NoCaps(Bot.Properties.ANTISPAM_NOCAPS, message -> {
             // count upper- and lowercase characters
             final String content = message.getReadableContent();
 
@@ -101,11 +101,11 @@ public enum AntiSpam implements MessageCreateListener {
         }, String::toLowerCase);
 
         public static Level INCIDENT = Level.forName("INCIDENT", Level.INFO.intLevel() - 50);
-        private final PropertyGroup enabledCheck;
+        private final Property enabledCheck;
         private final Predicate<Message> messagePredicate;
         private final Function<String, String> cleaner;
 
-        SpamRule(PropertyGroup enabledCheck, Predicate<Message> messagePredicate, Function<String, String> cleaner) {
+        SpamRule(Property enabledCheck, Predicate<Message> messagePredicate, Function<String, String> cleaner) {
             this.enabledCheck = enabledCheck;
             this.messagePredicate = messagePredicate;
             this.cleaner = cleaner;

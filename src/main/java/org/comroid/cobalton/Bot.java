@@ -14,8 +14,8 @@ import org.comroid.cobalton.engine.GamescomEngine;
 import org.comroid.cobalton.engine.RoleMessageEngine;
 import org.comroid.javacord.util.commands.CommandHandler;
 import org.comroid.javacord.util.commands.eval.EvalCommand;
-import org.comroid.javacord.util.server.properties.PropertyGroup;
-import org.comroid.javacord.util.server.properties.ServerPropertiesManager;
+import org.comroid.javacord.util.server.properties.GuildSettings;
+import org.comroid.javacord.util.server.properties.Property;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.comroid.util.DNSUtil;
 import org.comroid.util.files.FileProvider;
@@ -33,6 +33,8 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.UserStatus;
 import org.javacord.api.util.logging.ExceptionLogger;
 
+import static org.comroid.javacord.util.server.properties.Property.ANY_STRING;
+
 public final class Bot {
     public final static Logger logger = LogManager.getLogger();
     public final static Color THEME = new Color(0x0f7eb1);
@@ -42,7 +44,7 @@ public final class Bot {
     public static final DiscordApi API;
     public static final StatsClient STATS;
     public static final CommandHandler CMD;
-    public static final ServerPropertiesManager PROP;
+    public static final GuildSettings PROP;
     // todo public static final Starboard STAR;
     public static final Server SRV;
 
@@ -89,12 +91,12 @@ public final class Bot {
             CMD.registerCommands(EvalCommand.INSTANCE);
 
             logger.info("Initialzing server properties");
-            PROP = new ServerPropertiesManager(FileProvider.getFile("data/servers.json"));
-            PROP.usePropertyCommand(null, CMD);
-            Property.init();
+            PROP = GuildSettings.using(FileProvider.getFile("data/guildSettings.json"));
+            CMD.registerCommandTarget(PROP);
+            Properties.init();
 
             logger.info("Registering prefix provider");
-            CMD.withCustomPrefixProvider(Property.PREFIX);
+            CMD.withCustomPrefixProvider(Properties.PREFIX);
 
             logger.info("Registering runtime hooks");
             API.getThreadPool()
@@ -128,8 +130,8 @@ public final class Bot {
                         .exceptionally(ExceptionLogger.get());
         });
 
-        API.getServerTextChannelById(Property.INFO_CHANNEL.getValue(SRV).asLong())
-                .ifPresent(infoChannel -> infoChannel.getMessageById(Property.ROLE_MESSAGE.getValue(SRV).asLong())
+        API.getServerTextChannelById(Properties.INFO_CHANNEL.getValue(SRV).asLong())
+                .ifPresent(infoChannel -> infoChannel.getMessageById(Properties.ROLE_MESSAGE.getValue(SRV).asLong())
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage)))
                         .exceptionally(ExceptionLogger.get()));
 
@@ -148,6 +150,7 @@ public final class Bot {
 
         API.getServerTextChannelById(625640036096016404L)
                 .ifPresent(weristes -> weristes.addMessageCreateListener(event -> {
+                    //noinspection OptionalGetWithoutIsPresent
                     API.getRoleById(632196120902107137L)
                             .ifPresent(event.getMessageAuthor().asUser().get()::removeRole);
                 }));
@@ -184,45 +187,107 @@ public final class Bot {
         void run() throws Throwable;
     }
 
-    public static final class Property {
-        public static PropertyGroup PREFIX;
+    public static final class Properties {
+        public static Property PREFIX;
 
-        public static PropertyGroup INFO_CHANNEL;
-        public static PropertyGroup ROLE_MESSAGE;
-        public static PropertyGroup ARCHIVE_CATEGORY;
-        public static PropertyGroup GAMESCOM_ROLE;
+        public static Property INFO_CHANNEL;
+        public static Property ROLE_MESSAGE;
+        public static Property ARCHIVE_CATEGORY;
+        public static Property GAMESCOM_ROLE;
 
-        public static PropertyGroup ACCEPT_EMOJI;
-        public static PropertyGroup DENY_EMOJI;
+        public static Property ACCEPT_EMOJI;
+        public static Property DENY_EMOJI;
 
         //region AntiSpam
-        public static PropertyGroup ENABLE_ANTISPAM;
-        public static PropertyGroup ANTISPAM_NOCAPS;
-        public static PropertyGroup ANTISPAM_NOURLS;
+        public static Property ENABLE_ANTISPAM;
+        public static Property ANTISPAM_NOCAPS;
+        public static Property ANTISPAM_NOURLS;
         //endregion
 
-        public static PropertyGroup MAINTENANCE_CHANNEL;
+        public static Property MAINTENANCE_CHANNEL;
 
         private static void init() {
-            PREFIX = PROP.register("bot.customprefix", "t!");
+            PREFIX = PROP.registerProperty(prop -> prop.setName("bot.customprefix")
+                    .setDefaultValue("t!")
+                    .setType(String.class)
+                    .setPattern(ANY_STRING)
+                    .setDescription("Custom Command prefix"))
+                    .property("bot.customprefix")
+                    .orElseThrow();
 
-            INFO_CHANNEL = PROP.register("info.channel.id", 625502007150641172L);
-            ROLE_MESSAGE = PROP.register("role.message.id", 625645142543564822L);
-            ARCHIVE_CATEGORY = PROP.register("bot.archive.id", 625498805634203648L);
-            GAMESCOM_ROLE = PROP.register("role.gamescom.id", 626822066280071213L);
+            INFO_CHANNEL = PROP.registerProperty(prop -> prop.setName("channels.info.id")
+                    .setDefaultValue("625502007150641172")
+                    .setType(Long.class)
+                    .setPattern(Property.DEFAULT_PATTERNS.get(Long.class))
+                    .setDescription("Information Channel ID"))
+                    .property("channels.info.id")
+                    .orElseThrow();
+            MAINTENANCE_CHANNEL = PROP.registerProperty(prop -> prop.setName("channels.maintenance.id")
+                    .setDefaultValue("625503716736237588")
+                    .setType(Long.class)
+                    .setPattern(Property.DEFAULT_PATTERNS.get(Long.class))
+                    .setDescription("Maintenance Channel ID"))
+                    .property("channels.maintenance.id")
+                    .orElseThrow();
+            ARCHIVE_CATEGORY = PROP.registerProperty(prop -> prop.setName("channels.archive.id")
+                    .setDefaultValue("625498805634203648")
+                    .setType(Long.class)
+                    .setPattern(Property.DEFAULT_PATTERNS.get(Long.class))
+                    .setDescription("Archival Category ID"))
+                    .property("channels.archive.id")
+                    .orElseThrow();
 
-            ACCEPT_EMOJI = PROP.register("emoji.accept", "✅");
-            DENY_EMOJI = PROP.register("emoji.deny", "❌");
+            ROLE_MESSAGE = PROP.registerProperty(prop -> prop.setName("messages.autorole.id")
+                    .setDefaultValue("625645142543564822")
+                    .setType(Long.class)
+                    .setPattern(Property.DEFAULT_PATTERNS.get(Long.class))
+                    .setDescription("AutoRole Message ID"))
+                    .property("messages.autorole.id")
+                    .orElseThrow();
+            GAMESCOM_ROLE = PROP.registerProperty(prop -> prop.setName("roles.gamescom.id")
+                    .setDefaultValue("626822066280071213")
+                    .setType(Long.class)
+                    .setPattern(Property.DEFAULT_PATTERNS.get(Long.class))
+                    .setDescription("Gamescom Role ID"))
+                    .property("roles.gamescom.id")
+                    .orElseThrow();
 
-            ENABLE_ANTISPAM = PROP.register("bot.antispam.enable", true)
-                    .withDisplayName("Enable AntiSpam")
-                    .withDescription("Enables the AntiSpam system. Boolean values only.");
-            ANTISPAM_NOCAPS = PROP.register("bot.antispam.nocaps", false)
-                    .withDisplayName("Enables the NoCaps AntiSpam filter");
-            ANTISPAM_NOURLS = PROP.register("bot.antispam.nourls", false)
-                    .withDisplayName("Enables the NoURLs AntiSpam filter");
+            ACCEPT_EMOJI = PROP.registerProperty(prop -> prop.setName("emojis.accept")
+                    .setDefaultValue("✅")
+                    .setType(String.class)
+                    .setPattern(ANY_STRING)
+                    .setDescription("Acceptance Emoji"))
+                    .property("emojis.accept")
+                    .orElseThrow();
+            DENY_EMOJI = PROP.registerProperty(prop -> prop.setName("emojis.deny")
+                    .setDefaultValue("❌")
+                    .setType(String.class)
+                    .setPattern(ANY_STRING)
+                    .setDescription("Denial Emoji"))
+                    .property("emojis.deny")
+                    .orElseThrow();
 
-            MAINTENANCE_CHANNEL = PROP.register("bot.maintenance.id", 625503716736237588L);
+            ENABLE_ANTISPAM = PROP.registerProperty(prop -> prop.setName("antispam.enable")
+                    .setDefaultValue("true")
+                    .setType(Boolean.class)
+                    .setPattern(Property.DEFAULT_PATTERNS.get(Boolean.class))
+                    .setDescription("Whether AntiSpam should be enabled"))
+                    .property("antispam.enable")
+                    .orElseThrow();
+            ANTISPAM_NOCAPS = PROP.registerProperty(prop -> prop.setName("antispam.filter.nocaps")
+                    .setDefaultValue("true")
+                    .setType(Boolean.class)
+                    .setPattern(Property.DEFAULT_PATTERNS.get(Boolean.class))
+                    .setDescription("Whether the AntiSpam NoCaps filter should be enabled"))
+                    .property("antispam.filter.nocaps")
+                    .orElseThrow();
+            ANTISPAM_NOURLS = PROP.registerProperty(prop -> prop.setName("antispam.filter.nourls")
+                    .setDefaultValue("true")
+                    .setType(Boolean.class)
+                    .setPattern(Property.DEFAULT_PATTERNS.get(Boolean.class))
+                    .setDescription("Whether the AntiSpam NoURLs filter should be enabled"))
+                    .property("antispam.filter.nourls")
+                    .orElseThrow();
         }
     }
 }

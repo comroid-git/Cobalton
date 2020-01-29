@@ -97,6 +97,11 @@ public enum AdminCommands {
         return embedBuilder;
     }
 
+    @Command
+    public void store() throws IOException {
+        Bot.PROP.storeData();
+    }
+
     @Command(aliases = "archive",
             enablePrivateChat = false,
             requiredDiscordPermissions = PermissionType.ADMINISTRATOR,
@@ -113,11 +118,11 @@ public enum AdminCommands {
 
         if (stc.getCategory()
                 .map(DiscordEntity::getId)
-                .map(id -> Bot.Property.ARCHIVE_CATEGORY.getValue(srv).asLong() == id)
+                .map(id -> Bot.Properties.ARCHIVE_CATEGORY.getValue(srv).asLong() == id)
                 .orElse(false))
             throw new IllegalStateException("Channel is already archived!");
 
-        Bot.API.getChannelCategoryById(Bot.Property.ARCHIVE_CATEGORY
+        Bot.API.getChannelCategoryById(Bot.Properties.ARCHIVE_CATEGORY
                 .getValue(srv)
                 .asLong())
                 .ifPresent(archive -> {
