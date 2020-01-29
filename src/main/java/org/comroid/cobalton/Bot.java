@@ -96,7 +96,7 @@ public final class Bot {
             Properties.init();
 
             logger.info("Registering prefix provider");
-            CMD.withCustomPrefixProvider(Properties.PREFIX);
+            //todo Causes NPEs CMD.withCustomPrefixProvider(Properties.PREFIX);
 
             logger.info("Registering runtime hooks");
             API.getThreadPool()

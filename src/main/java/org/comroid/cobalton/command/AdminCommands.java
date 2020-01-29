@@ -98,7 +98,10 @@ public enum AdminCommands {
     }
 
     @Command
-    public void store() throws IOException {
+    public void store(User executor) throws IOException {
+        if (!Bot.permitted.contains(executor.getId()))
+            return;
+
         Bot.PROP.storeData();
     }
 
