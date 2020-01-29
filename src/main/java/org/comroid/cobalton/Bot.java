@@ -268,7 +268,7 @@ public final class Bot {
                     .orElseThrow();
 
             ENABLE_ANTISPAM = PROP.registerProperty(prop -> prop.setName("antispam.enable")
-                    .setDefaultValue("true")
+                    .setDefaultValue("false")
                     .setType(Boolean.class)
                     .setPattern(Property.DEFAULT_PATTERNS.get(Boolean.class))
                     .setDescription("Whether AntiSpam should be enabled"))
