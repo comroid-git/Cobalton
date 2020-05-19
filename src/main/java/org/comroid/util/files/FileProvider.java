@@ -18,7 +18,7 @@ import static java.io.File.separatorChar;
 
 public class FileProvider {
     public final static Logger logger = LogManager.getLogger();
-    private final static String PREFIX = OSValidator.isUnix() ? "/app/data/" : "";
+    private final static String PREFIX = OSValidator.isUnix() ? "/var/dcb/cobalton/" : "";
 
     public static String[] readContent(String subPath) throws NoSuchFileException {
         final File file = getFile(subPath);
