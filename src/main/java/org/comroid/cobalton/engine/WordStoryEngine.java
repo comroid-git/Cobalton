@@ -10,11 +10,14 @@ import org.javacord.api.listener.message.MessageCreateListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class WordStoryEngine implements MessageCreateListener {
     private final ServerTextChannel stc;
+    private final boolean autoConclude = true;
 
     public WordStoryEngine(ServerTextChannel stc) {
         this.stc = stc;
@@ -22,14 +25,30 @@ public class WordStoryEngine implements MessageCreateListener {
         stc.addTextChannelAttachableListener(this);
     }
 
-    private final boolean autoConclude = true;
-
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
         final String content = event.getReadableMessageContent();
 
         if (isStoryPart(content) && content.contains("."))
-            concludeStory().join();
+            concludeStory()
+                    .thenCompose(msg -> msg.getChannel()
+                            .sendMessage(generateTitle(msg
+                                    .getEmbeds()
+                                    .get(0)
+                                    .getDescription()
+                                    .orElse("no title :("))))
+                    .join();
+    }
+
+    private String generateTitle(String story) {
+        final Random rng = new Random();
+        final List<String> words = Stream.of(story.split(" "))
+                .collect(Collectors.toUnmodifiableList());
+
+        return String.format("New Story: %s %s %s",
+                words.get(rng.nextInt(words.size())),
+                words.get(rng.nextInt(words.size())),
+                words.get(rng.nextInt(words.size())));
     }
 
     public CompletableFuture<Message> concludeStory() {
