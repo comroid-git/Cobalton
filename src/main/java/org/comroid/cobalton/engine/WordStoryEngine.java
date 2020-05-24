@@ -33,6 +33,8 @@ public class WordStoryEngine implements MessageCreateListener {
     }
 
     public CompletableFuture<Message> concludeStory() {
+        stc.type();
+
         final List<String> yields = new ArrayList<>();
 
         final Optional<Message> stopship = stc.getMessagesAsStream()
