@@ -66,7 +66,8 @@ public class WordStoryEngine implements MessageCreateListener {
                         .map(message -> "story named " + message.getReadableContent())
                         .orElse("tale of unknown name")))
                 .setDescription(story)
-                .addField("Authors:", authors);
+                .addField("Authors:", authors)
+                .setFooter(String.format("%d Words", storyMessages.size()));
 
         return stc.sendMessage(embed);
     }
