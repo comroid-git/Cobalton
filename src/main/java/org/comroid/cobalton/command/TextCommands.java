@@ -1,5 +1,6 @@
 package org.comroid.cobalton.command;
 
+import org.comroid.cobalton.Bot;
 import org.comroid.javacord.util.commands.Command;
 import org.comroid.javacord.util.commands.CommandGroup;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
@@ -138,40 +139,12 @@ public enum TextCommands {
 
     @Command(
             description = "X-Word-Story Concluder",
-            usage = "[each word count]",
-            convertStringResultsToEmbed = true,
-            maximumArguments = 1,
-            async = true,
+            maximumArguments = 0,
             useTypingIndicator = true,
             enablePrivateChat = false,
             requiredDiscordPermissions = PermissionType.MANAGE_MESSAGES
     )
-    public Object concludeStory(ServerTextChannel stc, String[] args) {
-        final List<String> yields = new ArrayList<>();
-
-        final Optional<Message> stopship = stc.getMessagesAsStream()
-                .limit(200)
-                .filter(msg -> msg.getReadableContent().toLowerCase().contains("new story"))
-                .findFirst();
-
-        final String story = stopship.map(stc::getMessagesAfterAsStream)
-                .orElseGet(() -> stc
-                        .getMessagesAsStream()
-                        .limit(100))
-                .map(Message::getReadableContent)
-                .filter(str -> !str.contains("concludeStory"))
-                .filter(str -> str
-                        .chars()
-                        .filter(x -> x == ' ')
-                        .count()
-                        == (args.length == 0 ? 0
-                        : Integer.parseInt(args[0])))
-                .collect(Collectors.joining(" ", "```", "```"));
-
-        return DefaultEmbedFactory.create(stc.getServer())
-                .setTitle(String.format("The %s goes like this:", stopship
-                        .map(message -> "story named " + message.getReadableContent())
-                        .orElse("tale of unknown name")))
-                .setDescription(story);
+    public void concludeStory() {
+        Bot.WSE.concludeStory().join();
     }
 }

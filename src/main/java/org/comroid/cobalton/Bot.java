@@ -1,17 +1,17 @@
 package org.comroid.cobalton;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
-
+import de.kaleidox.botstats.BotListSettings;
+import de.kaleidox.botstats.javacord.JavacordStatsClient;
+import de.kaleidox.botstats.model.StatsClient;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.comroid.cobalton.command.AdminCommands;
 import org.comroid.cobalton.command.TextCommands;
 import org.comroid.cobalton.command.ToolCommands;
 import org.comroid.cobalton.engine.AntiSpam;
 import org.comroid.cobalton.engine.GamescomEngine;
 import org.comroid.cobalton.engine.RoleMessageEngine;
+import org.comroid.cobalton.engine.WordStoryEngine;
 import org.comroid.javacord.util.commands.CommandHandler;
 import org.comroid.javacord.util.commands.eval.EvalCommand;
 import org.comroid.javacord.util.server.properties.GuildSettings;
@@ -19,12 +19,6 @@ import org.comroid.javacord.util.server.properties.Property;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.comroid.util.DNSUtil;
 import org.comroid.util.files.FileProvider;
-import de.kaleidox.botstats.BotListSettings;
-import de.kaleidox.botstats.javacord.JavacordStatsClient;
-import de.kaleidox.botstats.model.StatsClient;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.activity.ActivityType;
@@ -32,6 +26,12 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.UserStatus;
 import org.javacord.api.util.logging.ExceptionLogger;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static org.comroid.javacord.util.server.properties.Property.ANY_STRING;
 
@@ -45,6 +45,7 @@ public final class Bot {
     public static final StatsClient STATS;
     public static final CommandHandler CMD;
     public static final GuildSettings PROP;
+    public static final WordStoryEngine WSE;
     // todo public static final Starboard STAR;
     public static final Server SRV;
 
@@ -94,6 +95,14 @@ public final class Bot {
             PROP = GuildSettings.using(FileProvider.getFile("data/guildSettings.json"));
             CMD.registerCommandTarget(PROP);
             Properties.init();
+
+            logger.info("Initializing WordStoryEngine");
+            WordStoryEngine[] wseLocal = new WordStoryEngine[1];
+            API.getServerTextChannelById(Properties.WSE_CHANNEL
+                    .getDefaultValue()
+                    .asLong(""))
+                    .ifPresent(stc -> wseLocal[0] = new WordStoryEngine(stc));
+            WSE = wseLocal[0];
 
             logger.info("Registering prefix provider");
             //todo Causes NPEs CMD.withCustomPrefixProvider(Properties.PREFIX);
@@ -183,7 +192,8 @@ public final class Bot {
         }
     }
 
-    @FunctionalInterface interface ThrowingRunnable {
+    @FunctionalInterface
+    interface ThrowingRunnable {
         void run() throws Throwable;
     }
 
@@ -197,6 +207,8 @@ public final class Bot {
 
         public static Property ACCEPT_EMOJI;
         public static Property DENY_EMOJI;
+
+        public static Property WSE_CHANNEL;
 
         //region AntiSpam
         public static Property ENABLE_ANTISPAM;
@@ -265,6 +277,14 @@ public final class Bot {
                     .setPattern(ANY_STRING)
                     .setDescription("Denial Emoji"))
                     .property("emojis.deny")
+                    .orElseThrow();
+
+            WSE_CHANNEL = PROP.registerProperty(prop -> prop.setName("wse.channel.id")
+                    .setDefaultValue("640965171782746165")
+                    .setType(Long.class)
+                    .setPattern(Property.DEFAULT_PATTERNS.get(Long.class))
+                    .setDescription("WordStory Channel"))
+                    .property("wse.channel.id")
                     .orElseThrow();
 
             ENABLE_ANTISPAM = PROP.registerProperty(prop -> prop.setName("antispam.enable")
