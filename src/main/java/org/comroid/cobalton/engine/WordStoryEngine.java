@@ -66,7 +66,7 @@ public class WordStoryEngine implements MessageCreateListener {
         final String title = String.format("The %s goes like this:", stopship
                 .map(message -> {
                     final String readableContent = message.getReadableContent();
-                    return "story named " + readableContent.substring(0, Math.max(32, readableContent.length()));
+                    return "story named " + readableContent.substring(0, Math.min(32, readableContent.length()));
                 })
                 .orElse("tale of unknown name"));
 
