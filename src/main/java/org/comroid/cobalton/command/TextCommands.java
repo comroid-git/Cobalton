@@ -154,14 +154,12 @@ public enum TextCommands {
                 .filter(msg -> msg.getReadableContent().toLowerCase().contains("new story"))
                 .findFirst();
 
-        final String story = stopship.map(stp -> stc
-                .getMessagesAfterAsStream(stp)
-                .map(Message::getReadableContent)
-                .filter(str -> !str.contains("concludeStory")))
+        final String story = stopship.map(stc::getMessagesAfterAsStream)
                 .orElseGet(() -> stc
                         .getMessagesAsStream()
-                        .limit(100)
-                        .map(Message::getReadableContent))
+                        .limit(100))
+                .map(Message::getReadableContent)
+                .filter(str -> !str.contains("concludeStory"))
                 .filter(str -> str
                         .chars()
                         .filter(x -> x == ' ')
