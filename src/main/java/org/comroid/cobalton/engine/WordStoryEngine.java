@@ -8,6 +8,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -102,6 +103,9 @@ public class WordStoryEngine implements MessageCreateListener {
                 .setDescription(story)
                 .addField("Authors:", authors)
                 .setFooter(String.format("%d Words", storyMessages.size()));
+        stopship.map(Message::getLink)
+                .map(URL::toExternalForm)
+                .ifPresent(embed::setUrl);
 
         return stc.sendMessage(embed);
     }
