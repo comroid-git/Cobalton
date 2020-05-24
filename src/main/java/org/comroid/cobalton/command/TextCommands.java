@@ -172,7 +172,7 @@ public enum TextCommands {
 
         return DefaultEmbedFactory.create(stc.getServer())
                 .setTitle(String.format("The %s goes like this:", stopship
-                        .map(message -> "story named" + message.getReadableContent())
+                        .map(message -> "story named " + message.getReadableContent())
                         .orElse("tale of unknown name")))
                 .setDescription(story);
     }
