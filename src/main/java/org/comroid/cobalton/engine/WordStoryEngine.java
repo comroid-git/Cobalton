@@ -48,7 +48,9 @@ public class WordStoryEngine implements MessageCreateListener {
         return String.format("New Story: %s %s %s",
                 words.get(rng.nextInt(words.size())),
                 words.get(rng.nextInt(words.size())),
-                words.get(rng.nextInt(words.size())));
+                words.get(rng.nextInt(words.size())))
+                .replace("`", "")
+                .replace("\n", "");
     }
 
     public CompletableFuture<Message> concludeStory() {
