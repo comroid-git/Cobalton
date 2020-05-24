@@ -1,16 +1,19 @@
 package org.comroid.cobalton.command;
 
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import org.comroid.util.CommonUtil;
 import org.comroid.javacord.util.commands.Command;
 import org.comroid.javacord.util.commands.CommandGroup;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
-
+import org.comroid.util.CommonUtil;
+import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageSet;
+import org.javacord.api.entity.permission.PermissionType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @CommandGroup(name = "TextCommands", description = "Textual fun!")
 public enum TextCommands {
@@ -44,6 +47,14 @@ public enum TextCommands {
             "\uD83C\uDDFE", // y
             "\uD83C\uDDFF" // z
     };
+
+    private static String getReferencedContent(Message message, String[] args) {
+        return (args.length == 0 ? message.getMessagesBefore(1)
+                .thenApply(MessageSet::getNewestMessage)
+                .join() // we don't want this to become asynchrounous
+                .map(Message::getReadableContent) : Optional.<String>empty())
+                .orElseGet(() -> String.join(" ", args).toLowerCase());
+    }
 
     @Command(convertStringResultsToEmbed = true)
     public String codebrackets() {
@@ -125,11 +136,44 @@ public enum TextCommands {
                 .collect(Collectors.joining());
     }
 
-    private static String getReferencedContent(Message message, String[] args) {
-        return (args.length == 0 ? message.getMessagesBefore(1)
-                .thenApply(MessageSet::getNewestMessage)
-                .join() // we don't want this to become asynchrounous
-                .map(Message::getReadableContent) : Optional.<String>empty())
-                .orElseGet(() -> String.join(" ", args).toLowerCase());
+    @Command(
+            description = "X-Word-Story Concluder",
+            usage = "[each word count]",
+            convertStringResultsToEmbed = true,
+            maximumArguments = 1,
+            async = true,
+            useTypingIndicator = true,
+            enablePrivateChat = false,
+            requiredDiscordPermissions = PermissionType.MANAGE_MESSAGES
+    )
+    public Object concludeStory(ServerTextChannel stc, String[] args) {
+        final List<String> yields = new ArrayList<>();
+
+        final Optional<Message> stopship = stc.getMessagesAsStream()
+                .limit(100)
+                .filter(msg -> msg.getReadableContent().toLowerCase().contains("new story"))
+                .findFirst();
+
+        final String story = stopship.map(stp -> stc
+                .getMessagesAfterAsStream(stp)
+                .map(Message::getReadableContent)
+                .filter(str -> !str.contains("concludeStory")))
+                .orElseGet(() -> stc
+                        .getMessagesAsStream()
+                        .limit(100)
+                        .map(Message::getReadableContent))
+                .filter(str -> str
+                        .chars()
+                        .filter(x -> x == ' ')
+                        .count()
+                        == (args.length == 0 ? 0
+                        : Integer.parseInt(args[0])))
+                .collect(Collectors.joining(" ", "```", "```"));
+
+        return DefaultEmbedFactory.create(stc.getServer())
+                .setTitle(String.format("The %s goes like this:", stopship
+                        .map(message -> "story named" + message.getReadableContent())
+                        .orElse("tale of unknown name")))
+                .setDescription(story);
     }
 }
