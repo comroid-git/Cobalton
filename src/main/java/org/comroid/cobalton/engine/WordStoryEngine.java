@@ -61,7 +61,7 @@ public class WordStoryEngine implements MessageCreateListener {
                 .map(Optional::get)
                 .distinct()
                 .map(user -> user.getDisplayName(stc.getServer()))
-                .collect(Collectors.joining("\n\t- "));
+                .collect(Collectors.joining("\n\t- ", "- ", ""));
 
         final String title = String.format("The %s goes like this:", stopship
                 .map(message -> {
@@ -69,11 +69,6 @@ public class WordStoryEngine implements MessageCreateListener {
                     return "story named " + readableContent.substring(0, Math.min(32, readableContent.length()));
                 })
                 .orElse("tale of unknown name"));
-
-        System.out.println("embed.title   = " + title);
-        System.out.println("embed.story   = " + story);
-        System.out.println("embed.authors = " + authors);
-        System.out.println("embed.words   = " + storyMessages.size());
 
         final EmbedBuilder embed = DefaultEmbedFactory.create(stc.getServer())
                 .setTitle(title)
