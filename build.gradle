@@ -1,7 +1,7 @@
 apply plugin: 'application'
 
 group 'org.comroid'
-version '1.00'
+version '1.10'
 
 apply from: 'gradle/ext.gradle'
 
