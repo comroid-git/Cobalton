@@ -37,12 +37,11 @@ public class WordStoryEngine implements MessageCreateListener {
             if (userAuthor == null)
                 return;
 
-            concludeStory().thenCompose(msg -> msg.getChannel()
-                    .sendMessage(generateTitle(msg
-                            .getEmbeds()
-                            .get(0)
-                            .getDescription()
-                            .orElse("no title :("))))
+            concludeStory().thenCompose(msg -> msg.edit(generateTitle(msg
+                    .getEmbeds()
+                    .get(0)
+                    .getDescription()
+                    .orElse("no title :("))))
                     .join();
         }
     }
