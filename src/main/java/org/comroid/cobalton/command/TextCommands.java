@@ -145,7 +145,6 @@ public enum TextCommands {
             enablePrivateChat = false,
             requiredDiscordPermissions = PermissionType.MANAGE_MESSAGES
     )
-
     public void concludeStory() {
         Bot.WSE.concludeStory().join();
     }
