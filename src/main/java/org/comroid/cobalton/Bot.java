@@ -71,7 +71,7 @@ public final class Bot {
             API.updateStatus(UserStatus.DO_NOT_DISTURB);
             API.updateActivity("Booting up...");
 
-            SRV = API.getServerById(625494140427173889L).orElseThrow(IllegalStateException::new);
+            SRV = API.getServerById(711318785889665127L).orElseThrow(IllegalStateException::new);
 
             logger.info("Initializting StatsClient...");
             STATS = new JavacordStatsClient(BotListSettings.builder()
