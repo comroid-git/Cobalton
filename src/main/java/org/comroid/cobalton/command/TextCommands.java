@@ -146,7 +146,7 @@ public enum TextCommands {
             requiredDiscordPermissions = PermissionType.MANAGE_MESSAGES
     )
 
-    public void concludeStory(User user) {
-        Bot.WSE.concludeStory(user).join();
+    public void concludeStory() {
+        Bot.WSE.concludeStory().join();
     }
 }

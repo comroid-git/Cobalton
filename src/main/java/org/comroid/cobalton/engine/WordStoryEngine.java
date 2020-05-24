@@ -36,7 +36,7 @@ public class WordStoryEngine implements MessageCreateListener {
             if (userAuthor == null)
                 return;
 
-            concludeStory(userAuthor).thenCompose(msg -> msg.getChannel()
+            concludeStory().thenCompose(msg -> msg.getChannel()
                     .sendMessage(generateTitle(msg
                             .getEmbeds()
                             .get(0)
@@ -59,7 +59,7 @@ public class WordStoryEngine implements MessageCreateListener {
                 .replace("\n", "");
     }
 
-    public CompletableFuture<Message> concludeStory(User trigger) {
+    public CompletableFuture<Message> concludeStory() {
         stc.type();
 
         final List<String> yields = new ArrayList<>();
@@ -97,7 +97,7 @@ public class WordStoryEngine implements MessageCreateListener {
                 })
                 .orElse("tale of unknown name"));
 
-        final EmbedBuilder embed = DefaultEmbedFactory.create(stc.getServer(), trigger)
+        final EmbedBuilder embed = DefaultEmbedFactory.create(stc.getServer())
                 .setTitle(title)
                 .setDescription(story)
                 .addField("Authors:", authors)
