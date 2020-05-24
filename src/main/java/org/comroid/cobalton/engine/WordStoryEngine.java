@@ -65,7 +65,10 @@ public class WordStoryEngine implements MessageCreateListener {
 
         final EmbedBuilder embed = DefaultEmbedFactory.create(stc.getServer())
                 .setTitle(String.format("The %s goes like this:", stopship
-                        .map(message -> "story named " + message.getReadableContent())
+                        .map(message -> {
+                            final String readableContent = message.getReadableContent();
+                            return "story named " + readableContent.substring(0, Math.max(32, readableContent.length()));
+                        })
                         .orElse("tale of unknown name")))
                 .setDescription(story)
                 .addField("Authors:", authors)
