@@ -150,7 +150,7 @@ public enum TextCommands {
         final List<String> yields = new ArrayList<>();
 
         final Optional<Message> stopship = stc.getMessagesAsStream()
-                .limit(100)
+                .limit(200)
                 .filter(msg -> msg.getReadableContent().toLowerCase().contains("new story"))
                 .findFirst();
 
