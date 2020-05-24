@@ -9,6 +9,7 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.permission.PermissionType;
+import org.javacord.api.entity.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,7 +146,7 @@ public enum TextCommands {
             requiredDiscordPermissions = PermissionType.MANAGE_MESSAGES
     )
 
-    public void concludeStory() {
-        Bot.WSE.concludeStory().join();
+    public void concludeStory(User user) {
+        Bot.WSE.concludeStory(user).join();
     }
 }

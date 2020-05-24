@@ -4,6 +4,7 @@ import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
@@ -29,15 +30,20 @@ public class WordStoryEngine implements MessageCreateListener {
     public void onMessageCreate(MessageCreateEvent event) {
         final String content = event.getReadableMessageContent();
 
-        if (isStoryPart(content) && content.contains("."))
-            concludeStory()
-                    .thenCompose(msg -> msg.getChannel()
-                            .sendMessage(generateTitle(msg
-                                    .getEmbeds()
-                                    .get(0)
-                                    .getDescription()
-                                    .orElse("no title :("))))
+        if (isStoryPart(content) && content.contains(".")) {
+            final User userAuthor = event.getMessageAuthor().asUser().orElse(null);
+
+            if (userAuthor == null)
+                return;
+
+            concludeStory(userAuthor).thenCompose(msg -> msg.getChannel()
+                    .sendMessage(generateTitle(msg
+                            .getEmbeds()
+                            .get(0)
+                            .getDescription()
+                            .orElse("no title :("))))
                     .join();
+        }
     }
 
     private String generateTitle(String story) {
@@ -53,7 +59,7 @@ public class WordStoryEngine implements MessageCreateListener {
                 .replace("\n", "");
     }
 
-    public CompletableFuture<Message> concludeStory() {
+    public CompletableFuture<Message> concludeStory(User trigger) {
         stc.type();
 
         final List<String> yields = new ArrayList<>();
@@ -91,7 +97,7 @@ public class WordStoryEngine implements MessageCreateListener {
                 })
                 .orElse("tale of unknown name"));
 
-        final EmbedBuilder embed = DefaultEmbedFactory.create(stc.getServer())
+        final EmbedBuilder embed = DefaultEmbedFactory.create(stc.getServer(), trigger)
                 .setTitle(title)
                 .setDescription(story)
                 .addField("Authors:", authors)
