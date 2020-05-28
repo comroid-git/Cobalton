@@ -124,39 +124,37 @@ public enum TextCommands {
 
     @Command(
             description = "Emojify Text!",
-            usage = "emojify [any string]",
-            convertStringResultsToEmbed = true
+            usage = "emojify [message identifier]",
+            convertStringResultsToEmbed = true,
+            maximumArguments = 1
     )
-    public Object emojify(Message message, String[] args) {
-        final String str = getReferencedContent(message, args);
+    public Object emojify(TextChannel tc, String[] args) {
+        // default to identifier "1" as in: count 1 back = use previous message if no argument was given
+        return findMessageContentByToken(tc, args.length == 0 ? "1" : args[0])
+                .thenApply(str -> {
+                    if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
+                        throw new IllegalArgumentException("Input Input String must match Regular Expression: \n```regexp\n.*?[a-zA-Z0-9\\s]+.*?\n```");
+                    return str;
+                })
+                .thenApply(str -> {
+                    final StringBuilder yield = new StringBuilder();
 
-        if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
-            return DefaultEmbedFactory.create()
-                    .addField("Error", "Input Input String must match Regular Expression: \n" +
-                            "```regexp\n" +
-                            ".*?[a-zA-Z0-9\\s]+.*?\n" +
-                            "```")
-                    .addField("Input String", "```\n" +
-                            str + "\n" +
-                            "```");
+                    for (char c : str.toCharArray()) {
+                        if (Character.isWhitespace(c)) {
+                            yield.append(' ');
+                            continue;
+                        }
 
-        StringBuilder yield = new StringBuilder();
+                        if (!Character.isAlphabetic(c))
+                            continue;
 
-        for (char c : str.toCharArray()) {
-            if (Character.isWhitespace(c)) {
-                yield.append(' ');
-                continue;
-            }
+                        if (CommonUtil.range(0, c - 'a', 26))
+                            yield.append(EMOJI_TABLE[c - 'a' /* 97 */])
+                                    .append(' ');
+                    }
 
-            if (!Character.isAlphabetic(c))
-                continue;
-
-            if (CommonUtil.range(0, c - 'a', 26))
-                yield.append(EMOJI_TABLE[c - 'a' /* 97 */])
-                        .append(' ');
-        }
-
-        return yield.toString();
+                    return yield.toString();
+                });
     }
 
     @Command(
