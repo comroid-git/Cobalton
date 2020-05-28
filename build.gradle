@@ -22,6 +22,7 @@ tasks.withType(JavaCompile) {
 }
 
 repositories {
+    mavenLocal()
     maven {
         url "https://maven.jetbrains.space/comroid/repo"
         credentials.username "Anonymous.User"
@@ -37,7 +38,7 @@ dependencies {
     compileOnly 'org.jetbrains:annotations:18.0.0'
 
     // Javacord
-    implementation('org.javacord:javacord:3.0.+')
+    implementation('org.javacord:javacord:3.0.5')
 
     // Javacord Utilities
     implementation "org.comroid:javacord-utilities:1.5.2-SNAPSHOT"
