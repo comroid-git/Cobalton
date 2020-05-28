@@ -3,7 +3,6 @@ package org.comroid.cobalton.command;
 import org.comroid.cobalton.Bot;
 import org.comroid.javacord.util.commands.Command;
 import org.comroid.javacord.util.commands.CommandGroup;
-import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.comroid.util.CommonUtil;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
@@ -161,7 +160,12 @@ public enum TextCommands {
         return findMessageContentByToken(tc, args.length == 0 ? "1" : args[0])
                 .thenApply(str -> {
                     if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
-                        throw new IllegalArgumentException("Input Input String must match Regular Expression: \n```regexp\n.*?[a-zA-Z0-9\\s]+.*?\n```");
+                        throw new IllegalArgumentException("Input Input String must match Regular Expression:\n" +
+                                "```regexp\n" +
+                                ".*?[a-zA-Z0-9\\s]+.*?\n" +
+                                "``` Input String: ```\n"
+                                + str + "\n" +
+                                "```");
                     return str;
                 })
                 .thenApply(str -> {
@@ -187,35 +191,36 @@ public enum TextCommands {
 
     @Command(
             description = "Mock People!",
-            usage = "mockify [any string]",
+            maximumArguments = 1,
+            usage = "mockify [message identifier]",
             convertStringResultsToEmbed = true
     )
-    public Object mockify(Message message, String[] args) {
-        final String str = getReferencedContent(message, args);
-
-        if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
-            return DefaultEmbedFactory.create()
-                    .addField("Error", "Input Input String must match Regular Expression: \n" +
-                            "```regexp\n" +
-                            ".*?[a-zA-Z0-9\\s]+.*?\n" +
-                            "```")
-                    .addField("Input String", "```\n" +
-                            str + "\n" +
-                            "```");
-
-        return IntStream.range(0, str.length())
-                .mapToObj(val -> {
-                    final char charAt = str.charAt(val);
-
-                    if (Character.isWhitespace(charAt))
-                        return ' ';
-
-                    return (val % 2) != 1
-                            ? Character.toUpperCase(charAt)
-                            : Character.toLowerCase(charAt);
+    public CompletableFuture<String> mockify(TextChannel tc, String[] args) {
+        // default to identifier "1" as in: count 1 back = use previous message if no argument was given
+        return findMessageContentByToken(tc, args.length == 0 ? "1" : args[0])
+                .thenApply(str -> {
+                    if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
+                        throw new IllegalArgumentException("Input Input String must match Regular Expression:\n" +
+                                "```regexp\n" +
+                                ".*?[a-zA-Z0-9\\s]+.*?\n" +
+                                "``` Input String: ```\n"
+                                + str + "\n" +
+                                "```");
+                    return str;
                 })
-                .map(String::valueOf)
-                .collect(Collectors.joining());
+                .thenApply(str -> IntStream.range(0, str.length())
+                        .mapToObj(val -> {
+                            final char charAt = str.charAt(val);
+
+                            if (Character.isWhitespace(charAt))
+                                return ' ';
+
+                            return (val % 2) != 1
+                                    ? Character.toUpperCase(charAt)
+                                    : Character.toLowerCase(charAt);
+                        })
+                        .map(String::valueOf)
+                        .collect(Collectors.joining()));
     }
 
     @Command(
