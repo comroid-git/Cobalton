@@ -11,11 +11,13 @@ import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.permission.PermissionType;
 
+import java.util.Comparator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @CommandGroup(name = "TextCommands", description = "Textual fun!")
 public enum TextCommands {
@@ -123,12 +125,38 @@ public enum TextCommands {
     }
 
     @Command(
+            description = "Reverses text",
+            usage = "reverse <'word'/'char'> [message identifier]",
+            minimumArguments = 1,
+            maximumArguments = 2,
+            convertStringResultsToEmbed = true
+    )
+    public CompletableFuture<String> reverse(TextChannel tc, String[] args) {
+        // default to identifier "1" as in: count 1 back = use previous message if no argument was given
+        final CompletableFuture<String> str = findMessageContentByToken(tc, args.length == 0 ? "1" : args[0]);
+
+        switch (args[0]) {
+            case "word":
+                return str.thenApply(it -> Stream.of(it.split(" "))
+                        .sorted(Comparator.reverseOrder())
+                        .collect(Collectors.joining()));
+            case "char":
+                return str.thenApply(it -> it.chars()
+                        .mapToObj(x -> String.valueOf((char) x))
+                        .sorted(Comparator.reverseOrder())
+                        .collect(Collectors.joining()));
+            default:
+                throw new UnsupportedOperationException("Unknown reverse operation: " + args[0]);
+        }
+    }
+
+    @Command(
             description = "Emojify Text!",
             usage = "emojify [message identifier]",
             convertStringResultsToEmbed = true,
             maximumArguments = 1
     )
-    public Object emojify(TextChannel tc, String[] args) {
+    public CompletableFuture<String> emojify(TextChannel tc, String[] args) {
         // default to identifier "1" as in: count 1 back = use previous message if no argument was given
         return findMessageContentByToken(tc, args.length == 0 ? "1" : args[0])
                 .thenApply(str -> {
