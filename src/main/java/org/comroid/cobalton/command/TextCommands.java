@@ -5,15 +5,15 @@ import org.comroid.javacord.util.commands.Command;
 import org.comroid.javacord.util.commands.CommandGroup;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.comroid.util.CommonUtil;
-import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageSet;
+import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.permission.PermissionType;
-import org.javacord.api.entity.user.User;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -50,12 +50,66 @@ public enum TextCommands {
             "\uD83C\uDDFF" // z
     };
 
+    @Deprecated
     private static String getReferencedContent(Message message, String[] args) {
         return (args.length == 0 ? message.getMessagesBefore(1)
                 .thenApply(MessageSet::getNewestMessage)
                 .join() // we don't want this to become asynchrounous
                 .map(Message::getReadableContent) : Optional.<String>empty())
                 .orElseGet(() -> String.join(" ", args).toLowerCase());
+    }
+
+    public static CompletableFuture<String> findMessageContentByToken(TextChannel context, String token) {
+        if (token.matches("\\d+")) {
+            // is numeric
+            final long num = Long.parseLong(token);
+
+            if (token.length() < 3) {
+                // count back TOKEN messages
+
+                return context.getMessages((int) num)
+                        .thenApply(MessageSet::getOldestMessage)
+                        .thenApply(opt -> {
+                            if (opt.isEmpty())
+                                throw new NoSuchElementException(String
+                                        .format("Could not count back %s messages", token));
+                            return opt.get();
+                        })
+                        .thenApply(TextCommands::getTextualMessageContent);
+            } else {
+                // get message with id == TOKEN
+
+                return context.getMessageById(num)
+                        .thenApply(TextCommands::getTextualMessageContent);
+            }
+        } else {
+            // is plaintext
+            return CompletableFuture.completedFuture(token);
+        }
+    }
+
+    public static String getTextualMessageContent(Message of) {
+        // prioritize message content
+        final String content = of.getReadableContent();
+        if (!content.isEmpty())
+            return content;
+
+        // try to get embed
+        return of.getEmbeds()
+                .stream()
+                .map(TextCommands::getTextualEmbedContent)
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException(String.format("No textual message content found in message: %s", of)));
+    }
+
+    public static String getTextualEmbedContent(Embed embed) {
+        // prioritize description
+        return embed.getDescription()
+                // else append fields
+                .orElseGet(() -> embed.getFields()
+                        .stream()
+                        .map(field -> String.format("**%s**\n%s", field.getName(), field.getValue()))
+                        .collect(Collectors.joining("\n\n")));
     }
 
     @Command(convertStringResultsToEmbed = true)
