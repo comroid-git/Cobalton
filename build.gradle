@@ -42,6 +42,11 @@ dependencies {
     implementation 'org.comroid:status-api:0.10.1-SNAPSHOT'
     runtimeOnly 'com.squareup.okhttp3:okhttp:4.7.2'
     runtimeOnly 'com.alibaba:fastjson:1.2.70'
+    implementation 'com.github.comroid-git.common-util:mutatio:b9b55324e856a2beb46987ec1a21550324e24e35'
+    implementation 'com.github.comroid-git.common-util:common-util:b9b55324e856a2beb46987ec1a21550324e24e35'
+    implementation 'com.github.comroid-git.common-util:uniform:b9b55324e856a2beb46987ec1a21550324e24e35'
+    implementation 'com.github.comroid-git.common-util:varbind:b9b55324e856a2beb46987ec1a21550324e24e35'
+    implementation 'com.github.comroid-git.common-util:restless:b9b55324e856a2beb46987ec1a21550324e24e35'
 
     // Javacord
     implementation('org.javacord:javacord:3.0.6')
