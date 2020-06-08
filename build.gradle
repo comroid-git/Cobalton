@@ -47,7 +47,7 @@ dependencies {
     implementation('org.javacord:javacord:3.0.6')
 
     // Javacord Utilities
-    implementation 'com.github.comroid-git:javacord-utilities:9caea17cef'
+    implementation 'com.github.comroid-git:javacord-utilities:master-SNAPSHOT'
 
     // stats client
     implementation 'de.kaleidox:discordbotlist-stats-javacord:0.1.3'
