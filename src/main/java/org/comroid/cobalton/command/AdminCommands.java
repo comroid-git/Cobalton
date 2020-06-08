@@ -14,6 +14,7 @@ import org.comroid.javacord.util.commands.Command;
 import org.comroid.javacord.util.commands.CommandGroup;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 
+import org.comroid.status.entity.Service;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
@@ -25,6 +26,7 @@ import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
+import org.javacord.api.entity.user.UserStatus;
 import org.javacord.api.util.logging.ExceptionLogger;
 
 import static java.time.temporal.ChronoField.DAY_OF_MONTH;
@@ -53,6 +55,18 @@ public enum AdminCommands {
 
         command.delete("Unauthorized").exceptionally(ExceptionLogger.get());
         channel.sendMessage("User " + user.getDiscriminatedName() + " not authorized.");
+    }
+
+    @Command(usage = "shutdown", description = "Only the owner of the bot can use this", shownInHelpCommand = false)
+    public void maintenance(User user, String[] args, Message command, TextChannel channel) {
+        if (Bot.permitted.contains(user.getId())) {
+            Bot.STATUS.updateStatus(Service.Status.MAINTENANCE);
+            Bot.API.updateStatus(UserStatus.DO_NOT_DISTURB);
+
+            return;
+        }
+
+        command.delete("Unauthorized").exceptionally(ExceptionLogger.get());
     }
 
     @Command
