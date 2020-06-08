@@ -17,6 +17,9 @@ import org.comroid.javacord.util.commands.eval.EvalCommand;
 import org.comroid.javacord.util.server.properties.GuildSettings;
 import org.comroid.javacord.util.server.properties.Property;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import org.comroid.status.StatusConnection;
+import org.comroid.status.entity.Service;
+import org.comroid.status.entity.Service.Status;
 import org.comroid.util.DNSUtil;
 import org.comroid.util.files.FileProvider;
 import org.javacord.api.DiscordApi;
@@ -41,6 +44,7 @@ public final class Bot {
 
     public static final long BOT_ID = 493055125766537236L;
 
+    public static final StatusConnection STATUS;
     public static final DiscordApi API;
     public static final StatsClient STATS;
     public static final CommandHandler CMD;
@@ -52,6 +56,13 @@ public final class Bot {
     public static final List<Long> permitted = new ArrayList<>();
 
     static {
+        try {
+            STATUS = new StatusConnection("cobalton", FileProvider.readContent("login/status.cred")[0]);
+            STATUS.updateStatus(Status.REPORTED_PROBLEMS);
+        } catch (Throwable t) {
+            throw new RuntimeException("Failed to login to Status Server", t);
+        }
+
         try {
             try {
                 API = new DiscordApiBuilder()
@@ -124,8 +135,10 @@ public final class Bot {
 
             API.updateActivity(ActivityType.PLAYING, "Ping @Kaleidox#3902 for support");
             API.updateStatus(UserStatus.ONLINE);
+            STATUS.updateStatus(Status.ONLINE);
             logger.info("Bot ready and listening");
         } catch (Exception e) {
+            STATUS.updateStatus(Status.OFFLINE);
             ExceptionLogger.get().apply(e);
             System.exit(1);
             throw new AssertionError();
