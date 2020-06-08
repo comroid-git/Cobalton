@@ -39,7 +39,7 @@ dependencies {
     compileOnly 'org.jetbrains:annotations:19.0.0'
 
     // status server api
-    implementation 'org.comroid:status-api:0.10.1-SNAPSHOT'
+    implementation 'com.github.comroid-git:comroid.org:2b9067174e'
     runtimeOnly 'com.squareup.okhttp3:okhttp:4.7.2'
     runtimeOnly 'com.alibaba:fastjson:1.2.70'
     implementation 'com.github.comroid-git.common-util:mutatio:b9b55324e856a2beb46987ec1a21550324e24e35'
