@@ -50,8 +50,10 @@ public enum AdminCommands {
 
     @Command(usage = "shutdown", description = "Only the owner of the bot can use this", shownInHelpCommand = false)
     public void shutdown(User user, String[] args, Message command, TextChannel channel) {
-        if (Bot.permitted.contains(user.getId()))
+        if (Bot.permitted.contains(user.getId())) {
+            Bot.STATUS.updateStatus(Service.Status.OFFLINE);
             System.exit(1);
+        }
 
         command.delete("Unauthorized").exceptionally(ExceptionLogger.get());
         channel.sendMessage("User " + user.getDiscriminatedName() + " not authorized.");
