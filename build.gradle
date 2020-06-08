@@ -37,6 +37,11 @@ dependencies {
     // annotations
     compileOnly 'org.jetbrains:annotations:19.0.0'
 
+    // status server api
+    implementation 'org.comroid:status-api:0.10.1-SNAPSHOT'
+    runtimeOnly 'com.squareup.okhttp3:okhttp:4.7.2'
+    runtimeOnly 'com.alibaba:fastjson:1.2.70'
+
     // Javacord
     implementation('org.javacord:javacord:3.0.6')
 
