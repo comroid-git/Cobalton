@@ -185,6 +185,8 @@ public final class Bot {
     private static void terminateAll() {
         logger.info("Trying to shutdown gracefully");
 
+        Bot.STATUS.updateStatus(Status.REPORTED_PROBLEMS);
+
         for (ThrowingRunnable exec : new ThrowingRunnable[]{PROP::close, API::disconnect}) {
             try {
                 exec.run();
@@ -192,6 +194,8 @@ public final class Bot {
                 e.printStackTrace();
             }
         }
+
+        Bot.STATUS.updateStatus(Status.OFFLINE);
 
         logger.info("Shutdown complete!");
     }
