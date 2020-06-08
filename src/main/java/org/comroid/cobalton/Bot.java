@@ -17,9 +17,13 @@ import org.comroid.javacord.util.commands.eval.EvalCommand;
 import org.comroid.javacord.util.server.properties.GuildSettings;
 import org.comroid.javacord.util.server.properties.Property;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import org.comroid.restless.adapter.okhttp.v4.OkHttp3Adapter;
+import org.comroid.status.DependenyObject;
+import org.comroid.status.DependenyObject.Adapters;
 import org.comroid.status.StatusConnection;
 import org.comroid.status.entity.Service;
 import org.comroid.status.entity.Service.Status;
+import org.comroid.uniform.adapter.json.fastjson.FastJSONLib;
 import org.comroid.util.DNSUtil;
 import org.comroid.util.files.FileProvider;
 import org.javacord.api.DiscordApi;
@@ -57,6 +61,9 @@ public final class Bot {
 
     static {
         try {
+            Adapters.SERIALIZATION_ADAPTER = FastJSONLib.fastJsonLib;
+            Adapters.HTTP_ADAPTER = new OkHttp3Adapter();
+
             STATUS = new StatusConnection("cobalton", FileProvider.readContent("login/status.cred")[0]);
             STATUS.updateStatus(Status.REPORTED_PROBLEMS);
         } catch (Throwable t) {
