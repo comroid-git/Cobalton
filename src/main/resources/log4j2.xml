@@ -25,7 +25,7 @@
     </Loggers>
     <Properties>
         <Property name="LS">${sys:file.separator}</Property>
-        <Property name="LOG_FILE_PUBLIC">${LS}var${LS}bots${LS}james${LS}latest.log</Property>
-        <Property name="LOG_FILE">${LS}var${LS}bots${LS}james${LS}latest-private.log</Property>
+        <Property name="LOG_FILE_PUBLIC">/var/dcb/cobalton/latest-public.log</Property>
+        <Property name="LOG_FILE">/var/dcb/cobalton/latest-private.log</Property>
     </Properties>
 </Configuration>
