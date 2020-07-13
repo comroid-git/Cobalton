@@ -65,14 +65,20 @@ public class WordStoryEngine implements MessageCreateListener {
         final List<String> yields = new ArrayList<>();
 
         final Optional<Message> stopship = stc.getMessagesAsStream()
+                .filter(msg -> msg.getReadableContent().matches("[^ ]+"))
+                .filter(msg -> msg.getReadableContent().contains("."))
+                // latest period containing; newest end
+                .findFirst()
+                .map(stc::getMessagesBeforeAsStream)
+                .orElseGet(Stream::empty)
                 .limit(200)
-                .filter(msg -> msg.getReadableContent().toLowerCase().contains("new story"))
+                .filter(msg -> msg.getReadableContent().matches("[^ ]+"))
+                .filter(msg -> msg.getReadableContent().contains("."))
+                // second latest period containing, all until 1 before here
                 .findFirst();
 
         final List<Message> storyMessages = stopship.map(stc::getMessagesAfterAsStream)
-                .orElseGet(() -> stc
-                        .getMessagesAsStream()
-                        .limit(100))
+                .orElseGet(() -> stc.getMessagesAsStream().limit(100))
                 .filter(msg -> {
                     String msgContent = msg.getReadableContent();
 
