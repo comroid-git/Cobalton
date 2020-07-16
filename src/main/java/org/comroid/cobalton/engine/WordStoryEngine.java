@@ -66,14 +66,14 @@ public class WordStoryEngine implements MessageCreateListener {
 
         final Optional<Message> stopship = stc.getMessagesAsStream()
                 .filter(msg -> msg.getReadableContent().matches("[^ ]+"))
-                .filter(msg -> msg.getReadableContent().contains("."))
+                .filter(msg -> msg.getReadableContent().contains(".") || msg.getReadableContent().contains("?") || msg.getReadableContent().contains("!"))
                 // latest period containing; newest end
                 .findFirst()
                 .map(stc::getMessagesBeforeAsStream)
                 .orElseGet(Stream::empty)
                 .limit(200)
                 .filter(msg -> msg.getReadableContent().matches("[^ ]+"))
-                .filter(msg -> msg.getReadableContent().contains("."))
+                .filter(msg -> msg.getReadableContent().contains(".") || msg.getReadableContent().contains("?") || msg.getReadableContent().contains("!"))
                 // second latest period containing, all until 1 before here
                 .findFirst();
 
