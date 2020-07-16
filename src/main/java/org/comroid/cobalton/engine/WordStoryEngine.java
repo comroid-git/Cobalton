@@ -31,7 +31,7 @@ public class WordStoryEngine implements MessageCreateListener {
     public void onMessageCreate(MessageCreateEvent event) {
         final String content = event.getReadableMessageContent();
 
-        if (isStoryPart(content) && content.contains(".")) {
+        if (isStoryPart(content) && (content.contains(".") || content.contains("?") || content.contains("!")) {
             final User userAuthor = event.getMessageAuthor().asUser().orElse(null);
 
             if (userAuthor == null)
