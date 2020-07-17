@@ -43,8 +43,8 @@ public class WordStoryEngine implements MessageCreateListener {
                     .getDescription()
                     .orElse("no title :("))))
                     .join();
-        }
-    }
+        } else event.addReactionToMessage("⚠️");
+    } 
 
     private String generateTitle(String story) {
         final Random rng = new Random();
