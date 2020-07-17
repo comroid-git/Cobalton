@@ -29,6 +29,9 @@ public class WordStoryEngine implements MessageCreateListener {
 
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
+        if (!event.getMessage().getAuthor().isUser())
+            return;
+        
         final String content = event.getReadableMessageContent();
 
         if (isStoryPart(content) && (content.contains(".") || content.contains("?") || content.contains("!"))) {
