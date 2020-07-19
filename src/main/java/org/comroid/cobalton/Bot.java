@@ -153,6 +153,11 @@ public final class Bot {
     }
 
     public static void main(String[] args) {
+        API.addMessageCreateListener(event -> {
+            if (event.getMessage().getMentionedUsers().size() > 0)
+                API.getCustomEmojiById(582591035016871937L).ifPresent(event::addReactionsToMessage);
+        });
+
         API.getServerTextChannelById(Properties.INFO_CHANNEL.getValue(SRV).asLong())
                 .ifPresent(infoChannel -> infoChannel.getMessageById(Properties.ROLE_MESSAGE.getValue(SRV).asLong())
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage)))
