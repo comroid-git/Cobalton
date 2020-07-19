@@ -5,6 +5,7 @@ import de.kaleidox.botstats.javacord.JavacordStatsClient;
 import de.kaleidox.botstats.model.StatsClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.comroid.api.Provider;
 import org.comroid.cobalton.command.AdminCommands;
 import org.comroid.cobalton.command.TextCommands;
 import org.comroid.cobalton.command.ToolCommands;
@@ -17,11 +18,11 @@ import org.comroid.javacord.util.commands.eval.EvalCommand;
 import org.comroid.javacord.util.server.properties.GuildSettings;
 import org.comroid.javacord.util.server.properties.Property;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import org.comroid.mutatio.pipe.Pipe;
+import org.comroid.mutatio.span.Span;
 import org.comroid.restless.adapter.okhttp.v4.OkHttp3Adapter;
-import org.comroid.status.DependenyObject;
 import org.comroid.status.DependenyObject.Adapters;
 import org.comroid.status.StatusConnection;
-import org.comroid.status.entity.Service;
 import org.comroid.status.entity.Service.Status;
 import org.comroid.uniform.adapter.json.fastjson.FastJSONLib;
 import org.comroid.util.DNSUtil;
@@ -29,6 +30,7 @@ import org.comroid.util.files.FileProvider;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.activity.ActivityType;
+import org.javacord.api.entity.emoji.KnownCustomEmoji;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.UserStatus;
@@ -36,7 +38,9 @@ import org.javacord.api.util.logging.ExceptionLogger;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -47,6 +51,8 @@ public final class Bot {
     public final static Color THEME = new Color(0x0f7eb1);
 
     public static final long BOT_ID = 493055125766537236L;
+
+    public static final Pipe<?, ? extends Provider<KnownCustomEmoji>> PING_EMOJIS;
 
     public static final StatusConnection STATUS;
     public static final DiscordApi API;
@@ -89,6 +95,11 @@ public final class Bot {
 
             API.updateStatus(UserStatus.DO_NOT_DISTURB);
             API.updateActivity("Booting up...");
+
+            PING_EMOJIS = Span.immutable(
+                    Provider.of(() -> API.getCustomEmojiById(582591035016871937L).orElse(null)),
+                    Provider.of(() -> API.getCustomEmojiById(539194032870522889L).orElse(null))
+            ).pipe();
 
             SRV = API.getServerById(711318785889665127L).orElseThrow(IllegalStateException::new);
 
@@ -152,10 +163,25 @@ public final class Bot {
         }
     }
 
+    private static <T> Comparator<T> randomComparator() {
+        ThreadLocalRandom r = ThreadLocalRandom.current();
+        int x = r.nextInt(), y = r.nextInt();
+        boolean b = r.nextBoolean();
+
+        return Comparator.<T>comparingInt(t -> t.toString().hashCode() ^ x)
+                .thenComparingInt(t -> t.toString().length() ^ y)
+                .thenComparingInt(t -> b ? 1 : -1);
+    }
+
     public static void main(String[] args) {
+
         API.addMessageCreateListener(event -> {
             if (event.getMessage().getMentionedUsers().size() > 0)
-                API.getCustomEmojiById(582591035016871937L).ifPresent(event::addReactionsToMessage);
+                PING_EMOJIS.sorted(randomComparator())
+                        .map(Provider::now)
+                        .findAny()
+                        .into(event::addReactionsToMessage)
+                        .exceptionally(ExceptionLogger.get());
         });
 
         API.getServerTextChannelById(Properties.INFO_CHANNEL.getValue(SRV).asLong())
