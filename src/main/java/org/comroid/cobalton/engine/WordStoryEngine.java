@@ -35,9 +35,10 @@ public class WordStoryEngine implements MessageCreateListener {
         final String content = event.getReadableMessageContent();
 
         if (isStoryPart(content) && (content.contains(".") || content.contains("?") || content.contains("!"))) {
-            final User userAuthor = event.getMessageAuthor().asUser().orElse(null);
-
-            if (userAuthor == null)
+            if (event.getMessageAuthor()
+                    .asUser()
+                    .map(User::isBot)
+                    .orElse(true))
                 return;
 
             concludeStory().thenCompose(msg -> msg.edit(generateTitle(msg
