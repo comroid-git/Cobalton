@@ -153,12 +153,6 @@ public final class Bot {
     }
 
     public static void main(String[] args) {
-        API.addMessageCreateListener(event -> {
-            if (event.getReadableMessageContent().matches(".*[gG]+\\s*[uU]+\\s*[nN]+\\s*[aA4].*"))
-                event.addReactionsToMessage("\uD83C\uDDEC", "\uD83C\uDDFA", "\uD83C\uDDF3", "\uD83C\uDDE6")
-                        .exceptionally(ExceptionLogger.get());
-        });
-
         API.getServerTextChannelById(Properties.INFO_CHANNEL.getValue(SRV).asLong())
                 .ifPresent(infoChannel -> infoChannel.getMessageById(Properties.ROLE_MESSAGE.getValue(SRV).asLong())
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage)))
