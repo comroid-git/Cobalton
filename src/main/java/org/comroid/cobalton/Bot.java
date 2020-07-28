@@ -189,25 +189,7 @@ public final class Bot {
                         .thenAcceptAsync(roleMessage -> roleMessage.addMessageAttachableListener(new RoleMessageEngine(roleMessage)))
                         .exceptionally(ExceptionLogger.get()));
 
-        SRV.addServerMemberJoinListener(event -> SRV.getSystemChannel()
-                .ifPresent(stc -> stc.sendMessage(DefaultEmbedFactory.create(event.getUser())
-                        .addField("Willkommen zum Abriss, " + event.getUser().getName() + "!",
-                                "Bitte stell dich doch kurz in <#625640036096016404> mit ein paar Zeilen vor, dann kannst du alle Channel benutzen!"))));
-
-        // init gamescom engine
-        new GamescomEngine(API);
-
         API.addMessageCreateListener(AntiSpam.ENGINE);
-
-        API.addServerMemberJoinListener(event -> API.getRoleById(632196120902107137L)
-                .ifPresent(event.getUser()::addRole));
-
-        API.getServerTextChannelById(625640036096016404L)
-                .ifPresent(weristes -> weristes.addMessageCreateListener(event -> {
-                    //noinspection OptionalGetWithoutIsPresent
-                    API.getRoleById(632196120902107137L)
-                            .ifPresent(event.getMessageAuthor().asUser().get()::removeRole);
-                }));
 
         API.getServerTextChannelById(644211429599346708L)
                 .ifPresent(itcrowd -> itcrowd.sendMessage(DefaultEmbedFactory.create(SRV)
