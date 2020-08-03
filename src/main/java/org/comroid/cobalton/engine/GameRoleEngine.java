@@ -9,6 +9,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.user.UserChangeActivityEvent;
 import org.javacord.api.listener.user.UserChangeActivityListener;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public final class GameRoleEngine implements UserChangeActivityListener {
         final GameRoleEngine engine = api.getServerById(371328017340825610L)
                 .map(GameRoleEngine::new)
                 .orElseThrow(() -> new NoSuchElementException("Jumpy Missing"));
-        System.out.println("GameRole Engine initialized");
+        System.out.println("GameRole Engine initialized; members: " + Arrays.toString(engine.server().getMembers().toArray()));
         return engine;
     }
 
