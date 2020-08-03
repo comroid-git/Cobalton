@@ -68,7 +68,7 @@ public final class GameRoleEngine implements UserChangeActivityListener {
     @Override
     public void onUserChangeActivity(UserChangeActivityEvent event) {
         final User user = event.getUser();
-        System.out.printf("%s updated activity from %s to %s",
+        System.out.printf("%s updated activity from %s to %s\n",
                 user,
                 event.getOldActivity().orElse(null),
                 event.getNewActivity().orElse(null)
@@ -78,7 +78,7 @@ public final class GameRoleEngine implements UserChangeActivityListener {
 
         event.getOldActivity()
                 .ifPresent(old -> roleForGame(old.getName()).thenCompose(role -> {
-                    System.out.printf("Removing GameRole %s from %s", role, user);
+                    System.out.printf("Removing GameRole %s from %s\n", role, user);
                     return user.removeRole(role);
                 }));
 
@@ -88,7 +88,7 @@ public final class GameRoleEngine implements UserChangeActivityListener {
         if (activityN.getType() != ActivityType.PLAYING) return;
 
         roleForGame(activityN.getName()).thenCompose(role -> {
-            System.out.printf("Adding GameRole %s to %s", role, user);
+            System.out.printf("Adding GameRole %s to %s\n", role, user);
             return user.addRole(role);
         });
     }
