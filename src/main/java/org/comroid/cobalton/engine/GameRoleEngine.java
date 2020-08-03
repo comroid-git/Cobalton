@@ -5,6 +5,7 @@ import org.javacord.api.entity.activity.Activity;
 import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.user.UserChangeActivityEvent;
 import org.javacord.api.listener.user.UserChangeActivityListener;
 
@@ -64,16 +65,29 @@ public final class GameRoleEngine implements UserChangeActivityListener {
 
     @Override
     public void onUserChangeActivity(UserChangeActivityEvent event) {
-        if (event.getUser().isBot()) return;
+        final User user = event.getUser();
+        System.out.printf("%s updated activity from %s to %s",
+                user,
+                event.getOldActivity().orElse(null),
+                event.getNewActivity().orElse(null)
+        );
+
+        if (user.isBot()) return;
 
         event.getOldActivity()
-                .ifPresent(old -> roleForGame(old.getName()).thenCompose(event.getUser()::removeRole));
+                .ifPresent(old -> roleForGame(old.getName()).thenCompose(role -> {
+                    System.out.printf("Removing GameRole %s from %s", role, user);
+                    return user.removeRole(role);
+                }));
 
         final Optional<Activity> opt = event.getNewActivity();
         if (opt.isEmpty()) return;
         final Activity activityN = opt.get();
         if (activityN.getType() != ActivityType.PLAYING) return;
 
-        roleForGame(activityN.getName()).thenCompose(event.getUser()::addRole);
+        roleForGame(activityN.getName()).thenCompose(role -> {
+            System.out.printf("Adding GameRole %s to %s", role, user);
+            return user.addRole(role);
+        });
     }
 }
