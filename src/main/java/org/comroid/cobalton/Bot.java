@@ -9,10 +9,7 @@ import org.comroid.api.Provider;
 import org.comroid.cobalton.command.AdminCommands;
 import org.comroid.cobalton.command.TextCommands;
 import org.comroid.cobalton.command.ToolCommands;
-import org.comroid.cobalton.engine.AntiSpam;
-import org.comroid.cobalton.engine.GamescomEngine;
-import org.comroid.cobalton.engine.RoleMessageEngine;
-import org.comroid.cobalton.engine.WordStoryEngine;
+import org.comroid.cobalton.engine.*;
 import org.comroid.javacord.util.commands.CommandHandler;
 import org.comroid.javacord.util.commands.eval.EvalCommand;
 import org.comroid.javacord.util.server.properties.GuildSettings;
@@ -132,6 +129,9 @@ public final class Bot {
                     .asLong(""))
                     .ifPresent(stc -> wseLocal[0] = new WordStoryEngine(stc));
             WSE = wseLocal[0];
+
+            logger.info("Initializing GameRoleEngine");
+            GameRoleEngine.init(API);
 
             logger.info("Registering prefix provider");
             //todo Causes NPEs CMD.withCustomPrefixProvider(Properties.PREFIX);
