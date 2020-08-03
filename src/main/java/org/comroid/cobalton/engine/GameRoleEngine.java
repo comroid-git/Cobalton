@@ -30,9 +30,11 @@ public final class GameRoleEngine implements UserChangeActivityListener {
     }
 
     public static GameRoleEngine init(DiscordApi api) {
-        return api.getServerById(371328017340825610L)
+        final GameRoleEngine engine = api.getServerById(371328017340825610L)
                 .map(GameRoleEngine::new)
                 .orElseThrow(() -> new NoSuchElementException("Jumpy Missing"));
+        System.out.println("GameRole Engine initialized");
+        return engine;
     }
 
     private static String gameRoleString(String gameName) {
