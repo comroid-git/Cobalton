@@ -88,16 +88,18 @@ public enum ToolCommands {
     public String gameping(User user, Server server, String[] args) {
         final String gameName = String.join(" ", args);
         final BoundExtractedResult<Role> result = FuzzySearch.extractOne(gameName, server.getRoles(), Nameable::getName);
+        final Role role = result.getReferent();
 
         return server.getMembers()
                 .stream()
+                .filter(member -> server.getRoles(member).contains(role))
                 .filter(member -> member.getActivity()
                         .map(activity -> activity.getName().equalsIgnoreCase(gameName))
                         .orElse(false))
                 .map(User::getNicknameMentionTag)
                 .collect(Collectors.joining(
                         ", ",
-                        String.format("%s wants to play %s\n", user.getNicknameMentionTag(), result.getReferent()),
+                        String.format("%s wants to play %s\n", user.getNicknameMentionTag(), role),
                         ""
                 ));
     }
