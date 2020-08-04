@@ -1,8 +1,11 @@
 package org.comroid.cobalton.command;
 
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import org.comroid.cobalton.command.skribbl.SkribblEmbed;
 import org.comroid.javacord.util.commands.Command;
 import org.comroid.javacord.util.commands.CommandGroup;
+import org.javacord.api.entity.Nameable;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.emoji.CustomEmoji;
@@ -10,6 +13,7 @@ import org.javacord.api.entity.emoji.CustomEmojiBuilder;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.permission.PermissionType;
+import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.util.logging.ExceptionLogger;
@@ -72,5 +76,29 @@ public enum ToolCommands {
                 .map(CompletableFuture::join)
                 .map(CustomEmoji::getMentionTag)
                 .collect(Collectors.joining(" ", "Added emojis:", ""));
+    }
+
+    @Command(
+            usage = "gameping <game>",
+            enablePrivateChat = false,
+            minimumArguments = 1,
+            convertStringResultsToEmbed = true,
+            useTypingIndicator = true
+    )
+    public String gameping(User user, Server server, String[] args) {
+        final String gameName = String.join(" ", args);
+        final BoundExtractedResult<Role> result = FuzzySearch.extractOne(gameName, server.getRoles(), Nameable::getName);
+
+        return server.getMembers()
+                .stream()
+                .filter(member -> member.getActivity()
+                        .map(activity -> activity.getName().equalsIgnoreCase(gameName))
+                        .orElse(false))
+                .map(User::getNicknameMentionTag)
+                .collect(Collectors.joining(
+                        ", ",
+                        String.format("%s wants to play %s\n", user.getNicknameMentionTag(), result.getReferent()),
+                        ""
+                ));
     }
 }
