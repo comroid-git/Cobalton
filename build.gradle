@@ -41,7 +41,7 @@ dependencies {
     // status server api
     implementation 'com.github.comroid-git:comroid.org:2b9067174e'
     runtimeOnly 'com.squareup.okhttp3:okhttp:4.7.2'
-    runtimeOnly 'com.alibaba:fastjson:1.2.70'
+    runtimeOnly 'com.alibaba:fastjson:1.2.73'
     implementation 'com.github.comroid-git.common-util:mutatio:b9b55324e856a2beb46987ec1a21550324e24e35'
     implementation 'com.github.comroid-git.common-util:common-util:b9b55324e856a2beb46987ec1a21550324e24e35'
     implementation 'com.github.comroid-git.common-util:uniform:b9b55324e856a2beb46987ec1a21550324e24e35'
