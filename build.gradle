@@ -36,7 +36,7 @@ repositories {
 
 dependencies {
     // annotations
-    compileOnly 'org.jetbrains:annotations:19.0.0'
+    compileOnly 'org.jetbrains:annotations:20.1.0'
 
     // status server api
     implementation 'com.github.comroid-git:comroid.org:2b9067174e'
