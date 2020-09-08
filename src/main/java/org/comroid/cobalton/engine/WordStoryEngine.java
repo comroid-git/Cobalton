@@ -1,5 +1,6 @@
 package org.comroid.cobalton.engine;
 
+import org.comroid.cobalton.Bot;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
@@ -64,6 +65,7 @@ public class WordStoryEngine implements MessageCreateListener {
     }
 
     public CompletableFuture<Message> concludeStory() {
+        Bot.logger.debug("Concluding story");
         stc.type();
 
         final List<String> yields = new ArrayList<>();
@@ -80,6 +82,9 @@ public class WordStoryEngine implements MessageCreateListener {
                 .filter(msg -> msg.getReadableContent().contains(".") || msg.getReadableContent().contains("?") || msg.getReadableContent().contains("!"))
                 // second latest period containing, all until 1 before here
                 .findFirst();
+        stopship.ifPresentOrElse(
+                msg -> Bot.logger.debug("Found stopship: {}", msg),
+                () -> Bot.logger.debug("Could not find stopship"));
 
         final List<Message> storyMessages = stopship.map(stc::getMessagesAfterAsStream)
                 .orElseGet(() -> stc.getMessagesAsStream().limit(100))
@@ -89,6 +94,8 @@ public class WordStoryEngine implements MessageCreateListener {
                     return !msgContent.contains("concludeStory") && isStoryPart(msgContent);
                 })
                 .collect(Collectors.toList());
+        Bot.logger.debug("Found {} story parts", storyMessages.size());
+
         final String story = storyMessages.stream()
                 .map(Message::getReadableContent)
                 .collect(Collectors.joining(" ", "```", "```"));
@@ -99,6 +106,7 @@ public class WordStoryEngine implements MessageCreateListener {
                 .distinct()
                 .map(user -> user.getDisplayName(stc.getServer()))
                 .collect(Collectors.joining("\n\t- ", "- ", ""));
+        Bot.logger.debug("New Story complete\nAuthors: {}\nStory: {}", authors, story);
 
         final String title = String.format("The %s goes like this:", stopship
                 .map(message -> {
