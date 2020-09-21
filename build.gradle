@@ -49,7 +49,7 @@ dependencies {
     implementation 'com.github.comroid-git.common-util:restless:b9b55324e856a2beb46987ec1a21550324e24e35'
 
     // Javacord
-    implementation('org.javacord:javacord:3.0.6')
+    implementation('org.javacord:javacord:3.0.7')
 
     // Javacord Utilities
     implementation 'com.github.comroid-git:javacord-utilities:master-SNAPSHOT'
