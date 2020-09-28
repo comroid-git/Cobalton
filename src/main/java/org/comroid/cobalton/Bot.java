@@ -130,9 +130,6 @@ public final class Bot {
                     .ifPresent(stc -> wseLocal[0] = new WordStoryEngine(stc));
             WSE = wseLocal[0];
 
-            logger.info("Initializing GameRoleEngine");
-            GameRoleEngine.init(API);
-
             logger.info("Registering prefix provider");
             //todo Causes NPEs CMD.withCustomPrefixProvider(Properties.PREFIX);
 
