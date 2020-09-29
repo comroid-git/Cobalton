@@ -37,7 +37,7 @@ dependencies {
     compileOnly 'org.jetbrains:annotations:19.0.0'
 
     if (isAutoDeploy) {
-        implementation project(':common-util:commandline')
+        implementation 'com.github.comroid-git:cli-parser:master-SNAPSHOT'
 
         // status server api
         implementation project(':status:status-api')
@@ -50,8 +50,8 @@ dependencies {
         // javacord Utilities
         implementation project(':javacord-utilities')
         implementation project(':discord-ux:javacord')
-    } else {
-        implementation project(':common-util:commandline')
+    } else { // todo
+        implementation project(':clipa')
 
         // status server api
         implementation 'com.github.comroid-git:comroid.org:2b9067174e'
