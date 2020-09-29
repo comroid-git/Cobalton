@@ -14,8 +14,6 @@ tasks.findByName('wrapper')?.configure {
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
 }
 
-apply from: 'gradle/docker.gradle'
-
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
     options.incremental = true
@@ -38,34 +36,46 @@ dependencies {
     // annotations
     compileOnly 'org.jetbrains:annotations:19.0.0'
 
-    // status server api
-    implementation 'com.github.comroid-git:comroid.org:2b9067174e'
-    runtimeOnly 'com.squareup.okhttp3:okhttp:4.7.2'
-    runtimeOnly 'com.alibaba:fastjson:1.2.70'
-    implementation 'com.github.comroid-git.common-util:mutatio:b9b55324e856a2beb46987ec1a21550324e24e35'
-    implementation 'com.github.comroid-git.common-util:common-util:b9b55324e856a2beb46987ec1a21550324e24e35'
-    implementation 'com.github.comroid-git.common-util:uniform:b9b55324e856a2beb46987ec1a21550324e24e35'
-    implementation 'com.github.comroid-git.common-util:varbind:b9b55324e856a2beb46987ec1a21550324e24e35'
-    implementation 'com.github.comroid-git.common-util:restless:b9b55324e856a2beb46987ec1a21550324e24e35'
+    if (isAutoDeploy) {
+        implementation project(':common-util:commandline')
 
-    // Javacord
-    implementation('org.javacord:javacord:3.0.6')
+        // status server api
+        implementation project(':status:status-api')
 
-    // Javacord Utilities
-    implementation 'com.github.comroid-git:javacord-utilities:master-SNAPSHOT'
+        // guardian
+        implementation project(':guardian:restless')
+        implementation project(':guardian:uniform').sourceSets.java8compat.output.classesDirs
+        implementation project(':guardian:restless').sourceSets.java8compat.output.classesDirs
 
-    // fuzzy
+        // javacord Utilities
+        implementation project(':javacord-utilities')
+        implementation project(':discord-ux:javacord')
+    } else {
+        implementation project(':common-util:commandline')
+
+        // status server api
+        implementation 'com.github.comroid-git:comroid.org:2b9067174e'
+
+        // guardian
+        implementation project(':guardian:restless')
+        implementation project(':guardian:uniform').sourceSets.java8compat.output.classesDirs
+        implementation project(':guardian:restless').sourceSets.java8compat.output.classesDirs
+
+        // javacord Utilities
+        implementation project(':javacord-utilities')
+        implementation project(':discord-ux:javacord')
+    }
+
+    // javacord
+    implementation 'org.javacord:javacord:3.0.6'
+
+    // skribbl zeug
+    implementation 'io.socket:socket.io-client:1.0.0'
+
+    // fuzzy matcher
     implementation 'me.xdrop:fuzzywuzzy:1.3.1'
 
-    // stats client
-    implementation 'de.kaleidox:discordbotlist-stats-javacord:0.1.3'
-
-    // Socket
-    implementation('io.socket:socket.io-client:1.0.0')
-
-    // jackson
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.0'
-
-    // Runtime logger dependency
-    implementation 'org.apache.logging.log4j:log4j-core:2.13.3'
+    implementation 'com.google.flogger:flogger-log4j2-backend:0.5.1'
+    runtimeOnly 'org.apache.logging.log4j:log4j-core:2.13.3'
+    runtimeOnly 'com.squareup.okhttp3:okhttp:4.7.2'
 }

@@ -1,3 +1,5 @@
+import static java.lang.System.getenv
+
 ext {
-    dockerContainerName = 'cobalton-public'
+    isAutoDeploy = getenv().containsKey("TEAMCITY") || getenv().containsKey("JITPACK")
 }
