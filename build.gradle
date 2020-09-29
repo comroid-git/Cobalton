@@ -40,7 +40,7 @@ dependencies {
         implementation 'com.github.comroid-git:cli-parser:master-SNAPSHOT'
 
         // status server api
-        implementation 'com.github.comroid-git:comroid.org:2b9067174e'
+        implementation 'com.github.comroid-git:comroid.org:master-SNAPSHOT'
 
         // guardian
         implementation 'com.github.comroid-git.guardian-framework:uniform:master-SNAPSHOT'
