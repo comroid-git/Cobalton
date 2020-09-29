@@ -20,6 +20,7 @@ import org.comroid.status.DependenyObject.Adapters;
 import org.comroid.status.StatusConnection;
 import org.comroid.status.entity.Service.Status;
 import org.comroid.uniform.adapter.json.fastjson.FastJSONLib;
+import org.comroid.uniform.adapter.json.jackson.JacksonJSONAdapter;
 import org.comroid.util.DNSUtil;
 import org.comroid.util.files.FileProvider;
 import org.javacord.api.DiscordApi;
@@ -61,7 +62,7 @@ public final class Bot {
 
     static {
         try {
-            Adapters.SERIALIZATION_ADAPTER = FastJSONLib.fastJsonLib;
+            Adapters.SERIALIZATION_ADAPTER = JacksonJSONAdapter.instance;
             Adapters.HTTP_ADAPTER = new OkHttp3Adapter();
 
             STATUS = new StatusConnection("cobalton", new FileHandle("login/status.cred"));
