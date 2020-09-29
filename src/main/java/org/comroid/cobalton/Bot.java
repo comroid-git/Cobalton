@@ -96,6 +96,7 @@ public final class Bot {
 
             PING_EMOJIS = Span.immutable(
                     Provider.of(() -> API.getCustomEmojiById(582591035016871937L).orElse(null)),
+                    Provider.of(() -> API.getCustomEmojiById(760396852193001492L).orElse(null)),
                     Provider.of(() -> API.getCustomEmojiById(539194032870522889L).orElse(null))
             ).pipe();
 
