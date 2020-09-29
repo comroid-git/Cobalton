@@ -6,7 +6,9 @@ import org.comroid.api.Provider;
 import org.comroid.cobalton.command.AdminCommands;
 import org.comroid.cobalton.command.TextCommands;
 import org.comroid.cobalton.command.ToolCommands;
-import org.comroid.cobalton.engine.*;
+import org.comroid.cobalton.engine.AntiSpam;
+import org.comroid.cobalton.engine.RoleMessageEngine;
+import org.comroid.cobalton.engine.WordStoryEngine;
 import org.comroid.common.io.FileHandle;
 import org.comroid.javacord.util.commands.CommandHandler;
 import org.comroid.javacord.util.commands.eval.EvalCommand;
@@ -19,7 +21,6 @@ import org.comroid.restless.adapter.okhttp.v4.OkHttp3Adapter;
 import org.comroid.status.DependenyObject.Adapters;
 import org.comroid.status.StatusConnection;
 import org.comroid.status.entity.Service.Status;
-import org.comroid.uniform.adapter.json.fastjson.FastJSONLib;
 import org.comroid.uniform.adapter.json.jackson.JacksonJSONAdapter;
 import org.comroid.util.DNSUtil;
 import org.comroid.util.files.FileProvider;
@@ -50,6 +51,8 @@ public final class Bot {
 
     public static final Pipe<? extends Provider<KnownCustomEmoji>> PING_EMOJIS;
 
+    public static final FileHandle DIR = new FileHandle("/srv/dcb/cobalton/", true);
+    public static final FileHandle TOKENS = DIR.createSubDir("login");
     public static final StatusConnection STATUS;
     public static final DiscordApi API;
     public static final CommandHandler CMD;
@@ -65,7 +68,7 @@ public final class Bot {
             Adapters.SERIALIZATION_ADAPTER = JacksonJSONAdapter.instance;
             Adapters.HTTP_ADAPTER = new OkHttp3Adapter();
 
-            STATUS = new StatusConnection("cobalton", new FileHandle("login/status.cred"));
+            STATUS = new StatusConnection("cobalton", TOKENS.createSubFile("status.cred"));
             STATUS.updateStatus(Status.MAINTENANCE);
         } catch (Throwable t) {
             throw new RuntimeException("Failed to login to Status Server", t);
