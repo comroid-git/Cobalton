@@ -48,7 +48,7 @@ dependencies {
 
         // javacord Utilities
         implementation 'com.github.comroid-git:javacord-utilities:master-SNAPSHOT'
-        implementation 'com.github.comroid-git.discord-ux:dux-javacord:master-SNAPSHOT'
+        implementation 'com.github.comroid-git.botsuite:dux-javacord:master-SNAPSHOT'
     } else { // todo
         implementation project(':clipa')
 
@@ -62,7 +62,7 @@ dependencies {
 
         // javacord Utilities
         implementation project(':javacord-utilities')
-        implementation project(':discord-ux:javacord')
+        implementation project(':botsuite:javacord')
     }
 
     // javacord
