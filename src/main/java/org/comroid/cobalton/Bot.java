@@ -1,8 +1,5 @@
 package org.comroid.cobalton;
 
-import de.kaleidox.botstats.BotListSettings;
-import de.kaleidox.botstats.javacord.JavacordStatsClient;
-import de.kaleidox.botstats.model.StatsClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.comroid.api.Provider;
@@ -10,6 +7,7 @@ import org.comroid.cobalton.command.AdminCommands;
 import org.comroid.cobalton.command.TextCommands;
 import org.comroid.cobalton.command.ToolCommands;
 import org.comroid.cobalton.engine.*;
+import org.comroid.common.io.FileHandle;
 import org.comroid.javacord.util.commands.CommandHandler;
 import org.comroid.javacord.util.commands.eval.EvalCommand;
 import org.comroid.javacord.util.server.properties.GuildSettings;
@@ -49,11 +47,10 @@ public final class Bot {
 
     public static final long BOT_ID = 493055125766537236L;
 
-    public static final Pipe<?, ? extends Provider<KnownCustomEmoji>> PING_EMOJIS;
+    public static final Pipe<? extends Provider<KnownCustomEmoji>> PING_EMOJIS;
 
     public static final StatusConnection STATUS;
     public static final DiscordApi API;
-    public static final StatsClient STATS;
     public static final CommandHandler CMD;
     public static final GuildSettings PROP;
     public static final WordStoryEngine WSE;
@@ -67,8 +64,8 @@ public final class Bot {
             Adapters.SERIALIZATION_ADAPTER = FastJSONLib.fastJsonLib;
             Adapters.HTTP_ADAPTER = new OkHttp3Adapter();
 
-            STATUS = new StatusConnection("cobalton", FileProvider.readContent("login/status.cred")[0]);
-            STATUS.updateStatus(Status.REPORTED_PROBLEMS);
+            STATUS = new StatusConnection("cobalton", new FileHandle("login/status.cred"));
+            STATUS.updateStatus(Status.MAINTENANCE);
         } catch (Throwable t) {
             throw new RuntimeException("Failed to login to Status Server", t);
         }
@@ -101,10 +98,6 @@ public final class Bot {
             SRV = API.getServerById(711318785889665127L).orElseThrow(IllegalStateException::new);
 
             logger.info("Initializting StatsClient...");
-            STATS = new JavacordStatsClient(BotListSettings.builder()
-                    .tokenFile(FileProvider.getFile("login/botlists.properties"))
-                    .postStatsTester(() -> API.getYourself().getId() == BOT_ID)
-                    .build(), API);
 
             DefaultEmbedFactory.setEmbedSupplier(() -> new EmbedBuilder().setColor(THEME));
 
@@ -196,7 +189,7 @@ public final class Bot {
     private static void terminateAll() {
         logger.info("Trying to shutdown gracefully");
 
-        Bot.STATUS.updateStatus(Status.REPORTED_PROBLEMS);
+        Bot.STATUS.updateStatus(Status.MAINTENANCE);
 
         for (ThrowingRunnable exec : new ThrowingRunnable[]{PROP::close, API::disconnect}) {
             try {
