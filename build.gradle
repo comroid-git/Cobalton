@@ -40,21 +40,20 @@ dependencies {
         implementation 'com.github.comroid-git:cli-parser:master-SNAPSHOT'
 
         // status server api
-        implementation project(':status:status-api')
+        implementation 'com.github.comroid-git:comroid.org:2b9067174e'
 
         // guardian
-        implementation project(':guardian:restless')
-        implementation project(':guardian:uniform').sourceSets.java8compat.output.classesDirs
-        implementation project(':guardian:restless').sourceSets.java8compat.output.classesDirs
+        implementation 'com.github.comroid-git.guardian-framework:uniform:master-SNAPSHOT'
+        implementation 'com.github.comroid-git.guardian-framework:restless:master-SNAPSHOT'
 
         // javacord Utilities
-        implementation project(':javacord-utilities')
-        implementation project(':discord-ux:javacord')
+        implementation 'com.github.comroid-git:javacord-utilities:master-SNAPSHOT'
+        implementation 'com.github.comroid-git.discord-ux:dux-javacord:master-SNAPSHOT'
     } else { // todo
         implementation project(':clipa')
 
         // status server api
-        implementation 'com.github.comroid-git:comroid.org:2b9067174e'
+        implementation project(':status:status-api')
 
         // guardian
         implementation project(':guardian:restless')
