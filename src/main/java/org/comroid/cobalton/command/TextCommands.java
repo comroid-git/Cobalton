@@ -127,12 +127,11 @@ public enum TextCommands {
             description = "Reverses text",
             usage = "reverse <'word'/'char'> [message identifier]",
             minimumArguments = 1,
-            maximumArguments = 2,
             convertStringResultsToEmbed = true
     )
     public CompletableFuture<String> reverse(TextChannel tc, String[] args) {
         // default to identifier "1" as in: count 1 back = use previous message if no argument was given
-        final CompletableFuture<String> str = findMessageContentByToken(tc, args.length == 0 ? "1" : args[0]);
+        final CompletableFuture<String> str = findMessageContentByToken(tc, args.length == 0 ? "1" : String.join(" ", args));
 
         switch (args[0]) {
             case "word":
@@ -152,12 +151,11 @@ public enum TextCommands {
     @Command(
             description = "Emojify Text!",
             usage = "emojify [message identifier]",
-            convertStringResultsToEmbed = true,
-            maximumArguments = 1
+            convertStringResultsToEmbed = true
     )
     public CompletableFuture<String> emojify(TextChannel tc, String[] args) {
         // default to identifier "1" as in: count 1 back = use previous message if no argument was given
-        return findMessageContentByToken(tc, args.length == 0 ? "1" : args[0])
+        return findMessageContentByToken(tc, args.length == 0 ? "1" : String.join(" ", args))
                 .thenApply(str -> {
                     if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
                         throw new IllegalArgumentException("Input Input String must match Regular Expression:\n" +
@@ -191,13 +189,12 @@ public enum TextCommands {
 
     @Command(
             description = "Mock People!",
-            maximumArguments = 1,
             usage = "mockify [message identifier]",
             convertStringResultsToEmbed = true
     )
     public CompletableFuture<String> mockify(TextChannel tc, String[] args) {
         // default to identifier "1" as in: count 1 back = use previous message if no argument was given
-        return findMessageContentByToken(tc, args.length == 0 ? "1" : args[0])
+        return findMessageContentByToken(tc, args.length == 0 ? "1" : String.join(" ", args))
                 .thenApply(str -> {
                     if (!str.matches(".*?[a-zA-Z0-9\\s]+.*?"))
                         throw new IllegalArgumentException("Input Input String must match Regular Expression:\n" +
