@@ -10,6 +10,7 @@ import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.permission.PermissionType;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -131,7 +132,7 @@ public enum TextCommands {
     )
     public CompletableFuture<String> reverse(TextChannel tc, String[] args) {
         // default to identifier "1" as in: count 1 back = use previous message if no argument was given
-        final CompletableFuture<String> str = findMessageContentByToken(tc, args.length == 0 ? "1" : String.join(" ", args));
+        final CompletableFuture<String> str = findMessageContentByToken(tc, args.length == 1 ? "1" : String.join(" ", Arrays.copyOfRange(args, 0, args.length)));
 
         switch (args[0]) {
             case "word":
