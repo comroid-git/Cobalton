@@ -2,6 +2,7 @@ package org.comroid.cobalton;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.comroid.api.ContextualProvider;
 import org.comroid.api.Provider;
 import org.comroid.cobalton.command.AdminCommands;
 import org.comroid.cobalton.command.TextCommands;
@@ -68,7 +69,7 @@ public final class Bot {
             Adapters.SERIALIZATION_ADAPTER = JacksonJSONAdapter.instance;
             Adapters.HTTP_ADAPTER = new OkHttp3Adapter();
 
-            STATUS = new StatusConnection("cobalton", TOKENS.createSubFile("status.cred"));
+            STATUS = new StatusConnection(Adapters.PROVIDER, "cobalton", TOKENS.createSubFile("status.cred"));
             STATUS.updateStatus(Status.MAINTENANCE);
         } catch (Throwable t) {
             throw new RuntimeException("Failed to login to Status Server", t);
