@@ -32,7 +32,7 @@ public class WordStoryEngine implements MessageCreateListener {
     public void onMessageCreate(MessageCreateEvent event) {
         if (!event.getMessage().getAuthor().isUser())
             return;
-        
+
         final String content = event.getReadableMessageContent();
 
         if (isStoryPart(content) && (content.contains(".") || content.contains("?") || content.contains("!"))) {
@@ -49,7 +49,7 @@ public class WordStoryEngine implements MessageCreateListener {
                     .orElse("no title :("))))
                     .join();
         } else if (!isStoryPart(content)) event.addReactionToMessage("⚠️");
-    } 
+    }
 
     private String generateTitle(String story) {
         final Random rng = new Random();

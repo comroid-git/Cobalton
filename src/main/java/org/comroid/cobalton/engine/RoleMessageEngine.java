@@ -1,12 +1,6 @@
 package org.comroid.cobalton.engine;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.comroid.cobalton.Bot;
-
 import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.Reaction;
@@ -16,9 +10,13 @@ import org.javacord.api.listener.message.reaction.ReactionAddListener;
 import org.javacord.api.listener.message.reaction.ReactionRemoveListener;
 import org.javacord.api.util.logging.ExceptionLogger;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class RoleMessageEngine implements ReactionAddListener, ReactionRemoveListener {
     private final static Map<String, Long> roles = new ConcurrentHashMap<>();
-    private final Message roleMessage;
 
     static {
         roles.put("\uD83D\uDEAC", 625500083026133004L); // raucher
@@ -27,6 +25,8 @@ public class RoleMessageEngine implements ReactionAddListener, ReactionRemoveLis
         roles.put("❄", 625500313511526400L); // pepper
         roles.put("\uD83D\uDC8A", 625500251586822174L); // chemikant
     }
+
+    private final Message roleMessage;
 
     public RoleMessageEngine(Message roleMessage) {
         this.roleMessage = roleMessage;

@@ -1,13 +1,8 @@
 package org.comroid.cobalton.engine;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.comroid.cobalton.Bot;
-import org.comroid.util.ChannelUtils;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
-
+import org.comroid.util.ChannelUtils;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.activity.Activity;
@@ -23,6 +18,10 @@ import org.javacord.api.event.channel.server.voice.ServerVoiceChannelMemberLeave
 import org.javacord.api.listener.channel.server.voice.ServerVoiceChannelMemberJoinListener;
 import org.javacord.api.listener.channel.server.voice.ServerVoiceChannelMemberLeaveListener;
 import org.javacord.api.util.logging.ExceptionLogger;
+
+import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class GamescomEngine implements ServerVoiceChannelMemberJoinListener, ServerVoiceChannelMemberLeaveListener {
     public static final long GAMESCOM_VOICE = 625508431272345600L;

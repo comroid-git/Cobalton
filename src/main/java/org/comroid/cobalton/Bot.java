@@ -2,7 +2,6 @@ package org.comroid.cobalton;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.comroid.api.ContextualProvider;
 import org.comroid.api.Provider;
 import org.comroid.cobalton.command.AdminCommands;
 import org.comroid.cobalton.command.TextCommands;

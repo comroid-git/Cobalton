@@ -1,15 +1,14 @@
 package org.comroid.util;
 
-import java.time.Instant;
-
 import org.comroid.cobalton.Bot;
-
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.Permissionable;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.channel.ServerTextChannelUpdater;
 import org.javacord.api.util.logging.ExceptionLogger;
+
+import java.time.Instant;
 
 public class ChannelUtils {
     @SuppressWarnings("unchecked") // fuck javacord

@@ -1,12 +1,12 @@
 package org.comroid.cobalton.command.skribbl;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SkribblConnector extends SocketConnector {
     private static final int[] AVATAR = {5, 0, 2, -1};
@@ -14,15 +14,15 @@ public class SkribblConnector extends SocketConnector {
     private static final String port = "5001";
     private final CompletableFuture<Object> result = new CompletableFuture<>();
 
+    public Object getRoom() throws ExecutionException, InterruptedException {
+        return this.result.get();
+    }
+
     SkribblConnector() throws URISyntaxException {
         super(baseUrl + ":" + port);
         this.socket
                 .on("lobbyConnected", this::onLobbyConnected)
                 .on("lobbyPlayerConnected", this::onLobbyPlayerConnected);
-    }
-
-    public Object getRoom() throws ExecutionException, InterruptedException {
-        return this.result.get();
     }
 
     @Override

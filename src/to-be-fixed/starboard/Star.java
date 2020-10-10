@@ -9,7 +9,8 @@ class StarMessage {
     public long id;
     public long channel;
 
-    @JsonCreator StarMessage(@JsonProperty long id, @JsonProperty long channel) {
+    @JsonCreator
+    StarMessage(@JsonProperty long id, @JsonProperty long channel) {
         this.id = id;
         this.channel = channel;
     }
@@ -19,19 +20,6 @@ public class Star {
     private int score;
     private StarMessage origin;
     private StarMessage destination;
-
-    @JsonCreator
-    public Star(@JsonProperty int score, @JsonProperty StarMessage origin, @JsonProperty StarMessage destination) {
-        this.score = score;
-        this.origin = origin;
-        this.destination = destination;
-    }
-
-    public Star(int score, Message origin, Message destination) {
-        this.score = score;
-        this.setOrigin(origin);
-        this.setDestination(destination);
-    }
 
     @JsonGetter("score")
     public int getScore() {
@@ -61,6 +49,19 @@ public class Star {
     @JsonProperty
     public void setDestination(Message destination) {
         this.destination = new StarMessage(destination.getId(), destination.getChannel().getId());
+    }
+
+    @JsonCreator
+    public Star(@JsonProperty int score, @JsonProperty StarMessage origin, @JsonProperty StarMessage destination) {
+        this.score = score;
+        this.origin = origin;
+        this.destination = destination;
+    }
+
+    public Star(int score, Message origin, Message destination) {
+        this.score = score;
+        this.setOrigin(origin);
+        this.setDestination(destination);
     }
 
     public int incScore() {

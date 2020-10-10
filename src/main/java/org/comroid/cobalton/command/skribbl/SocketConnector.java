@@ -1,9 +1,9 @@
 package org.comroid.cobalton.command.skribbl;
 
-import java.net.URISyntaxException;
-
 import io.socket.client.IO;
 import io.socket.client.Socket;
+
+import java.net.URISyntaxException;
 
 abstract class SocketConnector {
     Socket socket;

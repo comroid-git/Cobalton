@@ -1,5 +1,18 @@
 package org.comroid.cobalton.engine;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.comroid.cobalton.Bot;
+import org.comroid.javacord.util.server.properties.Property;
+import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.server.Server;
+import org.javacord.api.event.message.MessageCreateEvent;
+import org.javacord.api.listener.message.MessageCreateListener;
+import org.javacord.api.util.logging.ExceptionLogger;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,20 +22,6 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.comroid.cobalton.Bot;
-import org.comroid.javacord.util.server.properties.Property;
-import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
-
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.server.Server;
-import org.javacord.api.event.message.MessageCreateEvent;
-import org.javacord.api.listener.message.MessageCreateListener;
-import org.javacord.api.util.logging.ExceptionLogger;
 
 public enum AntiSpam implements MessageCreateListener {
     ENGINE;
@@ -111,6 +110,12 @@ public enum AntiSpam implements MessageCreateListener {
             this.cleaner = cleaner;
         }
 
+        public static Collection<SpamRule> collect(Server server) {
+            return Stream.of(SpamRule.values())
+                    .filter(rule -> rule.isEnabled(server))
+                    .collect(Collectors.toList());
+        }
+
         public boolean isEnabled(Server onServer) {
             return enabledCheck.getValue(onServer).asBoolean();
         }
@@ -121,12 +126,6 @@ public enum AntiSpam implements MessageCreateListener {
 
         public String applyRule(String content) {
             return cleaner.apply(content);
-        }
-
-        public static Collection<SpamRule> collect(Server server) {
-            return Stream.of(SpamRule.values())
-                    .filter(rule -> rule.isEnabled(server))
-                    .collect(Collectors.toList());
         }
     }
 }

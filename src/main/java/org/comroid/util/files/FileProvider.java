@@ -1,20 +1,14 @@
 package org.comroid.util.files;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.NoSuchFileException;
-import java.util.stream.IntStream;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static java.io.File.pathSeparator;
-import static java.io.File.separator;
-import static java.io.File.separatorChar;
+import java.io.*;
+import java.nio.file.NoSuchFileException;
+import java.util.stream.IntStream;
+
+import static java.io.File.*;
 
 public class FileProvider {
     public final static Logger logger = LogManager.getLogger();

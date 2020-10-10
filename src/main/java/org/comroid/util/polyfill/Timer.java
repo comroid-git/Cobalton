@@ -1,12 +1,11 @@
 package org.comroid.util.polyfill;
 
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import org.comroid.cobalton.Bot;
+
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import org.comroid.cobalton.Bot;
-
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 public class Timer {
     private final ScheduledExecutorService schedule;

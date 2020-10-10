@@ -1,7 +1,6 @@
 package org.comroid.cobalton.command.skribbl;
 
 import org.comroid.cobalton.model.Embed;
-
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 

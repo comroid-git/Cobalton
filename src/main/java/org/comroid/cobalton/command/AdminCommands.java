@@ -1,19 +1,9 @@
 package org.comroid.cobalton.command;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.util.regex.Pattern;
-import javax.script.ScriptEngineManager;
-
 import org.comroid.cobalton.Bot;
 import org.comroid.javacord.util.commands.Command;
 import org.comroid.javacord.util.commands.CommandGroup;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
-
 import org.comroid.status.entity.Service;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.ServerTextChannel;
@@ -29,16 +19,21 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.entity.user.UserStatus;
 import org.javacord.api.util.logging.ExceptionLogger;
 
-import static java.time.temporal.ChronoField.DAY_OF_MONTH;
-import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
-import static java.time.temporal.ChronoField.YEAR;
+import javax.script.ScriptEngineManager;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.regex.Pattern;
+
+import static java.time.temporal.ChronoField.*;
 
 @CommandGroup(name = "Administration Commands", description = "Commands for handling the Server")
 public enum AdminCommands {
     INSTANCE;
 
-    private final ScriptEngineManager mgr = new ScriptEngineManager();
-    private final Pattern ext = Pattern.compile("`{3}(java)?\\n(.*)\\n`{3}");
     final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
             .parseCaseInsensitive()
             .appendValue(DAY_OF_MONTH, 2)
@@ -47,6 +42,8 @@ public enum AdminCommands {
             .appendLiteral('-')
             .appendValue(YEAR, 4)
             .toFormatter();
+    private final ScriptEngineManager mgr = new ScriptEngineManager();
+    private final Pattern ext = Pattern.compile("`{3}(java)?\\n(.*)\\n`{3}");
 
     @Command(usage = "shutdown", description = "Only the owner of the bot can use this", shownInHelpCommand = false)
     public void shutdown(User user, String[] args, Message command, TextChannel channel) {

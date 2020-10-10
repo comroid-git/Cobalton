@@ -2,13 +2,16 @@ package org.comroid.cobalton.model;
 
 import org.comroid.cobalton.Bot;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
-
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 
 public class Embed {
     protected EmbedBuilder embed;
+
+    public EmbedBuilder getBuilder() {
+        return this.embed;
+    }
 
     public Embed(Server server, User user) {
         this.embed = DefaultEmbedFactory.create()
@@ -24,9 +27,5 @@ public class Embed {
     public Embed addField(String name, String value, boolean inline) {
         this.embed.addField(name, value, inline);
         return this;
-    }
-
-    public EmbedBuilder getBuilder() {
-        return this.embed;
     }
 }
