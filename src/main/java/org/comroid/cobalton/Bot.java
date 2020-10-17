@@ -174,7 +174,6 @@ public final class Bot {
     }
 
     public static void main(String[] args) {
-
         API.addMessageCreateListener(event -> {
             if (event.getMessage().getMentionedUsers().size() > 0)
                 PING_EMOJIS.sorted(randomComparator())
