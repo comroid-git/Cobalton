@@ -1,31 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration monitorInterval="60" packages="de.comroid.util" status="debug">
+<Configuration monitorInterval="60" packages="org.comroid.status" status="debug">
     <Appenders>
-        <CobaltonLog4J2Appender name="CobaltonLog4J2Appender">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
-        </CobaltonLog4J2Appender>
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-        <File name="logfile" append="false" bufferedIo="true" filename="${env:LOG_FILE:-LOG_FILE}">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
-        </File>
-        <File name="logfile_public" append="false"
-            bufferedIo="true" filename="${env:LOG_FILE_PUBLIC:-LOG_FILE_PUBLIC}">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+        <File name="logfile" filename="/srv/dcb/cobalton/latest.log">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </File>
     </Appenders>
     <Loggers>
         <Root level="trace">
-            <AppenderRef level="info" ref="Console" />
-            <AppenderRef level="info" ref="logfile_public" />
-            <AppenderRef level="debug" ref="logfile" />
-            <AppenderRef level="error" ref="CobaltonLog4J2Appender" />
+            <AppenderRef level="info" ref="console"/>
+            <AppenderRef level="info" ref="logfile"/>
         </Root>
     </Loggers>
-    <Properties>
-        <Property name="LS">${sys:file.separator}</Property>
-        <Property name="LOG_FILE_PUBLIC">/var/dcb/cobalton/latest-public.log</Property>
-        <Property name="LOG_FILE">/var/dcb/cobalton/latest-private.log</Property>
-    </Properties>
 </Configuration>
