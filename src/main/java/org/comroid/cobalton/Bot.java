@@ -6,6 +6,7 @@ import org.comroid.api.Provider;
 import org.comroid.cobalton.command.AdminCommands;
 import org.comroid.cobalton.command.TextCommands;
 import org.comroid.cobalton.command.ToolCommands;
+import org.comroid.cobalton.engine.AnswersEngine;
 import org.comroid.cobalton.engine.AntiSpam;
 import org.comroid.cobalton.engine.RoleMessageEngine;
 import org.comroid.cobalton.engine.WordStoryEngine;
@@ -58,6 +59,7 @@ public final class Bot {
     public static final CommandHandler CMD;
     public static final GuildSettings PROP;
     public static final WordStoryEngine WSE;
+    public static final AnswersEngine ASW;
     // todo public static final Starboard STAR;
     public static final Server SRV;
 
@@ -127,6 +129,9 @@ public final class Bot {
                     .asLong(""))
                     .ifPresent(stc -> wseLocal[0] = new WordStoryEngine(stc));
             WSE = wseLocal[0];
+
+            logger.info("Creating Skayo answers engine");
+            ASW = new AnswersEngine(API, "gibts hier ein problem");
 
             logger.info("Registering prefix provider");
             //todo Causes NPEs CMD.withCustomPrefixProvider(Properties.PREFIX);
