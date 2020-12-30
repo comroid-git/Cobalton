@@ -4,7 +4,6 @@ import org.comroid.mutatio.pipe.Pipe;
 import org.comroid.mutatio.ref.ReferenceMap;
 import org.comroid.restless.REST;
 import org.comroid.restless.endpoint.AccessibleEndpoint;
-import org.comroid.status.DependenyObject;
 import org.comroid.uniform.node.UniObjectNode;
 import org.intellij.lang.annotations.Language;
 import org.javacord.api.DiscordApi;

@@ -19,7 +19,6 @@ import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.comroid.mutatio.pipe.Pipe;
 import org.comroid.mutatio.span.Span;
 import org.comroid.restless.adapter.okhttp.v4.OkHttp3Adapter;
-import org.comroid.status.DependenyObject.Adapters;
 import org.comroid.status.StatusConnection;
 import org.comroid.status.entity.Service.Status;
 import org.comroid.uniform.adapter.json.jackson.JacksonJSONAdapter;
