@@ -18,7 +18,7 @@ import org.comroid.javacord.util.server.properties.Property;
 import org.comroid.javacord.util.ui.embed.DefaultEmbedFactory;
 import org.comroid.mutatio.pipe.Pipe;
 import org.comroid.mutatio.span.Span;
-import org.comroid.restless.adapter.okhttp.v4.OkHttp3Adapter;
+import org.comroid.restless.adapter.okhttp.v4.OkHttp4Adapter;
 import org.comroid.status.StatusConnection;
 import org.comroid.status.entity.Service.Status;
 import org.comroid.uniform.adapter.json.jackson.JacksonJSONAdapter;
@@ -67,7 +67,7 @@ public final class Bot {
     static {
         try {
             Adapters.SERIALIZATION_ADAPTER = JacksonJSONAdapter.instance;
-            Adapters.HTTP_ADAPTER = new OkHttp3Adapter();
+            Adapters.HTTP_ADAPTER = new OkHttp4Adapter();
 
             STATUS = new StatusConnection(Adapters.PROVIDER, "cobalton", TOKENS.createSubFile("status.cred"));
             STATUS.updateStatus(Status.MAINTENANCE);
