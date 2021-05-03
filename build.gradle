@@ -44,7 +44,7 @@ dependencies {
 
         // guardian
         implementation 'com.github.comroid-git.guardian-framework:uniform:master-SNAPSHOT'
-        implementation 'com.github.comroid-git.guardian-framework:restless:master-SNAPSHOT'
+        implementation 'com.github.comroid-git.guardian-framework:restless:webkit-0.1.3'
 
         // javacord Utilities
         implementation 'com.github.comroid-git:javacord-utilities:master-SNAPSHOT'
